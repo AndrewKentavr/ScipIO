@@ -37,6 +37,8 @@ async def equation_mentally_answer(message: types.Message, state: FSMContext):
         else:
             await message.answer('Правильно, вы молодцы!!')
             await state.finish()
+            await Equation.equation_mentally.set()
+            await message.answer('Ещё?')
 
 
 def equation_generate():
