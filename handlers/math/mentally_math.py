@@ -3,15 +3,22 @@ from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
+from aiogram.types import InputFile
 
 from handlers.keyboards.default import math_menu
+from handlers.keyboards.inline import math_menu_inline
 
 
-async def math_start(message: types.Message):
-    await message.answer('Выберете:', reply_markup=math_menu.get_keyboard_math_start())
+async def equation_mentally_theory(message: types.Message):
+    await message.answer('Мы должны использовать: Круглые Числа\nОдин из самых распространённыхприёмов устного счёта'
+                         ' заключается в том, что любое число можно представить в виде суммы или разности чисел, одно или '
+                         'несколько из которых «круглое»', reply_markup=math_menu_inline.get_inline_math_url())
+    photo = InputFile("C:/Users/andrt/PycharmProjects/ConTia/data/math_1.jpg")
+    await message.answer_photo(photo=photo)
 
 
 async def equation_mentally_start(message: types.Message):
+    await message.answer('Чтобы вызвать подсказку напишите /mell_theory')
     await message.answer('Вы готовы?', reply_markup=types.ReplyKeyboardRemove())
     await Equation.equation_mentally.set()
 
@@ -64,7 +71,7 @@ async def equation_mentally_end(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     answer = user_data['answer']
     attempt = user_data['attempts']
-    await message.answer(f'Ответы :{answer}\nКоличество попыток на каждый ответ:{attempt}')
+    await message.answer(f'Ответы: {answer}\nКоличество попыток на каждый ответ: {attempt}')
     await state.finish()
 
 
@@ -85,8 +92,8 @@ class Equation(StatesGroup):
     equation_mentally_answer = State()
 
 
-def register_handlers_math(dp: Dispatcher):
-    dp.register_message_handler(math_start, commands='math', state="*")
+def register_handlers_math_mentally(dp: Dispatcher):
+    dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')
     dp.register_message_handler(equation_mentally_end, Text(equals="закончить", ignore_case=True), state="*")
 
     dp.register_message_handler(equation_mentally_start, Text(equals="Примеры для подчёта в уме"))
