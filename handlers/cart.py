@@ -3,7 +3,7 @@ from aiogram.dispatcher.filters import Text
 
 
 async def cart_func(message: types.Message):
-    await message.answer('ТАНЯ БЛЛЯЯЯЯЯЯЯЯ')
+    await message.answer('ТАНЯ БЛЛЯЯЯЯЯЯЯЯ', reply_markup=types.ReplyKeyboardRemove())
 
 
 def register_handlers_cart(dp: Dispatcher):

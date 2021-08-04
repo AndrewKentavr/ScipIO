@@ -10,3 +10,13 @@ def get_keyboard_math_start():
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     return keyboard
+
+
+def get_keyboard_math_end():
+    buttons = [
+        'Продолжаем, я деньги за это заплатил',
+        'Закончить'
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
