@@ -101,10 +101,13 @@ async def equation_mentally_end(message: types.Message, state: FSMContext):
 
 
 def equation_generate():
-    mathematically_signs = ['*']
+    mathematically_signs = ['*', '**']
     sign = choice(mathematically_signs)
     A = str(randint(11, 99))
-    B = str(randint(11, 99))
+    if sign == '**':
+        B = 2
+    else:
+        B = str(randint(11, 99))
     equation = f'{A} {sign} {B}'
     answer = eval(equation)
     print(answer)
