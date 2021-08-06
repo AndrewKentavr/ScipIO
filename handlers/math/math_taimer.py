@@ -4,9 +4,9 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.filters import Text
+from asyncio import sleep as async_sleep
 
 from handlers.math.mentally_math import Equation
-from handlers.math.tamer import Timer
 
 
 async def timer_math_start(message: types.Message):
@@ -16,23 +16,20 @@ async def timer_math_start(message: types.Message):
     await TimerMath.timer_math.set()
 
 
-async def timer_math(message: types.Message, state: FSMContext):
+async def timer_math(message: types.Message):
     time_msg = message.text.split('_')
     hour, min = int(time_msg[0]), int(time_msg[1])
     await message.reply('Время установлено')
 
-    # user_data = await state.get_data()
-    # await state.update_data(answer=[])
-    # answers = user_data['answer']
-    # answers.append(equation[1])
-
-    t = Timer(hour, min)
     """Есть идея засунуть while true прям сюда, но я ещё не уверен"""
-    await t.wait_timer_func()
 
-    await message.answer('Ежедневное задание')
-    await message.answer('Вы готовы?', reply_markup=types.ReplyKeyboardRemove())
-    await Equation.equation_mentally.set()
+    while True:
+        await async_sleep(60)
+        now = datetime.now()
+        if now.hour == hour and now.minute == min:
+            await message.answer('Ежедневное задание')
+            await message.answer('Вы готовы?', reply_markup=types.ReplyKeyboardRemove())
+            await Equation.equation_mentally.set()
 
 
 class TimerMath(StatesGroup):
