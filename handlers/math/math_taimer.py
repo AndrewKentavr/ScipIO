@@ -7,7 +7,7 @@ from aiogram.dispatcher.filters import Text
 from asyncio import sleep as async_sleep
 
 from handlers.math.mentally_math import Equation
-
+from dp.math_dp import timer_create_dp
 
 async def timer_math_start(message: types.Message):
     await message.answer('Введите нужное вам время в формате:\n'
@@ -17,9 +17,12 @@ async def timer_math_start(message: types.Message):
 
 
 async def timer_math_create(message: types.Message):
-    time_msg = message.text.split('_')
+    msg = message.text
+    time_msg = msg.split('_')
     hour, min = int(time_msg[0]), int(time_msg[1])
     await message.reply('Время установлено')
+    timer_create_dp(message.from_user.id, msg)
+    await message.answer('ЗАЕБИСЬ ЗАЕБИСЬ ЗАЕБИСЬ ЗАЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕБИСЬ')
 
     """Есть идея засунуть while true прям сюда, но я ещё не уверен"""
 
