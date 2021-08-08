@@ -91,6 +91,18 @@ async def equation_mentally_answer(message: types.Message, state: FSMContext):
             await message.answer('Что делаем?', reply_markup=math_menu.get_keyboard_math_end())
 
 
+# class Govno:
+#     def __init__(self, message: types.Message, state: FSMContext):
+#         self.message = message
+#         self.state = state
+#
+#     async def equation_mentally_end(self):
+#         await self.message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
+#         user_data = await self.state.get_data()
+#         answer = user_data['answer']
+#         attempt = user_data['attempts']
+#         await self.message.answer(f'Ответы: {answer}\nКоличество попыток на каждый ответ: {attempt}')
+#         await self.state.finish()
 async def equation_mentally_end(message: types.Message, state: FSMContext):
     await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
