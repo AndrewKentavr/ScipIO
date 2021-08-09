@@ -1,10 +1,9 @@
-import asyncio
-
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
 from handlers.register_cmd import reg_cmd
+from handlers.timer.check_timer import check_timer_func
 
 from config import BOT_TOKEN, ADMINS
 import logging
@@ -15,6 +14,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 async def on_startup(dp):
+    check_timer_func()
     await set_commands(bot)
     reg_cmd(dp)  # функция регистрации "register_message_handler"
     await bot.send_message(ADMINS, "Bot - on", reply_markup=types.ReplyKeyboardRemove())

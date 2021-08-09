@@ -9,6 +9,7 @@ from asyncio import sleep as async_sleep
 from handlers.math.mentally_math import Equation
 from dp.math_dp import timer_create_dp
 
+
 async def timer_math_start(message: types.Message):
     await message.answer('Введите нужное вам время в формате:\n'
                          '<i>16_02</i>\n'
@@ -18,21 +19,11 @@ async def timer_math_start(message: types.Message):
 
 async def timer_math_create(message: types.Message):
     msg = message.text
-    time_msg = msg.split('_')
-    hour, min = int(time_msg[0]), int(time_msg[1])
     await message.reply('Время установлено')
     timer_create_dp(message.from_user.id, msg)
     await message.answer('ЗАЕБИСЬ ЗАЕБИСЬ ЗАЕБИСЬ ЗАЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕБИСЬ')
 
     """Есть идея засунуть while true прям сюда, но я ещё не уверен"""
-
-    while True:
-        await async_sleep(60)
-        now = datetime.now()
-        if now.hour == hour and now.minute == min:
-            await message.answer('Ежедневное задание')
-            await message.answer('Вы готовы?', reply_markup=types.ReplyKeyboardRemove())
-            await Equation.equation_mentally.set()
 
 
 async def timer_math_del(message: types.Message):
