@@ -28,3 +28,10 @@ where user_id == '{user_id}';""")
     c = cur.fetchall()
     all_timers = list(map(lambda x: x[0], c))
     return all_timers
+
+
+def problem_search_random():
+    cur.execute(f"""SELECT * FROM math_problems 
+    ORDER BY RANDOM() LIMIT 1;""")
+    c = cur.fetchall()
+    return c[0]

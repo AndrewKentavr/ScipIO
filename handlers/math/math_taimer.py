@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.filters import Text
 
-from dp.math_dp import timer_create_dp, timer_info_dp, timer_del_dp
+from dp.dp_math import timer_create_dp, timer_info_dp, timer_del_dp
 from handlers.keyboards.default import math_menu
 
 
