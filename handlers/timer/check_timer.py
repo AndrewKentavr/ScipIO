@@ -1,18 +1,42 @@
 import sqlite3
-from handlers.timer.class_timer import ALL_TIMERS, Timer
+from asyncio import sleep as async_sleep
+from datetime import datetime
+
+from aiogram import types
+
+from handlers.math.mentally_math import Equation
+
+"""
+Создать только один цикл await async_sleep(60)
+и потом проверять у пользователя наличие данного таймера
+--------
+Создать 1 цикл await async_sleep(60)
+который будет просто в данное время присылать определённым пользователем сообщение
+"""
 
 
-def check_timer_func(dp):
-    CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/ConTia/dp/contia_dp.db')
-    cur = CONN.cursor()
-    cur.execute("SELECT * FROM time;")
-    all_results = cur.fetchall()
-    all_time_dp = [i[1] for i in all_results]
-    s = ALL_TIMERS.keys()
-    all_time = [i for i in s]
-    exceptions = list(set(all_time_dp) - set(all_time))
-    if exceptions:
-        for msg in exceptions:
-            time_msg = msg.split('_')
-            hour, min = int(time_msg[0]), int(time_msg[1])
-            Timer(dp, hour, min, user_id)
+async def timer_cycle(dp):
+    while True:
+        await async_sleep(30)
+        CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/ConTia/dp/contia_dp.db')
+        cur = CONN.cursor()
+        now = datetime.now()
+
+        hour_now = str(now.hour)
+        min_now = str(now.minute)
+        if int(hour_now) < 10:
+            hour_now = '0' + hour_now
+        if int(min_now) < 10:
+            min_now = '0' + min_now
+        time_now = hour_now + '_' + min_now
+
+        cur.execute(f"""SELECT time, user_id FROM Time
+                        where time == '{time_now}';""")
+        time_results = cur.fetchall()
+        if time_results:
+            for i in time_results:
+                user_id = i[1]
+                await dp.bot.send_message(user_id, 'Ежедневное задание',
+                                          reply_markup=types.ReplyKeyboardRemove())
+                await dp.bot.send_message(user_id, 'Вы готовы?')
+                await Equation.equation_mentally.set()

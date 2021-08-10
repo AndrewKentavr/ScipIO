@@ -1,12 +1,8 @@
-from datetime import datetime
-
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.filters import Text
-from asyncio import sleep as async_sleep
 
-from handlers.math.mentally_math import Equation
 from dp.math_dp import timer_create_dp
 
 
@@ -17,13 +13,12 @@ async def timer_math_start(message: types.Message):
     await TimerMath.timer_math_create.set()
 
 
-async def timer_math_create(message: types.Message):
+async def timer_math_create(message: types.Message, state: FSMContext):
     msg = message.text
     await message.reply('Время установлено')
     timer_create_dp(message.from_user.id, msg)
     await message.answer('ЗАЕБИСЬ ЗАЕБИСЬ ЗАЕБИСЬ ЗАЕЕЕЕЕЕЕЕЕЕЕЕЕЕЕБИСЬ')
-
-    """Есть идея засунуть while true прям сюда, но я ещё не уверен"""
+    await state.finish()
 
 
 async def timer_math_del(message: types.Message):
