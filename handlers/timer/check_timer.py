@@ -20,15 +20,9 @@ async def timer_cycle(dp):
         await async_sleep(30)
         CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/ConTia/dp/contia_dp.db')
         cur = CONN.cursor()
-        now = datetime.now()
 
-        hour_now = str(now.hour)
-        min_now = str(now.minute)
-        if int(hour_now) < 10:
-            hour_now = '0' + hour_now
-        if int(min_now) < 10:
-            min_now = '0' + min_now
-        time_now = hour_now + '_' + min_now
+        now = datetime.now()
+        time_now = now.strftime("%H:%M")
 
         cur.execute(f"""SELECT time, user_id FROM Time
                         where time == '{time_now}';""")
