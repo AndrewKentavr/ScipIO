@@ -5,7 +5,7 @@ def get_keyboard_math_start():
     buttons = [
         'Задачки',
         'Примеры для подчёта в уме',
-        'Поставить таймер на отправку заданий'
+        'Математический таймер'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
@@ -16,6 +16,17 @@ def get_keyboard_math_end():
     buttons = [
         'Продолжаем, я деньги за это заплатил',
         'Закончить'
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def get_keyboard_math_timer():
+    buttons = [
+        'Создать таймер',
+        'Удалить таймер',
+        'Посмотреть все таймеры'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

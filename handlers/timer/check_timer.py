@@ -1,9 +1,9 @@
-import sqlite3
 from asyncio import sleep as async_sleep
 from datetime import datetime
 
 from aiogram import types
 
+from dp.math_dp import get_cursor
 from handlers.math.mentally_math import Equation
 
 """
@@ -16,14 +16,17 @@ from handlers.math.mentally_math import Equation
 
 
 async def timer_cycle(dp):
+    """
+    Тут находиться бесконечный цикл, который запускается командой администратора,
+    Эта функция находит в базе данных время, которое ровно данному времени и юзеру,
+     владеющему, данным времинем задание
+    """
     while True:
-        await async_sleep(30)
-        CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/ConTia/dp/contia_dp.db')
-        cur = CONN.cursor()
-
+        await async_sleep(60)
         now = datetime.now()
         time_now = now.strftime("%H:%M")
 
+        cur = get_cursor()
         cur.execute(f"""SELECT time, user_id FROM Time
                         where time == '{time_now}';""")
         time_results = cur.fetchall()
