@@ -2,13 +2,16 @@ from aiogram import types
 
 
 def get_keyboard_math_start():
-    buttons = [
+    buttons_1 = [
         'Задачки',
-        'Примеры для подчёта в уме',
-        'Математический таймер'
+        'Формулы',
     ]
+    buttons_2 = 'Примеры для подчёта в уме'
+    buttons_3 = 'Математический таймер'
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    keyboard.add(*buttons)
+    keyboard.add(*buttons_1)
+    keyboard.add(buttons_2)
+    keyboard.add(buttons_3)
     return keyboard
 
 
@@ -37,6 +40,16 @@ def get_keyboard_math_timer():
         'Создать таймер',
         'Удалить таймер',
         'Посмотреть все таймеры'
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def get_keyboard_math_formulas():
+    buttons = [
+        'Продолжаем',
+        'Закончить повторение'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

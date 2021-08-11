@@ -33,5 +33,12 @@ where user_id == '{user_id}';""")
 def problem_search_random():
     cur.execute(f"""SELECT * FROM math_problems 
     ORDER BY RANDOM() LIMIT 1;""")
-    c = cur.fetchall()
-    return c[0]
+    result = cur.fetchall()
+    return result[0]
+
+
+def formulas_search_random():
+    cur.execute(f"""SELECT formulas, answer, explanation FROM math_formulas 
+    ORDER BY RANDOM() LIMIT 1;""")
+    result = cur.fetchall()
+    return result[0]
