@@ -53,15 +53,20 @@ async def equation_mentally(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
 
     if len(user_data) == 0:
+        await state.update_data(condition=[])
         await state.update_data(answer=[])
         await state.update_data(attempts=[])
         user_data = await state.get_data()
     answers = user_data['answer']
     answers.append(equation[1])
 
+    conditions = user_data['condition']
+    conditions.append(equation[0])
+
     attempt = user_data['attempts']
     attempt.append(0)
 
+    await state.update_data(condition=conditions)
     await state.update_data(answer=answers)
     await state.update_data(attempts=attempt)
 
@@ -94,9 +99,14 @@ async def equation_mentally_answer(message: types.Message, state: FSMContext):
 async def equation_mentally_end(message: types.Message, state: FSMContext):
     await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
+
+    conditions = user_data['condition']
     answer = user_data['answer']
     attempt = user_data['attempts']
-    await message.answer(f'Ответы: {answer}\nКоличество попыток на каждый ответ: {attempt}')
+
+    for i in range(len(conditions)):
+        await message.answer(
+            f'Условие задачи:\n{conditions[i]}\n    Ответ: {answer[i]}\n    Количество попыток: {attempt[i]}')
     await state.finish()
 
 
