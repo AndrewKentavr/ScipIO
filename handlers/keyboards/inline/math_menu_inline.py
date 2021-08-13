@@ -12,8 +12,8 @@ def get_inline_math_url():
 
 def get_inline_math_formulas():
     buttons = [
-        types.InlineKeyboardButton(text="Вывести подсказку", callback_data="151515"),
-        types.InlineKeyboardButton(text="Вывести ответ", callback_data="1616161")
+        types.InlineKeyboardButton(text="Вывести подсказку", callback_data="hint_f"),
+        types.InlineKeyboardButton(text="Вывести ответ", callback_data="answer_f")
     ]
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)

@@ -16,7 +16,9 @@ def reg_cmd(dp):
     register_handlers_math_problem(dp)
     register_handlers_math_timer(dp)
 
+    # register_handlers_math_formulas_inline(dp)
+
 
 def reg_call_cmd(dp):
-    # register_handlers_math_formulas_inline(dp)
+    # register_handlers_math_formulas_inline(data_b)
     pass

@@ -3,7 +3,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-from dp.dp_math import problem_search_random
+from data_b.dp_math import problem_search_random
 from handlers.keyboards.default import math_menu
 
 

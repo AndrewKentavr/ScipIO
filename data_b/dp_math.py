@@ -1,6 +1,6 @@
 import sqlite3
 
-CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/ConTia/dp/contia_dp.db')
+CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/ConTia/data_b/contia_dp.db')
 cur = CONN.cursor()
 
 

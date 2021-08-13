@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
 
-from dp.dp_math import formulas_search_random
+from data_b.dp_math import formulas_search_random
 from handlers.keyboards.default.math_menu import get_keyboard_math_formulas
 from handlers.keyboards.inline.math_menu_inline import get_inline_math_formulas
 
@@ -41,26 +41,10 @@ async def math_formulas(message: types.Message, state: FSMContext):
 
     await state.update_data(condition=conditions)
     await state.update_data(answer=answers)
+    await state.finish()
 
     await message.answer(f"Формула:\n{str(condition_dp)}", reply_markup=get_inline_math_formulas())
     # await message.answer(f'Посмотрите Продолжить или закончить?', reply_markup=get_keyboard_math_formulas(), )
-
-
-async def math_formulas_end(message: types.Message, state: FSMContext):
-    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
-    user_data = await state.get_data()
-
-    conditions = user_data['condition']
-    answer = user_data['answer']
-
-    for i in range(len(conditions)):
-        await message.answer(
-            f'Условие задачи:\n{conditions[i]}\n    Ответ: {answer[i]}\n')
-    await state.finish()
-
-
-class Formulas(StatesGroup):
-    math_formulas = State()
 
 
 async def hint_func(call: types.CallbackQuery):
@@ -81,14 +65,33 @@ async def answer_func(call: types.CallbackQuery):
     await call.answer()
 
 
+async def math_formulas_end(message: types.Message, state: FSMContext):
+    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
+    user_data = await state.get_data()
+
+    conditions = user_data['condition']
+    answer = user_data['answer']
+
+    for i in range(len(conditions)):
+        await message.answer(
+            f'Условие задачи:\n{conditions[i]}\n    Ответ: {answer[i]}\n')
+    await state.finish()
+
+
+class Formulas(StatesGroup):
+    math_formulas = State()
+
+
 def register_handlers_math_formulas(dp: Dispatcher):
     dp.register_message_handler(math_formulas_start, Text(equals="Формулы"))
     dp.register_message_handler(math_formulas_start, commands="math_formulas")
     dp.register_message_handler(math_formulas_end, Text(equals="закончить задачки", ignore_case=True), state="*")
     dp.register_message_handler(math_formulas, state=Formulas.math_formulas)
+    dp.register_callback_query_handler(hint_func, text="hint_f")
+    dp.register_callback_query_handler(answer_func, text="answer_f")
 
 
 def register_handlers_math_formulas_inline(dp: Dispatcher):
+    # dp.register_callback_query_handler(hint_func, text="hint_f")
+    # dp.register_callback_query_handler(answer_func, text="answer_f")
     pass
-#     dp.register_callback_query_handler(hint_func, text="151515")
-#     dp.register_callback_query_handler(answer_func, text="1616161")
