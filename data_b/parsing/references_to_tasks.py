@@ -6,6 +6,7 @@ from user_agent import generate_user_agent
 from random import randrange
 from time import sleep
 from math import ceil
+import re
 
 
 def checking_quantity_start():
@@ -29,6 +30,30 @@ def add_example_info(soup):
         difficult = (i.find(class_="problemsmalldifficulty").find_all('nobr'))
         for i in difficult:
             all_info.append(i.text)
+        sleep(randrange(3, 5))
+
+        headers_0 = {
+            "Accept": "*/*",
+            "User-Agent": generate_user_agent()
+        }
+
+        req_example = requests.get(all_info[1], form_data, headers=headers_0)
+        src_example = req_example.text
+        soup_example = BeautifulSoup(src_example, "lxml")
+
+        tables_example = soup_example.find(class_="componentboxcontents")
+        headings_h3 = tables_example.find_all("h3")
+
+        list_text_trash = tables_example.text.split(headings_h3[0].text)
+        for i in range(len(headings_h3) - 1):
+            c_1 = headings_h3[i + 1]
+            c_2 = list_text_trash[-1].split(c_1.text)
+
+            text = re.sub("[\n|\t|&nbsp;]", "", c_2[0])
+
+            all_info.append(f"{headings_h3[i]}: {text}")
+            list_text_trash.append(c_2[1])
+
         all_examples_hrefs.append(all_info)
 
 
