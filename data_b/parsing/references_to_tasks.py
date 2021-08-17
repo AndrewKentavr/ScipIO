@@ -18,11 +18,15 @@ def checking_quantity_start():
 
 
 def add_example_info(soup):
+    all_examples_hrefs = []
+
     table_example = soup.find_all(class_="problemsmallcaptiontable")
-    for i in table_example[::3]:
+    count = 1
+    for i in table_example[::2]:
         all_info = []
         href = i.find(class_="componentboxlink")
         all_info.append(href.text.split('\n\t\t\t\t\t\t')[1])
+        print(f"\033[37m Задание: {count} ID: {all_info[0]}")
         all_info.append('https://www.problems.ru' + href.get("href"))
         all_info.append(
             i.find(class_="problemsmallsubjecttablecell").find(class_="componentboxlink").text.split('\t\t\t\t\t\t\t')[
@@ -40,6 +44,17 @@ def add_example_info(soup):
         req_example = requests.get(all_info[1], form_data, headers=headers_0)
         src_example = req_example.text
         soup_example = BeautifulSoup(src_example, "lxml")
+        check = True
+        for link in soup_example.select("img"):
+            lnk = link["src"]
+            print(f'\033[33m {lnk}')
+            if "show_document" in lnk:
+                print(f'\033[31m note')
+                check = False
+                break
+
+        if not check:
+            continue
 
         tables_example = soup_example.find(class_="componentboxcontents")
         headings_h3 = tables_example.find_all("h3")
@@ -55,6 +70,18 @@ def add_example_info(soup):
             list_text_trash.append(c_2[1])
 
         all_examples_hrefs.append(all_info)
+
+        print('\033[32m correct')
+        count += 1
+
+        for i in range(len(all_examples_hrefs)):
+            item = all_examples_hrefs[i]
+            id = item[0]
+
+            problems_dict[id] = item[1:]
+
+        with open("Logic_2.json", "a", encoding="utf-8") as file:
+            json.dump(problems_dict, file, indent=4, ensure_ascii=False)
 
 
 url = "https://www.problems.ru/view_by_subject_new.php"
@@ -106,13 +133,22 @@ if number_start > 1:
         src = req.text
         soup = BeautifulSoup(src, "lxml")
 
+        for i in range(len(all_examples_hrefs)):
+            item = all_examples_hrefs[i]
+            id = item[0]
+
+            problems_dict[id] = item[1:]
+
+        with open("Logic_2.json", "a", encoding="utf-8") as file:
+            json.dump(problems_dict, file, indent=4, ensure_ascii=False)
+
         add_example_info(soup)
 
-for i in range(len(all_examples_hrefs)):
-    item = all_examples_hrefs[i]
-    id = item[0]
-
-    problems_dict[id] = item[1:]
-
-with open("Logic.json", "w", encoding="utf-8") as file:
-    json.dump(problems_dict, file, indent=4, ensure_ascii=False)
+# for i in range(len(all_examples_hrefs)):
+#     item = all_examples_hrefs[i]
+#     id = item[0]
+#
+#     problems_dict[id] = item[1:]
+#
+# with open("Logic_2.json", "a", encoding="utf-8") as file:
+#     json.dump(problems_dict, file, indent=4, ensure_ascii=False)
