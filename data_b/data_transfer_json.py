@@ -1,14 +1,15 @@
 import json
-import re
 
-with open('Logic.json', encoding='utf-8') as f:
+
+
+with open('C:/Users/andrt/PycharmProjects/ConTia/data_b/json/logic.json', encoding='utf-8') as f:
     templates = json.load(f)
     count = 0
     for i in templates.values():
+        print('--------------------------')
         list_cat = i[4:]
         for j in list_cat:
             print(j)
-        if count != 0:
+        if count > 1:
             exit()
-        print(i)
         count += 1

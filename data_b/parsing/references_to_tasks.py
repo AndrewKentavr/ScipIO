@@ -20,7 +20,7 @@ def checking_quantity_start():
 def add_example_info(soup):
     table_example = soup.find_all(class_="problemsmallcaptiontable")
     count = 1
-    for i in table_example[::5]:
+    for i in table_example[::4]:
         try:
             all_info = []
             href = i.find(class_="componentboxlink")
@@ -81,7 +81,7 @@ url = "https://www.problems.ru/view_by_subject_new.php"
 all_examples_hrefs = []
 problems_dict = {}
 
-parent = 204
+parent = 97
 
 headers = {
     "Accept": "*/*",
@@ -136,5 +136,5 @@ for i in range(len(all_examples_hrefs)):
 
     problems_dict[id] = item[1:]
 
-with open("theory_of_algorithms.json", "w", encoding="utf-8") as file:
+with open("../json/fractions.json", "w", encoding="utf-8") as file:
     json.dump(problems_dict, file, indent=4, ensure_ascii=False)
