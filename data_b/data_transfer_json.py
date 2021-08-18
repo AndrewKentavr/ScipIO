@@ -12,12 +12,7 @@ with open('C:/Users/andrt/PycharmProjects/ConTia/data_b/json/set_theory.json', e
         # print(i)
         list_cat = i[4:]
         for j in list_cat:
-            if '\xa0' in j:
-                text = j.replace("\xa0", " ")
-            if '\r' in j:
-                text = j.replace("\r", " ")
-
-                print(text)
+            print(j)
         if count > 1:
             exit()
         count += 1
