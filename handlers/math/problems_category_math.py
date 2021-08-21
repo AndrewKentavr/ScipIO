@@ -1,94 +1,33 @@
+import os
+
 from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.utils.callback_data import CallbackData
 
-from data_b.dp_math import problem_search_random
-from handlers.keyboards.default import math_menu
+from handlers.keyboards.inline import math_menu_inline
 
-
-async def math_problems_start(message: types.Message):
-    await message.answer('Вы готовы?', reply_markup=types.ReplyKeyboardRemove())
-    await Problems.math_problems.set()
+callback_problems = CallbackData("problems", "category")
 
 
-async def math_problems(message: types.Message, state: FSMContext):
-    c = problem_search_random()
-    condition_dp = c[1]
-    answer_dp = c[2]
-    if c[3]:
-        explanation = c[3]
-
-    print(answer_dp)
-
-    user_data = await state.get_data()
-
-    if len(user_data) == 0:
-        await state.update_data(condition=[])
-        await state.update_data(answer=[])
-        await state.update_data(attempts=[])
-        user_data = await state.get_data()
-    answers = user_data['answer']
-    answers.append(answer_dp)
-
-    conditions = user_data['condition']
-    conditions.append(condition_dp)
-
-    attempt = user_data['attempts']
-    attempt.append(0)
-
-    await state.update_data(condition=conditions)
-    await state.update_data(answer=answers)
-    await state.update_data(attempts=attempt)
-
-    await message.answer(f'Решите данную задачу:\n{condition_dp}', reply_markup=types.ReplyKeyboardRemove())
-    await Problems.next()
+async def problems_category_start(message: types.Message):
+    await message.answer('Выберете категорию заданий:',
+                         reply_markup=math_menu_inline.get_inline_math_problems_category())
 
 
-async def math_problems_answer(message: types.Message, state: FSMContext):
-    try:
-        answer_input = int(message.text)
-    except ValueError:
-        await message.answer(f'Неправильные знаки')
-    else:
-        user_data = await state.get_data()
-        answer = user_data['answer'][-1]
-        if int(answer) != answer_input:
-            attempt = user_data['attempts']
-            cc = attempt[-1] + 1
-            attempt[-1] = cc
-            await state.update_data(attempts=attempt)
+async def problems_category_print(call: types.CallbackQuery, callback_data: dict):
+    category = callback_data["category"]
 
-            await message.answer('Не правильно\nПопробуйте ещё раз')
-            return
-        else:
-            await message.answer('Правильно, вы молодцы!!')
-            await Problems.math_problems.set()
-            await message.answer('Что делаем?', reply_markup=math_menu.get_keyboard_math_end_problem())
+    await call.message.answer(f'{category}')
+    await call.answer()
 
 
-async def math_problems_end(message: types.Message, state: FSMContext):
-    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
-    user_data = await state.get_data()
+def register_handlers_math_problem_category(dp: Dispatcher):
+    dp.register_message_handler(problems_category_start, Text(equals="Задания по категориям"))
+    dp.register_message_handler(problems_category_start, commands="problems_category")
+    all_files_names = os.listdir(path="C:/Users/andrt/PycharmProjects/ConTia/data_b/json")
+    all_file_names_list_not_json = [file_name_json.split('.json')[0] for file_name_json in all_files_names]
 
-    conditions = user_data['condition']
-    answer = user_data['answer']
-    attempt = user_data['attempts']
-
-    for i in range(len(conditions)):
-        await message.answer(
-            f'Условие задачи:\n{conditions[i]}\n    Ответ: {answer[i]}\n    Количество попыток: {attempt[i]}')
-    await state.finish()
-
-
-class Problems(StatesGroup):
-    math_problems = State()
-    math_problems_answer = State()
-
-
-def register_handlers_math_problem(dp: Dispatcher):
-    dp.register_message_handler(math_problems_start, Text(equals="Задачки"))
-    dp.register_message_handler(math_problems_start, commands="math_problems")
-    dp.register_message_handler(math_problems_end, Text(equals="закончить задачки", ignore_case=True), state="*")
-    dp.register_message_handler(math_problems, state=Problems.math_problems)
-    dp.register_message_handler(math_problems_answer, state=Problems.math_problems_answer)
+    dp.register_callback_query_handler(problems_category_print,
+                                       callback_problems.filter(category=all_file_names_list_not_json), state='*')
