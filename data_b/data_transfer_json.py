@@ -78,25 +78,5 @@ def converter_string(task_info):
     return all_strings
 
 
-# for num_file in range(len(all_files_names)):
-#     with open(f'C:/Users/andrt/PycharmProjects/ConTia/data_b/json/{all_files_names[num_file]}',
-#               encoding='utf-8') as f:
-#         templates = json.load(f)
-#         count = 0
-#         print(all_files_names[num_file])
-#         for i in templates.values():
-#             cat = True
-#             if count != 0:
-#                 cat = False
-#             if not cat:
-#                 break
-#             cat = True
-#             list_cat = i[4:]
-#             for j in list_cat:
-#                 print(j)
-#             count += 1
-#         print('**************************')
-#         print()
-
 if __name__ == '__main__':
     transfer_data_json()

@@ -42,3 +42,10 @@ def formulas_search_random():
     ORDER BY RANDOM() LIMIT 1;""")
     result = cur.fetchall()
     return result[0]
+
+
+def problem_translate_name(name):
+    cur.execute(f"""SELECT translate_category FROM category
+    WHERE '{name}' = value;""")
+    result = cur.fetchall()
+    return result[0][0]

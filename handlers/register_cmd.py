@@ -4,7 +4,7 @@ from handlers.math.math import register_handlers_math
 from handlers.math.math_formulas import register_handlers_math_formulas
 from handlers.math.math_taimer import register_handlers_math_timer
 from handlers.math.mentally_math import register_handlers_math_mentally
-from handlers.math.problem_math import register_handlers_math_problem
+from handlers.math.problems_category_math import register_handlers_math_problem
 
 
 def reg_cmd(dp):
