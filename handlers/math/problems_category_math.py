@@ -6,6 +6,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
 
+from data_b.dp_math import problem_category_random
 from handlers.keyboards.inline import math_menu_inline
 
 callback_problems = CallbackData("problems", "category")
@@ -18,8 +19,8 @@ async def problems_category_start(message: types.Message):
 
 async def problems_category_print(call: types.CallbackQuery, callback_data: dict):
     category = callback_data["category"]
-
-    await call.message.answer(f'{category}')
+    cc = problem_category_random(category)
+    await call.message.answer(f'{cc}')
     await call.answer()
 
 

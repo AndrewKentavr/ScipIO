@@ -49,3 +49,19 @@ def problem_translate_name(name):
     WHERE '{name}' = value;""")
     result = cur.fetchall()
     return result[0][0]
+
+
+def problem_category_random(name_category):
+    cur = get_cursor()
+    cur.execute(f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks
+                WHERE id_category = (SELECT id FROM category
+                                WHERE value = '{name_category}')
+                ORDER BY RANDOM()
+                LIMIT 1;""")
+    result_0 = cur.fetchall()
+    result = []
+    for i in result_0[0]:
+        if i is not None:
+            result.append(i)
+
+    return result
