@@ -6,7 +6,7 @@ def get_keyboard_math_start():
         'Задания по категориям',
         'Формулы',
     ]
-    buttons_2 = 'Примеры для подчёта в уме'
+    buttons_2 = 'Примеры для подсчёта в уме'
     buttons_3 = 'Математический таймер'
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons_1)

@@ -5,8 +5,12 @@ from aiogram.dispatcher.filters import Text
 from config import ADMINS
 
 
-async def cart_func(dp: Dispatcher):
-    await dp.bot.send_message(ADMINS, 'ТАНЯ БЛЛЯЯЯЯЯЯЯЯ', reply_markup=types.ReplyKeyboardRemove())
+# async def cart_func_admin(dp: Dispatcher):
+#     await dp.bot.send_message(ADMINS, 'ТАНЯ БЛЛЯЯЯЯЯЯЯЯ', reply_markup=types.ReplyKeyboardRemove())
+
+
+async def cart_func(message: types.Message):
+    await message.answer('ТАНЯ БЛЛЯЯЯЯЯЯЯЯ', reply_markup=types.ReplyKeyboardRemove())
 
 
 def register_handlers_cart(dp: Dispatcher):
