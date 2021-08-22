@@ -47,22 +47,28 @@ def get_inline_math_problems_category_info(info_problem):
     for i in info_problem:
         if 'Решение 1' in i:
             buttons.append(types.InlineKeyboardButton(text='Решение 1',
-                                                      callback_data=callback_problems_info.new(info='Solution 1')))
+                                                      callback_data=callback_problems_info.new(info='Solution 1',
+                                                                                               translate='Решение 1')))
         elif 'Решение 2' in i:
             buttons.append(types.InlineKeyboardButton(text='Решение 2',
-                                                      callback_data=callback_problems_info.new(info='Solution 2')))
+                                                      callback_data=callback_problems_info.new(info='Solution 2',
+                                                                                               translate='Решение 2')))
         elif 'Решение' in i:
             buttons.append(
-                types.InlineKeyboardButton(text='Решение', callback_data=callback_problems_info.new(info='Decision')))
+                types.InlineKeyboardButton(text='Решение', callback_data=callback_problems_info.new(info='Decision',
+                                                                                                    translate='Решение')))
         elif 'Ответ' in i:
             buttons.append(
-                types.InlineKeyboardButton(text='Ответ', callback_data=callback_problems_info.new(info='Answer')))
+                types.InlineKeyboardButton(text='Ответ',
+                                           callback_data=callback_problems_info.new(info='Answer', translate='Ответ')))
         elif 'Подсказка' in i:
             buttons.append(
-                types.InlineKeyboardButton(text='Подсказка', callback_data=callback_problems_info.new(info='Hint')))
+                types.InlineKeyboardButton(text='Подсказка', callback_data=callback_problems_info.new(info='Hint',
+                                                                                                      translate='Подсказка')))
         elif 'Замечания' in i:
             buttons.append(
-                types.InlineKeyboardButton(text='Замечания', callback_data=callback_problems_info.new(info='Remarks')))
+                types.InlineKeyboardButton(text='Замечания', callback_data=callback_problems_info.new(info='Remarks',
+                                                                                                      translate='Замечания')))
 
     keyboard = types.InlineKeyboardMarkup(row_width=3)
     keyboard.add(*buttons)

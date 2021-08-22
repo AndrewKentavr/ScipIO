@@ -10,7 +10,7 @@ from data_b.dp_math import problem_category_random
 from handlers.keyboards.inline import math_menu_inline
 
 callback_problems = CallbackData("problems", "category")
-callback_problems_info = CallbackData("values", "info")
+callback_problems_info = CallbackData("values", "info", "translate")
 
 
 async def problems_category_start(message: types.Message):
@@ -27,6 +27,8 @@ async def problems_category_print(call: types.CallbackQuery, callback_data: dict
     complexity, classes = list_info_problem[3], list_info_problem[4]
     condition = list_info_problem[5]
     info_problem = list_info_problem[6:]
+    global problems_info_data
+    problems_info_data = info_problem
 
     await call.message.answer(
         f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}')
@@ -37,7 +39,12 @@ async def problems_category_print(call: types.CallbackQuery, callback_data: dict
 
 
 async def problems_category_print_info(call: types.CallbackQuery, callback_data: dict):
-    # await call.message.answer(f'Вот ответ:\n{callback_data["text"]}')
+    translate = callback_data['translate']
+
+    for i in range(len(problems_info_data)):
+        if translate in problems_info_data[i]:
+            await call.message.answer(f'{problems_info_data[i]}')
+            break
     await call.answer()
 
 
