@@ -1,9 +1,7 @@
 import os
 
-from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
-from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
 
 from data_b.dp_math import problem_category_random
@@ -31,7 +29,8 @@ async def problems_category_print(call: types.CallbackQuery, callback_data: dict
     problems_info_data = info_problem
 
     await call.message.answer(
-        f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}')
+        f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+        reply_markup=types.ReplyKeyboardRemove())
     await call.message.answer(f'{condition}',
                               reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
 
