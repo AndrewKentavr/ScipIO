@@ -44,20 +44,25 @@ def get_inline_math_problems_category():
 
 def get_inline_math_problems_category_info(info_problem):
     buttons = []
-
     for i in info_problem:
         if 'Решение 1' in i:
-            buttons.append(types.InlineKeyboardButton(text='Решение 1', callback_data=callback_problems_info.new(category=file_name)))
+            buttons.append(types.InlineKeyboardButton(text='Решение 1',
+                                                      callback_data=callback_problems_info.new(info='Solution 1')))
         elif 'Решение 2' in i:
-            buttons.append(types.InlineKeyboardButton(text='Решение 2', callback_data=callback_problems_info.new(category=file_name)))
+            buttons.append(types.InlineKeyboardButton(text='Решение 2',
+                                                      callback_data=callback_problems_info.new(info='Solution 2')))
         elif 'Решение' in i:
-            buttons.append(types.InlineKeyboardButton(text='Решение', callback_data=callback_problems_info.new(category=file_name)))
+            buttons.append(
+                types.InlineKeyboardButton(text='Решение', callback_data=callback_problems_info.new(info='Decision')))
         elif 'Ответ' in i:
-            buttons.append(types.InlineKeyboardButton(text='Ответ', callback_data=callback_problems_info.new(category=file_name)))
+            buttons.append(
+                types.InlineKeyboardButton(text='Ответ', callback_data=callback_problems_info.new(info='Answer')))
         elif 'Подсказка' in i:
-            buttons.append(types.InlineKeyboardButton(text='Подсказка', callback_data=callback_problems_info.new(category=file_name)))
+            buttons.append(
+                types.InlineKeyboardButton(text='Подсказка', callback_data=callback_problems_info.new(info='Hint')))
         elif 'Замечания' in i:
-            buttons.append(types.InlineKeyboardButton(text='Замечания', callback_data=callback_problems_info.new(category=file_name)))
+            buttons.append(
+                types.InlineKeyboardButton(text='Замечания', callback_data=callback_problems_info.new(info='Remarks')))
 
     keyboard = types.InlineKeyboardMarkup(row_width=3)
     keyboard.add(*buttons)
