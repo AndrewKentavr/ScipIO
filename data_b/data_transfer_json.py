@@ -1,7 +1,7 @@
 import os
 
 import json
-from data_b.dp_math import get_cursor
+from data_b.dp_control import get_cursor
 
 all_files_names = os.listdir(path="C:/Users/andrt/PycharmProjects/ConTia/data_b/json")
 

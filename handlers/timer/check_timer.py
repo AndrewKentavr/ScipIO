@@ -3,7 +3,7 @@ from datetime import datetime
 
 from aiogram import types
 
-from data_b.dp_math import get_cursor
+from data_b.dp_control import get_cursor
 from handlers.math.mentally_math import Equation
 
 """

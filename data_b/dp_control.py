@@ -53,7 +53,7 @@ def problem_translate_name(name):
 
 def problem_category_random(name_category):
     cur = get_cursor()
-    cur.execute(f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks
+    cur.execute(f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks_math
                 WHERE id_category = (SELECT id FROM category
                                 WHERE value = '{name_category}')
                 ORDER BY RANDOM()
@@ -65,3 +65,18 @@ def problem_category_random(name_category):
             result.append(i)
 
     return result
+
+def logic_category_random(name_category):
+    cur.execute(f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks_logic
+                WHERE id_category = (SELECT id FROM category
+                                WHERE value = '{name_category}')
+                ORDER BY RANDOM()
+                LIMIT 1;""")
+    result_0 = cur.fetchall()
+    result = []
+    for i in result_0[0]:
+        if i is not None:
+            result.append(i)
+
+    return result
+

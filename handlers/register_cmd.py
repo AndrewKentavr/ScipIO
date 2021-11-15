@@ -1,5 +1,6 @@
 from handlers.cart import register_handlers_cart
 from handlers.cmd import register_handlers_start
+from handlers.logic.logic import register_handlers_logic
 from handlers.math.math import register_handlers_math
 from handlers.math.math_formulas import register_handlers_math_formulas
 from handlers.math.math_taimer import register_handlers_math_timer
@@ -15,10 +16,4 @@ def reg_cmd(dp):
     register_handlers_math_formulas(dp)
     register_handlers_math_problem_category(dp)
     register_handlers_math_timer(dp)
-
-    # register_handlers_math_formulas_inline(dp)
-
-
-def reg_call_cmd(dp):
-    # register_handlers_math_formulas_inline(data_b)
-    pass
+    register_handlers_logic(dp)

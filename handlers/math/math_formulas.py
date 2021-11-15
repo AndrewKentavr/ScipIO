@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.callback_data import CallbackData
 
-from data_b.dp_math import formulas_search_random
+from data_b.dp_control import formulas_search_random
 from handlers.keyboards.default.math_menu import get_keyboard_math_formulas
 from handlers.keyboards.inline.math_menu_inline import get_inline_math_formulas
 
