@@ -6,10 +6,10 @@ from data_b.dp_control import problem_translate_name
 from handlers.math.problems_category_math import callback_problems, callback_problems_info
 
 
-def get_inline_math_problems_category():
+def get_inline_logic_problems_category():
     buttons = []
 
-    all_files_names = os.listdir(path="C:/Users/andrt/PycharmProjects/ConTia/data_b/json")
+    all_category_names =
 
     for file_name_json in all_files_names:
         file_name = file_name_json.split('.json')[0]

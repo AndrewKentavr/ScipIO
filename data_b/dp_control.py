@@ -8,6 +8,8 @@ def get_cursor():
     return cur
 
 
+# -----------------------------TIMER-----------------------------------------
+
 def timer_create_dp(user_id, time):
     cur.execute(f"""INSERT INTO Time (user_id, time)
 VALUES ({user_id}, '{time}');""")
@@ -30,7 +32,36 @@ where user_id == '{user_id}';""")
     return all_timers
 
 
-def problem_search_random():
+# -----------------------------ANYTHING-----------------------------------------
+
+def problem_translate_name(name):
+    cur.execute(f"""SELECT translate_category FROM category
+    WHERE '{name}' = value;""")
+    result = cur.fetchall()
+    return result[0][0]
+
+
+def problem_category_random(name_category, tasks_theme):
+    cur = get_cursor()
+    cur.execute(
+        f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks_{tasks_theme}
+                WHERE id_category = (SELECT id FROM category
+                                WHERE value = '{name_category}')
+                ORDER BY RANDOM()
+                LIMIT 1;""")
+    result_0 = cur.fetchall()
+    result = []
+    for i in result_0[0]:
+        if i is not None:
+            result.append(i)
+
+    return result
+
+
+# -----------------------------MATH-----------------------------------------
+
+
+def problem_search_random():  # <--------  Эта функция вообще где-то применяется?
     cur.execute(f"""SELECT * FROM math_problems 
     ORDER BY RANDOM() LIMIT 1;""")
     result = cur.fetchall()
@@ -44,39 +75,14 @@ def formulas_search_random():
     return result[0]
 
 
-def problem_translate_name(name):
-    cur.execute(f"""SELECT translate_category FROM category
-    WHERE '{name}' = value;""")
-    result = cur.fetchall()
-    return result[0][0]
+# -----------------------------LOGIC-----------------------------------------
 
-
-def problem_category_random(name_category):
-    cur = get_cursor()
-    cur.execute(f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks_math
-                WHERE id_category = (SELECT id FROM category
-                                WHERE value = '{name_category}')
-                ORDER BY RANDOM()
-                LIMIT 1;""")
+def finding_categories_table(tasks_theme):
+    cur.execute(f"""SELECT DISTINCT id_category FROM tasks_{tasks_theme};""")
     result_0 = cur.fetchall()
     result = []
-    for i in result_0[0]:
+    for i in result_0:
         if i is not None:
-            result.append(i)
+            result.append(i[0])
 
     return result
-
-def logic_category_random(name_category):
-    cur.execute(f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks_logic
-                WHERE id_category = (SELECT id FROM category
-                                WHERE value = '{name_category}')
-                ORDER BY RANDOM()
-                LIMIT 1;""")
-    result_0 = cur.fetchall()
-    result = []
-    for i in result_0[0]:
-        if i is not None:
-            result.append(i)
-
-    return result
-

@@ -18,7 +18,7 @@ async def problems_category_start(message: types.Message):
 
 async def problems_category_print(call: types.CallbackQuery, callback_data: dict):
     category = callback_data["category"]
-    list_info_problem = problem_category_random(category)
+    list_info_problem = problem_category_random(category, 'logic')
     title = list_info_problem[0]
     href = list_info_problem[1]
     subcategory = list_info_problem[2]
