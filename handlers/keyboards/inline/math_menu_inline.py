@@ -1,8 +1,7 @@
-import os
 
 from aiogram import types
 
-from data_b.dp_control import problem_translate_name
+from data_b.dp_control import finding_categories_table
 from handlers.math.problems_category_math import callback_problems, callback_problems_info
 
 
@@ -29,13 +28,13 @@ def get_inline_math_formulas():
 def get_inline_math_problems_category():
     buttons = []
 
-    all_files_names = os.listdir(path="C:/Users/andrt/PycharmProjects/ConTia/data_b/json")
+    list_all_categorys = finding_categories_table('math')
 
-    for file_name_json in all_files_names:
-        file_name = file_name_json.split('.json')[0]
-        translated_name = problem_translate_name(file_name)
+    for i in list_all_categorys:
+        category_name = i[0]  # НАПРИМЕР --- "riddles"
+        translated_name = i[1]  # НАПРИМЕР --- "Загадки"
         buttons.append(
-            types.InlineKeyboardButton(text=translated_name, callback_data=callback_problems.new(category=file_name)))
+            types.InlineKeyboardButton(text=translated_name, callback_data=callback_problems.new(category=category_name)))
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
 

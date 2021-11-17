@@ -58,6 +58,13 @@ def problem_category_random(name_category, tasks_theme):
     return result
 
 
+def finding_categories_table(tasks_theme):
+    cur.execute(f"""SELECT value, translate_category FROM category
+        WHERE id in (SELECT DISTINCT id_category FROM tasks_{tasks_theme});""")
+    result_0 = cur.fetchall()
+    return result_0
+
+
 # -----------------------------MATH-----------------------------------------
 
 
@@ -76,13 +83,3 @@ def formulas_search_random():
 
 
 # -----------------------------LOGIC-----------------------------------------
-
-def finding_categories_table(tasks_theme):
-    cur.execute(f"""SELECT DISTINCT id_category FROM tasks_{tasks_theme};""")
-    result_0 = cur.fetchall()
-    result = []
-    for i in result_0:
-        if i is not None:
-            result.append(i[0])
-
-    return result

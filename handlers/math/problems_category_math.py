@@ -4,7 +4,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.utils.callback_data import CallbackData
 
-from data_b.dp_control import problem_category_random
+from data_b.dp_control import problem_category_random, finding_categories_table
 from handlers.keyboards.inline import math_menu_inline
 
 callback_problems = CallbackData("problems", "category")
@@ -51,10 +51,9 @@ def register_handlers_math_problem_category(dp: Dispatcher):
     dp.register_message_handler(problems_category_start, Text(equals="Задания по категориям"))
     dp.register_message_handler(problems_category_start, commands="problems_category")
 
-    all_files_names = os.listdir(path="C:/Users/andrt/PycharmProjects/ConTia/data_b/json")
-    all_file_names_list_not_json = [file_name_json.split('.json')[0] for file_name_json in all_files_names]
+    all_files_names = [i[0] for i in finding_categories_table('math')]
     dp.register_callback_query_handler(problems_category_print,
-                                       callback_problems.filter(category=all_file_names_list_not_json), state='*')
+                                       callback_problems.filter(category=all_files_names), state='*')
 
     info = ['Solution 1', 'Solution 2', 'Decision', 'Answer', 'Hint', 'Remarks']
     dp.register_callback_query_handler(problems_category_print_info,
