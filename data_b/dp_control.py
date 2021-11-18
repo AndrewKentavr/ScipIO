@@ -54,6 +54,8 @@ def problem_category_random(name_category, tasks_theme):
     for i in result_0[0]:
         if i is not None:
             result.append(i)
+        else:
+            result.append('')
 
     return result
 
@@ -80,6 +82,5 @@ def formulas_search_random():
     ORDER BY RANDOM() LIMIT 1;""")
     result = cur.fetchall()
     return result[0]
-
 
 # -----------------------------LOGIC-----------------------------------------
