@@ -3,19 +3,22 @@ from aiogram.dispatcher.filters import Text
 from aiogram.utils.callback_data import CallbackData
 
 from data_b.dp_control import problem_category_random, finding_categories_table
-from handlers.keyboards.inline import logic_menu_inline
 
-callback_problems_logic = CallbackData("problems", "category")
-callback_problems_info_logic = CallbackData("values", "info", "translate")
+callback_problems_logic = CallbackData("problems_logic", "category_logic")
+callback_problems_info_logic = CallbackData("values_logic", "info_logic", "translate_logic")
 
 
 async def tasks_category_logic_start(message: types.Message):
+    from handlers.keyboards.inline import logic_menu_inline
+
     await message.answer('Выберете категорию заданий:',
                          reply_markup=logic_menu_inline.get_inline_logic_problems_category())
 
 
 async def tasks_category_logic_print(call: types.CallbackQuery, callback_data: dict):
-    category = callback_data["category"]
+    from handlers.keyboards.inline import logic_menu_inline
+
+    category = callback_data["category_logic"]
     list_info_problem = problem_category_random(category, 'logic')
     title = list_info_problem[0]
     href = list_info_problem[1]
@@ -36,7 +39,7 @@ async def tasks_category_logic_print(call: types.CallbackQuery, callback_data: d
 
 
 async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_data: dict):
-    translate = callback_data['translate']
+    translate = callback_data['translate_logic']
 
     for i in range(len(problems_info_data_logic)):
         if translate in problems_info_data_logic[i]:
@@ -50,8 +53,8 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
 
     all_files_names = [i[0] for i in finding_categories_table('logic')]
     dp.register_callback_query_handler(tasks_category_logic_print,
-                                       callback_problems_logic.filter(category=all_files_names), state='*')
+                                       callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
     info = ['Solution 1', 'Solution 2', 'Decision', 'Answer', 'Hint', 'Remarks']
     dp.register_callback_query_handler(tasks_category_logic_print_info,
-                                       callback_problems_info_logic.filter(info=info), state='*')
+                                       callback_problems_info_logic.filter(info_logic=info), state='*')
