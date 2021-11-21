@@ -1,9 +1,6 @@
 from aiogram import types, Dispatcher
-from aiogram.dispatcher.filters.builtin import CommandStart, CommandHelp, Text, IDFilter
+from aiogram.dispatcher.filters.builtin import CommandStart, CommandHelp, Text
 from aiogram.dispatcher import FSMContext
-
-from config import ADMINS
-from handlers.timer.check_timer import timer_cycle
 
 
 async def cmd_start(message: types.Message):
