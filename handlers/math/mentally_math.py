@@ -134,7 +134,7 @@ def register_handlers_math_mentally(dp: Dispatcher):
     dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')
     dp.register_message_handler(equation_mentally_end, Text(equals="закончить", ignore_case=True), state="*")
 
-    dp.register_message_handler(equation_mentally_start, Text(equals="Примеры для подчёта в уме"))
+    dp.register_message_handler(equation_mentally_start, Text(equals="Примеры для подсчёта в уме"))
     dp.register_message_handler(equation_mentally_start, commands="equation_mentally")
     dp.register_message_handler(equation_mentally, state=Equation.equation_mentally)
     dp.register_message_handler(equation_mentally_answer, state=Equation.equation_mentally_answer)

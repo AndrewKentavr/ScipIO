@@ -31,4 +31,4 @@ def register_handlers_start(dp: Dispatcher):
     dp.register_message_handler(cmd_start, CommandHelp(), state='*')
     dp.register_message_handler(cmd_cancel, commands='cancel', state='*')
     dp.register_message_handler(cmd_cancel, Text(equals="отмена", ignore_case=True), state="*")
-    dp.register_message_handler(cmd_timer_start, IDFilter(user_id=ADMINS), commands='start_timers', state='*')
+    # dp.register_message_handler(cmd_timer_start, IDFilter(user_id=ADMINS), commands='start_timers', state='*')
