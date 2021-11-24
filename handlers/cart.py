@@ -10,7 +10,7 @@ from config import ADMINS
 
 
 async def cart_func(message: types.Message):
-    await message.answer('ТАНЯ БЛЛЯЯЯЯЯЯЯЯ', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('ТАНЯ Привет', reply_markup=types.ReplyKeyboardRemove())
 
 
 def register_handlers_cart(dp: Dispatcher):
