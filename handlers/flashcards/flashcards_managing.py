@@ -23,7 +23,7 @@ async def flashcards_managing_create_start(message: types.Message):
 async def flashcards_managing_create_middle(message: types.Message, state: FSMContext):
     msg = message.text
     if len(msg) > MAX_LEN:
-        await message.answer(f'Вы превысили максимальное количество символов'
+        await message.answer(f'Вы превысили максимальное количество символов\n'
                              f'Повторите ещё раз')
         await FlashcardManaging.flashcards_managing_create_middle.set()
     else:
@@ -31,19 +31,21 @@ async def flashcards_managing_create_middle(message: types.Message, state: FSMCo
 
         await message.answer(f'Введите значение этой карточки\n'
                              f'Максимальное количество символов: <b>{MAX_LEN}</b>')
+        await FlashcardManaging.next()
 
 
-async def flashcards_managing_create_middle(message: types.Message, state: FSMContext):
+async def flashcards_managing_create_end(message: types.Message, state: FSMContext):
     msg = message.text
     if len(msg) > MAX_LEN:
-        await message.answer(f'Вы превысили максимальное количество символов'
+        await message.answer(f'Вы превысили максимальное количество символов\n'
                              f'Повторите ещё раз')
-        await FlashcardManaging.flashcards_managing_create_middle.set()
+        await FlashcardManaging.flashcards_managing_create_end.set()
     else:
-        await state.update_data(front=msg)
-
-        await message.answer(f'Введите значение этой карточки\n'
-                             f'Максимальное количество символов: <b>{MAX_LEN}</b>')
+        user_data = await state.get_data()
+        await message.answer('Создана карточка\n'
+                             f'Передняя сторона - {user_data["front"]}')
+        await message.answer(f'Задняя сторона - {msg}')
+        await state.finish()
 
 
 # async def flashcards_managing_start(message: types.Message):
@@ -60,11 +62,11 @@ class FlashcardManaging(StatesGroup):
     flashcards_managing_create_end = State()
 
 
-def register_handlers_math_mentally(dp: Dispatcher):
+def register_handlers_flashcards_managing(dp: Dispatcher):
     dp.register_message_handler(flashcards_managing_start, commands='flc_man', state='*')
-    dp.register_message_handler(flashcards_managing_start, Text(equals="Управление карточками"))
+    dp.register_message_handler(flashcards_managing_create_start, Text(equals="Управление карточками"), state='*')
 
     dp.register_message_handler(flashcards_managing_create_middle,
                                 state=FlashcardManaging.flashcards_managing_create_middle)
-    dp.register_message_handler(flashcards_managing_create_middle,
-                                state=FlashcardManaging.flashcards_managing_create_middle)
+    dp.register_message_handler(flashcards_managing_create_end,
+                                state=FlashcardManaging.flashcards_managing_create_end)
