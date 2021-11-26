@@ -20,3 +20,13 @@ def get_keyboard_flashcard_managing():
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     return keyboard
+
+
+def get_keyboard_flashcard_end_que():
+    buttons = [
+        'Да',
+        'Нет',
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard

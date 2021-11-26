@@ -83,4 +83,11 @@ def formulas_search_random():
     result = cur.fetchall()
     return result[0]
 
+
 # -----------------------------LOGIC-----------------------------------------
+# -----------------------------FLASHCARD-----------------------------------------
+def flashcard_dp_create(user_id, front, back, show):
+    cur.execute(f"""INSERT INTO flashcards (user_id, front_card, back_card, show_card)
+VALUES ({user_id}, '{front}', '{back}', {show});""")
+    cur.connection.commit()
+    return
