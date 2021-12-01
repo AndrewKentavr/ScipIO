@@ -3,7 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
-from data_b.dp_control import flashcard_dp_create
+from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del_check, flashcard_del
 from handlers.keyboards.default import flashcard_menu
 
 MAX_LEN = 450
@@ -12,6 +12,9 @@ MAX_LEN = 450
 async def flashcards_managing_start(message: types.Message):
     await message.answer('Выберете, что вы хотите делать с flashcards ',
                          reply_markup=flashcard_menu.get_keyboard_flashcard_managing())
+
+
+# -----------------------------CREATE FUNC-----------------------------------------
 
 
 async def flashcards_managing_create_start(message: types.Message):
@@ -67,10 +70,44 @@ async def flashcards_managing_create_end(message: types.Message, state: FSMConte
     await message.answer(f'Показывать карточку с двух сторон? - {msg}')
     try:
         flashcard_dp_create(message.from_user.id, user_data["front"], user_data["back"], show_card)
-        await message.answer(f'Всё успешно сохранилось')
+        await message.answer(f'Всё успешно сохранилось', reply_markup=types.ReplyKeyboardRemove())
     except Exception:
         await message.answer(f'Что - то пошло не так')
     await state.finish()
+
+
+# -----------------------------DEL FUNC-----------------------------------------
+async def flashcards_managing_del_start(message: types.Message):
+    await message.answer(f'Чтобы удалить карточку - напишите её id',
+                         reply_markup=types.ReplyKeyboardRemove())
+    all_cards = flashcard_dp_info(message.from_user.id)
+    mes_print = 'id     :     front     :      back\n'
+    for i in all_cards:
+        mes_print += f'{i[0]}: {i[1]} - {i[2]}\n'
+
+    await message.answer(mes_print)
+    await FlashcardManaging.flashcards_managing_del_end.set()
+
+
+async def flashcards_managing_del_end(message: types.Message, state: FSMContext):
+    msg = message.text
+    list_id = msg.split(', ')
+    for card_id in list_id:
+        if card_id.isdigit():
+            if flashcard_del_check(card_id):
+                flashcard_del(card_id)
+                await message.reply(f'Карточка - {card_id} успешно удалена')
+                await state.finish()
+
+            else:
+                await message.answer('Такого id карточки - не существует')
+                await FlashcardManaging.flashcards_managing_del_end.set()
+        else:
+            await message.answer('Вы неправильно ввели id карточки\n'
+                                 'Напишите как показано в примере:\n'
+                                 'Если карточка одна: 3242\n'
+                                 'Если карточек несколько: 3242, 3346, 7285\n')
+            await FlashcardManaging.flashcards_managing_del_end.set()
 
 
 class FlashcardManaging(StatesGroup):
@@ -78,11 +115,14 @@ class FlashcardManaging(StatesGroup):
     flashcards_managing_create_middle_2 = State()
     flashcards_managing_create_end = State()
 
+    flashcards_managing_del_end = State()
+
 
 def register_handlers_flashcards_managing(dp: Dispatcher):
     dp.register_message_handler(flashcards_managing_start, commands='flc_man', state='*')
     dp.register_message_handler(flashcards_managing_start, Text(equals="Управление карточками"), state='*')
     dp.register_message_handler(flashcards_managing_create_start, Text(equals="Создать карточку"), state='*')
+    dp.register_message_handler(flashcards_managing_del_start, Text(equals="Удалить карточку"), state='*')
 
     dp.register_message_handler(flashcards_managing_create_middle,
                                 state=FlashcardManaging.flashcards_managing_create_middle)
@@ -90,3 +130,6 @@ def register_handlers_flashcards_managing(dp: Dispatcher):
                                 state=FlashcardManaging.flashcards_managing_create_middle_2)
     dp.register_message_handler(flashcards_managing_create_end,
                                 state=FlashcardManaging.flashcards_managing_create_end)
+
+    dp.register_message_handler(flashcards_managing_del_end,
+                                state=FlashcardManaging.flashcards_managing_del_end)
