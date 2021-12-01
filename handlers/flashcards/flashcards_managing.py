@@ -110,6 +110,16 @@ async def flashcards_managing_del_end(message: types.Message, state: FSMContext)
             await FlashcardManaging.flashcards_managing_del_end.set()
 
 
+async def flashcards_managing_info(message: types.Message):
+    await message.answer('Все ваши карточки:', reply_markup=types.ReplyKeyboardRemove())
+    all_cards = flashcard_dp_info(message.from_user.id)
+    mes_print = 'id     :     front     :      back\n'
+    for i in all_cards:
+        mes_print += f'{i[0]}: {i[1]} - {i[2]}\n'
+
+    await message.answer(mes_print)
+
+
 class FlashcardManaging(StatesGroup):
     flashcards_managing_create_middle = State()
     flashcards_managing_create_middle_2 = State()
@@ -123,6 +133,7 @@ def register_handlers_flashcards_managing(dp: Dispatcher):
     dp.register_message_handler(flashcards_managing_start, Text(equals="Управление карточками"), state='*')
     dp.register_message_handler(flashcards_managing_create_start, Text(equals="Создать карточку"), state='*')
     dp.register_message_handler(flashcards_managing_del_start, Text(equals="Удалить карточку"), state='*')
+    dp.register_message_handler(flashcards_managing_info, Text(equals="Информация о карточках"), state='*')
 
     dp.register_message_handler(flashcards_managing_create_middle,
                                 state=FlashcardManaging.flashcards_managing_create_middle)
