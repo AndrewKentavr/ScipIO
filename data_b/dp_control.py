@@ -114,3 +114,5 @@ def flashcard_del(card_id):
         where id = {card_id};""")
     cur.connection.commit()
     return
+
+# https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays
