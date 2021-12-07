@@ -2,6 +2,7 @@ from handlers.cart import register_handlers_cart
 from handlers.cmd import register_handlers_start
 from handlers.flashcards.flashcard import register_handlers_flashcard
 from handlers.flashcards.flashcards_managing import register_handlers_flashcards_managing
+from handlers.flashcards.flashcards_training import register_handlers_flashcards_training
 from handlers.logic.logic import register_handlers_logic
 from handlers.math.math import register_handlers_math
 from handlers.math.math_formulas import register_handlers_math_formulas
@@ -27,6 +28,7 @@ def reg_cmd(dp):
     # ------flashcards-------
     register_handlers_flashcard(dp)
     register_handlers_flashcards_managing(dp)
+    register_handlers_flashcards_training(dp)
 
     # ------logic-------
     register_handlers_tasks_logic_category(dp)
