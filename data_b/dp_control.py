@@ -106,11 +106,11 @@ def flashcard_dp_info_game(user_id, cards_id):
         for i in cards_id:
             string_id += f' and id != {i}'
 
-    cur.execute(f"""select id, front_card, back_card,  from flashcards
+    cur.execute(f"""select id, front_card, back_card, show_card from flashcards
             where user_id = {user_id}{string_id}
             ORDER BY RANDOM() LIMIT 1;""")
     result = cur.fetchall()
-    return result
+    return result[0]
 
 
 def flashcard_del_check(card_id):
