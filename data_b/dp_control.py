@@ -83,4 +83,49 @@ def formulas_search_random():
     result = cur.fetchall()
     return result[0]
 
+
 # -----------------------------LOGIC-----------------------------------------
+# -----------------------------FLASHCARD-----------------------------------------
+def flashcard_dp_create(user_id, front, back, show):
+    cur.execute(f"""INSERT INTO flashcards (user_id, front_card, back_card, show_card)
+VALUES ({user_id}, '{front}', '{back}', {show});""")
+    cur.connection.commit()
+    return
+
+
+def flashcard_dp_info(user_id):
+    cur.execute(f"""select id, front_card, back_card from flashcards
+            where user_id = {user_id};""")
+    result = cur.fetchall()
+    return result
+
+
+def flashcard_dp_info_game(user_id, cards_id):
+    string_id = ''
+    if cards_id != 0:
+        for i in cards_id:
+            string_id += f' and id != {i}'
+
+    cur.execute(f"""select id, front_card, back_card, show_card from flashcards
+            where user_id = {user_id}{string_id}
+            ORDER BY RANDOM() LIMIT 1;""")
+    result = cur.fetchall()
+    return result[0]
+
+
+def flashcard_del_check(card_id):
+    cur.execute(f"""select count(*) from flashcards
+        where id = {card_id};""")
+    result = cur.fetchall()
+    if result[0][0] == 0:
+        return False
+    return True
+
+
+def flashcard_del(card_id):
+    cur.execute(f"""DELETE FROM flashcards
+        where id = {card_id};""")
+    cur.connection.commit()
+    return
+
+# https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays
