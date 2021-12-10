@@ -25,6 +25,8 @@ async def fls_game(message: types.Message, state: FSMContext):
                 await state.update_data(correct=[])
             correct = user_data['correct']
             correct.append(user_data['card_id'])
+            await state.update_data(correct=correct)
+
     else:
         await message.answer('Вы написали что-то не то')
         await state.finish()
