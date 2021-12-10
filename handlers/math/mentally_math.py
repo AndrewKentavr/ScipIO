@@ -111,6 +111,13 @@ async def equation_mentally_end(message: types.Message, state: FSMContext):
 
 
 def equation_generate():
+    """
+    Функция создаёт математический пример состоящий из 2'х значных чисел и
+    перемножет их или возводит в степень
+
+    :return: equation - Это сам математический пример
+    :return: answer - Ответ на пример
+    """
     mathematically_signs = ['*', '**']
     sign = choice(mathematically_signs)
     A = str(randint(11, 99))

@@ -1,3 +1,6 @@
+"""
+Просто функции для проверок бота
+"""
 from random import randint
 
 from aiogram import types, Dispatcher
