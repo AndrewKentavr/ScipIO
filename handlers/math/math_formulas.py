@@ -1,3 +1,7 @@
+"""
+В данный момент тут ничего не работает, будем или перерабатывать или вообще удалять из-за ненадобности кода
+"""
+
 from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text

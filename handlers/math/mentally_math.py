@@ -14,7 +14,7 @@ async def equation_mentally_theory(message: types.Message):
         'Мы должны использовать: <b>Круглые Числа</b>\nОдин из самых распространённыхприёмов устного счёта'
         ' заключается в том, что любое число можно представить в виде суммы или разности чисел, одно или '
         'несколько из которых «круглое»', reply_markup=math_menu_inline.get_inline_math_url())
-    photo = InputFile("C:/Users/andrt/PycharmProjects/ConTia/data/math_1.jpg")
+    photo = InputFile("C:/Users/andrt/PycharmProjects/Scipio/data/math_1.jpg")
     await message.answer_photo(photo=photo)
     await message.answer(
         '<b>Упростим умножение делением</b>\nПри устном счёте бывает удобнее оперировать делимым и делителем нежели '
@@ -31,7 +31,7 @@ async def equation_mentally_theory(message: types.Message):
         'квадрат, достаточно запомнить квадраты всех чисел от 1 до 25. Благо, квадраты до 10 мы уже знаем из таблицы '
         'умножения. Остальные квадраты можно посмотреть в нижеприведённой таблице:')
 
-    photo_2 = InputFile("C:/Users/andrt/PycharmProjects/ConTia/data/math_2.jpg")
+    photo_2 = InputFile("C:/Users/andrt/PycharmProjects/Scipio/data/math_2.jpg")
     await message.answer_photo(photo=photo_2)
     await message.answer(
         '<b>Приём Рачинского</b> заключается в следующем. Для того чтобы найти квадрат любого двузначного числа, надо разность'
@@ -49,14 +49,18 @@ async def equation_mentally_start(message: types.Message):
 
 
 async def equation_mentally(message: types.Message, state: FSMContext):
+    # создание условия и ответа на это условие: [equation, answer]
     equation = equation_generate()
+
     user_data = await state.get_data()
 
+    # При начале программы 'user_data' - пуста и создаются сделующие списки
     if len(user_data) == 0:
         await state.update_data(condition=[])
         await state.update_data(answer=[])
         await state.update_data(attempts=[])
         user_data = await state.get_data()
+
     answers = user_data['answer']
     answers.append(equation[1])
 
@@ -83,6 +87,7 @@ async def equation_mentally_answer(message: types.Message, state: FSMContext):
         user_data = await state.get_data()
         answer = user_data['answer'][-1]
         if int(answer) != answer_input:
+            # считатет количество попыток и прибавляет
             attempt = user_data['attempts']
             cc = attempt[-1] + 1
             attempt[-1] = cc
