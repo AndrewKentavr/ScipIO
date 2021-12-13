@@ -6,7 +6,7 @@ from data_b.dp_control import get_cursor
 from handlers.math.mentally_math import Equation
 
 
-async def time_check(dp):
+async def time_cycle(dp):
     cur = get_cursor()
 
     now = datetime.now()
