@@ -30,7 +30,7 @@ async def timer_create_middle(message: types.Message, state: FSMContext):
         await Timer.timer_create_end.set()
 
 
-def timer_create_end(message: types.Message, state: FSMContext):
+async def timer_create_end(message: types.Message, state: FSMContext):
     msg = message.text
     if (msg == 'Карточки (Flashcards)') or (msg == 'Математика в уме') or (msg == 'Задачи по математике') or (
             msg == 'Задачи по логике'):
