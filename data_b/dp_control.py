@@ -1,6 +1,6 @@
 import sqlite3
 
-CONN = sqlite3.connect('/data_b/scipio.db')
+CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/Scipio/data_b/scipio.db')
 cur = CONN.cursor()
 
 
@@ -107,23 +107,23 @@ def flashcard_del(card_id):
 
 # -----------------------------TIMER-----------------------------------------
 
-def timer_create_dp(user_id, time):
-    cur.execute(f"""INSERT INTO Time (user_id, time)
-VALUES ({user_id}, '{time}');""")
+def timer_create_dp(user_id, time, tasks):
+    cur.execute(f"""INSERT INTO Time (user_id, time, tasks)
+VALUES ({user_id}, '{time}', '{tasks}');""")
     cur.connection.commit()
     return
 
 
 def timer_del_dp(user_id, time):
     cur.execute(f"""DELETE FROM Time
-where user_id = '{user_id}' and time = '{time}';""")
+where user_id = {user_id} and time = '{time}';""")
     cur.connection.commit()
     return
 
 
 def timer_info_dp(user_id):
     cur.execute(f"""SELECT time FROM Time
-where user_id == '{user_id}';""")
+where user_id == {user_id};""")
     c = cur.fetchall()
     all_timers = list(map(lambda x: x[0], c))
     return all_timers
