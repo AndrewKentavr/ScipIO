@@ -14,7 +14,8 @@ async def timer_select(message: types.Message):
 async def timer_create_start(message: types.Message):
     await message.answer('Введите нужное вам время в формате:\n'
                          '<i>16:02</i>\n'
-                         'Где <i>16</i> - это часы, а <i>02</i> - минуты', reply_markup=types.ReplyKeyboardRemove())
+                         'Где <i>16</i> - это часы, а <i>02</i> - минуты\n'
+                         '2 пример: <i>05:59</i>', reply_markup=types.ReplyKeyboardRemove())
     await Timer.timer_create_middle.set()
 
 
@@ -51,7 +52,8 @@ async def timer_create_end(message: types.Message, state: FSMContext):
 async def timer_del_start(message: types.Message):
     user_id = message.from_user.id
     await message.answer('Удалите таймер, написав время таймера сюда\n'
-                         'Вот так: <i>16:02</i>', reply_markup=types.ReplyKeyboardRemove())
+                         '1 пример: <i>16:02</i>'
+                         '2 пример: <i>05:59</i>', reply_markup=types.ReplyKeyboardRemove())
     await message.answer('Какой из таймеров вы хотите удалить?')
     all_timers = timer_info_dp(user_id)
     for i in all_timers:
@@ -109,7 +111,7 @@ def checking_message(msg):
             except ValueError:
                 return 'Введено не число'
             else:
-                if len(c[1]) == 2:
+                if len(c[0]) == 2 and len(c[1]) == 2:
                     if (0 <= int(c[0]) < 24) and (0 <= int(c[1]) < 60):
                         return True
                     else:
