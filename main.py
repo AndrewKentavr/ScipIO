@@ -34,7 +34,7 @@ def timer_interval_func():
     """
     Функция управляющая таймером
     """
-    scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp,))
+    scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp, ))
 
 
 async def main():
