@@ -9,7 +9,7 @@ import logging
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
-from handlers.timer.check_timer import time_check
+from handlers.timer.timer_cycle import time_cycle
 from handlers.register_cmd import reg_cmd
 
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
@@ -20,11 +20,12 @@ scheduler = AsyncIOScheduler()
 
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command="/help", description="Просмотр функционала"),
+        BotCommand(command="/timer", description="Таймер"),
         BotCommand(command="/math", description="Задания по математике"),
         BotCommand(command="/logic", description="Задания по логике"),
         BotCommand(command="/flashcard", description="Карточки для запомнинания"),
-        BotCommand(command="/cancel", description="Отмена действия")
+        BotCommand(command="/cancel", description="Отмена действия"),
+        BotCommand(command="/help", description="Просмотр функционала")
     ]
     await bot.set_my_commands(commands)
 
@@ -33,7 +34,7 @@ def timer_interval_func():
     """
     Функция управляющая таймером
     """
-    scheduler.add_job(time_check, "interval", seconds=60, args=(dp,))
+    scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp, ))
 
 
 async def main():

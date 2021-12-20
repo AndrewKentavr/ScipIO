@@ -35,17 +35,6 @@ def get_keyboard_math_end_problem():
     return keyboard
 
 
-def get_keyboard_math_timer():
-    buttons = [
-        'Создать таймер',
-        'Удалить таймер',
-        'Посмотреть все таймеры'
-    ]
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    keyboard.add(*buttons)
-    return keyboard
-
-
 def get_keyboard_math_formulas():
     buttons = [
         'Продолжаем',
