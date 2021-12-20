@@ -18,9 +18,17 @@ def problem_translate_name(name):
 
 
 def problem_category_random(name_category, tasks_theme):
-    cur = get_cursor()
+    """
+    :param name_category: Название категории вида: 'fractions'
+    :param tasks_theme: Передаётся название таблици
+    из которой будут брать задачи. Например: 'math'
+
+    :return: Вся информация, что есть по задаче. Например в задаче
+    2 Условия и Ответ. Значит так и будет передоваться
+    """
     cur.execute(
-        f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, decisions_2, answer, remarks FROM tasks_{tasks_theme}
+        f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, 
+        decisions_2, answer, remarks FROM tasks_{tasks_theme}
                 WHERE id_category = (SELECT id FROM category
                                 WHERE value = '{name_category}')
                 ORDER BY RANDOM()
