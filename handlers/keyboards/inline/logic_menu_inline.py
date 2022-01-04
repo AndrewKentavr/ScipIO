@@ -42,7 +42,7 @@ def get_inline_logic_problems_category_info(info_problem):
                                                                                           translate_logic='Решение')))
         elif 'Ответ' in i:
             buttons.append(
-                types.InlineKeyboardButton(text='Ответ',
+                types.InlineKeyboardButton(text='Посмотреть ответ',
                                            callback_data=callback_problems_info_logic.new(info_logic='Answer',
                                                                                           translate_logic='Ответ')))
         elif 'Подсказка' in i:
@@ -54,8 +54,12 @@ def get_inline_logic_problems_category_info(info_problem):
                 types.InlineKeyboardButton(text='Замечания',
                                            callback_data=callback_problems_info_logic.new(info_logic='Remarks',
                                                                                           translate_logic='Замечания')))
+    buttons.append(types.InlineKeyboardButton(text='Ответить',
+                                              callback_data=callback_problems_info_logic.new(info_logic='check_answer',
+                                                                                             translate_logic='Ответить')))
 
-    keyboard = types.InlineKeyboardMarkup(row_width=3)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
 
     return keyboard
+
