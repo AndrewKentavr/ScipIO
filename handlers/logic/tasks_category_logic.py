@@ -11,14 +11,23 @@ callback_problems_info_logic = CallbackData("values_logic", "info_logic", "trans
 
 
 async def tasks_category_logic_start(message: types.Message):
-    from handlers.keyboards.default import logic_menu_second
+    from handlers.keyboards.inline import logic_menu_inline
 
     await message.answer('Выберете категорию заданий:',
-                         reply_markup=logic_menu_second.get_inline_logic_problems_category())
+                         reply_markup=logic_menu_inline.get_inline_logic_problems_category())
 
 
 async def tasks_category_logic_print(call: types.CallbackQuery, callback_data: dict):
-    from handlers.keyboards.default import logic_menu_second
+    # НУЖНЫ ИЗМЕНЕНИЯ В КОММЕНТАРИИ
+
+    """
+
+    :param call: Это ответ на нажатие INLINE кнопки КАТЕГОРИЯ
+    :param callback_data: Это значения INLINE кнопки, то есть это информация
+    о категории (её вроде бы info_logic, translate_logic)
+    :return:
+    """
+    from handlers.keyboards.default import logic_menu
 
     category = callback_data["category_logic"]
     list_info_problem = problem_category_random(category, 'logic')
@@ -37,7 +46,9 @@ async def tasks_category_logic_print(call: types.CallbackQuery, callback_data: d
         f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
         reply_markup=types.ReplyKeyboardRemove())
     await call.message.answer(f'{condition}',
-                              reply_markup=logic_menu_second.get_inline_logic_problems_category_info(info_problem))
+                              reply_markup=logic_menu.get_keyboard_logic_answer())
+    await call.answer()
+
     await Logic_Answer.Waiting_User_Choise.set()
 
 
