@@ -5,12 +5,6 @@ from handlers.logic.tasks_category_logic import callback_problems_logic, callbac
 
 
 def get_inline_logic_problems_category():
-    """
-
-    НУЖНО НАПИСАТЬ ЕЩЁ
-
-    :return: Создаёт ко всем категориям Logic - INLINE кнопки
-    """
     buttons = []
 
     # Список всех категории 'Logic'

@@ -26,8 +26,9 @@ def get_inline_math_formulas():
 
 def get_inline_math_problems_category():
     """
-    Создаёт inline-клавиатуру, на которой показываются все
-    категории таблицы 'Math'
+    НУЖНО НАПИСАТЬ ЕЩЁ
+
+    :return: Создаёт ко всем категориям Logic - INLINE кнопки
     """
     buttons = []
 
