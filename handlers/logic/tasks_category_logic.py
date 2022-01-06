@@ -16,6 +16,15 @@ async def tasks_category_logic_start(message: types.Message):
 
 
 async def tasks_category_logic_print(call: types.CallbackQuery, callback_data: dict):
+    # НУЖНЫ ИЗМЕНЕНИЯ В КОММЕНТАРИИ
+
+    """
+
+    :param call: Это ответ на нажатие INLINE кнопки КАТЕГОРИЯ
+    :param callback_data: Это значения INLINE кнопки, то есть это информация
+    о категории (её вроде бы info_logic, translate_logic)
+    :return:
+    """
     from handlers.keyboards.inline import logic_menu_inline
 
     category = callback_data["category_logic"]
