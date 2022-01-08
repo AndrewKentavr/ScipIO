@@ -44,75 +44,82 @@ async def equation_mentally_theory(message: types.Message):
 
 async def equation_mentally_start(message: types.Message):
     await message.answer('Чтобы вызвать подсказку напишите /mell_theory')
-    await message.answer('Вы готовы?', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Вы готовы?', reply_markup=math_menu.get_keyboard_math_mentally_start())
     await Equation.equation_mentally.set()
 
 
 async def equation_mentally(message: types.Message, state: FSMContext):
-    # создание условия и ответа на это условие: [equation, answer]
-    equation = equation_generate()
+    if message.text != 'Да':
+        await message.answer('Вы написали что-то не то')
+        return
+    else:
 
-    user_data = await state.get_data()
+        # Генерирует пример ввида [equation, answer]
+        equation = equation_generate()
 
-    # При начале программы 'user_data' - пуста и создаются сделующие списки
-    if len(user_data) == 0:
-        await state.update_data(condition=[])
-        await state.update_data(answer=[])
-        await state.update_data(attempts=[])
         user_data = await state.get_data()
 
-    answers = user_data['answer']
-    answers.append(equation[1])
+        # ------  Создание user_data ---------
 
-    conditions = user_data['condition']
-    conditions.append(equation[0])
+        # При начале программы 'user_data' - пуста и создаются сделующие списки
+        if len(user_data) == 0:
+            await state.update_data(condition=[])
+            await state.update_data(answer=[])
+            await state.update_data(attempts=[])
+            user_data = await state.get_data()
 
-    attempt = user_data['attempts']
-    attempt.append(0)
+        # ------  Определение user_data -------
+        # хранит все условия примеров
+        conditions = user_data['condition']
+        conditions.append(equation[0])
+        # хранит все ответы примеров
+        answers = user_data['answer']
+        answers.append(equation[1])
+        # хранит всё количество попыток на ответы примеров
+        attempt = user_data['attempts']
+        attempt.append(1)
 
-    await state.update_data(condition=conditions)
-    await state.update_data(answer=answers)
-    await state.update_data(attempts=attempt)
+        # обновление user_data
+        await state.update_data(condition=conditions)
+        await state.update_data(answer=answers)
+        await state.update_data(attempts=attempt)
 
-    await message.answer(f'Решите в уме:\n{equation[0]}', reply_markup=types.ReplyKeyboardRemove())
-    await Equation.next()
+        await message.answer(f'Решите в уме:\n{equation[0]}')
+        await Equation.equation_mentally_answer.set()
 
 
 async def equation_mentally_answer(message: types.Message, state: FSMContext):
+    msg = message.text
     try:
-        answer_input = int(message.text)
+        msg = int(message.text)
     except ValueError:
         await message.answer(f'Неправильные знаки')
-    else:
-        user_data = await state.get_data()
-        answer = user_data['answer'][-1]
-        if int(answer) != answer_input:
-            # считатет количество попыток и прибавляет
-            attempt = user_data['attempts']
-            cc = attempt[-1] + 1
-            attempt[-1] = cc
-            await state.update_data(attempts=attempt)
 
-            await message.answer('Не правильно\nПопробуйте ещё раз')
-            return
-        else:
-            await message.answer('Правильно, вы молодцы!!')
-            await Equation.equation_mentally.set()
-            await message.answer('Что делаем?', reply_markup=math_menu.get_keyboard_math_end())
-
-
-async def equation_mentally_end(message: types.Message, state: FSMContext):
-    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
+    answer = user_data['answer'][-1]
+    conditions = user_data['condition'][-1]
+    attempt = user_data['attempts'][-1]
 
-    conditions = user_data['condition']
-    answer = user_data['answer']
-    attempt = user_data['attempts']
+    if msg != answer:
 
-    for i in range(len(conditions)):
-        await message.answer(
-            f'Условие задачи:\n{conditions[i]}\n    Ответ: {answer[i]}\n    Количество попыток: {attempt[i]}')
-    await state.finish()
+        await message.answer('Неправильно, попробуйте ещё раз')
+        if attempt % 3 == 0:
+            await message.answer('Посмотрите ещё раз "подсказку":\n'
+                                 'Для этого нажмите или наберите /mell_theory')
+        await message.answer(f'Решите в уме:\n{conditions}')
+        # считает количество попыток и прибавляет
+        cc = attempt[-1] + 1
+        attempt[-1] = cc
+        await state.update_data(attempts=attempt)
+        return
+    else:
+        await message.answer('Правильно, слидующее задание')
+        await Equation.equation_mentally.set()
+
+
+class Equation(StatesGroup):
+    equation_mentally = State()
+    equation_mentally_answer = State()
 
 
 def equation_generate():
@@ -120,7 +127,7 @@ def equation_generate():
     Функция создаёт математический пример состоящий из 2'х значных чисел и
     перемножет их или возводит в степень
 
-    :return: equation - Это сам математический пример
+    :return: equation - Математический пример
     :return: answer - Ответ на пример
     """
     mathematically_signs = ['*', '**']
@@ -137,14 +144,8 @@ def equation_generate():
     return [equation, answer]
 
 
-class Equation(StatesGroup):
-    equation_mentally = State()
-    equation_mentally_answer = State()
-
-
 def register_handlers_math_mentally(dp: Dispatcher):
     dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')
-    dp.register_message_handler(equation_mentally_end, Text(equals="закончить", ignore_case=True), state="*")
 
     dp.register_message_handler(equation_mentally_start, Text(equals="Примеры для подсчёта в уме"))
     dp.register_message_handler(equation_mentally_start, commands="equation_mentally")

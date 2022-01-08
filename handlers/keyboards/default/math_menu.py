@@ -43,3 +43,13 @@ def get_keyboard_math_formulas():
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     return keyboard
+
+
+def get_keyboard_math_mentally_start():
+    buttons = [
+        'Да',
+        'Отмена'
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
