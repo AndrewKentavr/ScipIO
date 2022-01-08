@@ -72,7 +72,7 @@ def formulas_search_random():
 # -----------------------------FLASHCARD-----------------------------------------
 def flashcard_dp_create(user_id, front, back, show):
     cur.execute(f"""INSERT INTO flashcards (user_id, front_card, back_card, show_card)
-VALUES ({user_id}, '{front}', '{back}', {show});""")
+VALUES ({user_id}, '{front}', '{back}', '{show}');""")          # Без этого новые карточки не сохранялись
     cur.connection.commit()
     return
 
