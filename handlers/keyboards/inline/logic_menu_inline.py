@@ -7,11 +7,14 @@ from handlers.logic.tasks_category_logic import callback_problems_logic, callbac
 def get_inline_logic_problems_category():
     buttons = []
 
+    # Список всех категории 'Logic'
     list_all_categorys = finding_categories_table('logic')
 
     for i in list_all_categorys:
-        category_name = i[0]  # НАПРИМЕР --- "riddles"
-        translated_name = i[1]  # НАПРИМЕР --- "Загадки"
+        # НАПРИМЕР --- "riddles"
+        category_name = i[0]
+        # НАПРИМЕР --- "Загадки"
+        translated_name = i[1]
         buttons.append(
             types.InlineKeyboardButton(text=translated_name,
                                        callback_data=callback_problems_logic.new(category_logic=category_name)))
@@ -29,12 +32,14 @@ def get_inline_logic_problems_category_info(info_problem):
 
         elif 'Решение 1' in i:
             buttons.append(types.InlineKeyboardButton(text='Решение 1',
-                                                      callback_data=callback_problems_info_logic.new(info_logic='Solution 1',
-                                                                                                     translate_logic='Решение 1')))
+                                                      callback_data=callback_problems_info_logic.new(
+                                                          info_logic='Solution 1',
+                                                          translate_logic='Решение 1')))
         elif 'Решение 2' in i:
             buttons.append(types.InlineKeyboardButton(text='Решение 2',
-                                                      callback_data=callback_problems_info_logic.new(info_logic='Solution 2',
-                                                                                                     translate_logic='Решение 2')))
+                                                      callback_data=callback_problems_info_logic.new(
+                                                          info_logic='Solution 2',
+                                                          translate_logic='Решение 2')))
         elif 'Решение' in i:
             buttons.append(
                 types.InlineKeyboardButton(text='Решение',
@@ -47,8 +52,9 @@ def get_inline_logic_problems_category_info(info_problem):
                                                                                           translate_logic='Ответ')))
         elif 'Подсказка' in i:
             buttons.append(
-                types.InlineKeyboardButton(text='Подсказка', callback_data=callback_problems_info_logic.new(info_logic='Hint',
-                                                                                                            translate_logic='Подсказка')))
+                types.InlineKeyboardButton(text='Подсказка',
+                                           callback_data=callback_problems_info_logic.new(info_logic='Hint',
+                                                                                          translate_logic='Подсказка')))
         elif 'Замечания' in i:
             buttons.append(
                 types.InlineKeyboardButton(text='Замечания',
