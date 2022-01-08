@@ -32,7 +32,8 @@ async def fls_game(message: types.Message, state: FSMContext):
         return
 
     user_data = await state.get_data()
-    flashcard = flashcard_generate(message.from_user.id, user_data)
+    correct = user_data['correct']
+    flashcard = flashcard_generate(message.from_user.id, correct)
     if not flashcard:
         await flc_game_end(message, state)
     else:
@@ -65,12 +66,10 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
     await message.answer(f'Обратная сторона: {card_back}')
 
 
-def flashcard_generate(user_id, user_data):
-    user_data = user_data
-    if len(user_data) == 0:
+def flashcard_generate(user_id, correct):
+    if len(correct) == 0:
         flashcard = flashcard_dp_info_game(user_id, 0)
     else:
-        correct = user_data['correct']
         try:
             flashcard = flashcard_dp_info_game(user_id, correct)
         except IndexError:
