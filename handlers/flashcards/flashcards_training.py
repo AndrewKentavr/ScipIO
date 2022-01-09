@@ -1,6 +1,10 @@
 """
 Данный алгоритм построен на основе ОДНОГО шага, основной функцией которого является (fls_game)
 
+Оснавная идея данного алгоритма в том, что из-за того что всё происходит в основной функции, то при нажатии "Правильно"
+    и "Неправильно" следующее что делает функция fls_game, это создаёт новую flashcard и вызывает саму себя. Из-за этого
+    алгоритм после "Правильно"/"Неправильно" сразу создаёт новую flashcard
+
 Алгоритм работает так:
     Пользователь вызвал /flc_train или нажал на кнопки в боте. Бот спросил готов ли он (flashcards_training_start),
         пользователь ответил, что готов, а дальше вызывается функция fls_game, которая проверяет, что пользователь верно
@@ -38,14 +42,20 @@ async def flashcards_training_start(message: types.Message):
 
 
 async def fls_game(message: types.Message, state: FSMContext):
+    """
+    Основной алгоритм
+
+    :param message: Ждёт сообщения: "Да"; "Правильно"; "Неправильно" всё остальное отсекается
+    """
+
     if message.text == 'Да':
         await message.answer('Чтобы закончить изучение напишите /flash_end')
 
     elif message.text == 'Правильно' or message.text == 'Неправильно':
+
+        # если "правильно", то в user_data['correct'] добавляется id карточки
         if message.text == 'Правильно':
             user_data = await state.get_data()
-            if len(user_data) == 0:
-                await state.update_data(correct=[])
             correct = user_data['correct']
             correct.append(user_data['card_id'])
             await state.update_data(correct=correct)
@@ -56,23 +66,37 @@ async def fls_game(message: types.Message, state: FSMContext):
         return
 
     user_data = await state.get_data()
+    # Генерация карточки
     flashcard = flashcard_generate(message.from_user.id, user_data)
+
+    #  если карточки закончились то END
     if not flashcard:
         await flc_game_end(message, state)
     else:
         card_id, card_front, card_back, show_card = flashcard
-        await message.answer(f'Карточка: {card_id}\n'
-                             f'Первая сторона: {card_front}',
-                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+
+        # если user_data - пустая, то создаётся массив correct
         if len(user_data) == 0:
             await state.update_data(correct=[])
+
         await state.update_data(card_id=card_id)
         await state.update_data(card_back=card_back)
 
+        await message.answer(f'Карточка: {card_id}\n'
+                             f'Первая сторона: {card_front}',
+                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
         await Flash_game.fls_game.set()
 
 
 async def flc_game_end(message: types.Message, state: FSMContext):
+    """
+    Функция присылает статистику по тренировке и закачивает тренировку
+
+    Вызов: 1.Если написали /flash_end
+           2.Если закончились flashcards у пользователя
+
+    :return: Конец тренировки, state.finish()
+    """
     await message.answer('Тренировка карточек закончена', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
     correct = user_data['correct']
@@ -83,6 +107,9 @@ async def flc_game_end(message: types.Message, state: FSMContext):
 
 
 async def flc_game_reverse_side(message: types.Message, state: FSMContext):
+    """
+    Показ обратной стороны
+    """
     user_data = await state.get_data()
     card_back = user_data['card_back']
     await message.answer(f'Обратная сторона: {card_back}')
