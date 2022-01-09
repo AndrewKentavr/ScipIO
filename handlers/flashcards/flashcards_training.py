@@ -1,3 +1,27 @@
+"""
+Данный алгоритм построен на основе ОДНОГО шага, основной функцией которого является (fls_game)
+
+Алгоритм работает так:
+    Пользователь вызвал /flc_train или нажал на кнопки в боте. Бот спросил готов ли он (flashcards_training_start),
+        пользователь ответил, что готов, а дальше вызывается функция fls_game, которая проверяет, что пользователь верно
+        нажал на кнопку "Да" и дальше...
+
+    Основной алгоритм. Функия гененирует карточку, присылает пользователю информацию о карточке и создаёт кнопки:
+        "Обратная сторона", "Правильно", "Неправильно", а дальше вызывает саму себя, и ждёт следующих дейстрий от
+        пользователя:
+            1. "Обратная сторона". Тогда вызывается функция flc_game_reverse_side, которая срабатывает
+                поверх функции fls_game. Она отправляет пользователю card_back и выключается, STATE оно не меняет!
+                fls_game остаётся далье ждать действий от пользователя
+
+            2. "Правильно" или "Неправильно". При нажатии на кнопку "Правильно" - пользователю при прохождении дальнейшей
+                тренировки больше не будет высвечиватся это карточка (id карточки добавляется в user_data, где потом
+                идёт простая проверка этого массива).
+                При нажатии на "Неправильно" - эта карточка при тренировке ещё БУДЕТ показываться
+
+            3. "Закончить". Вызывает функцию flc_game_end, которая присылвает статистику пользователю и соответственно
+                заканчивает тренировку.
+"""
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -32,8 +56,7 @@ async def fls_game(message: types.Message, state: FSMContext):
         return
 
     user_data = await state.get_data()
-    correct = user_data['correct']
-    flashcard = flashcard_generate(message.from_user.id, correct)
+    flashcard = flashcard_generate(message.from_user.id, user_data)
     if not flashcard:
         await flc_game_end(message, state)
     else:
@@ -60,16 +83,17 @@ async def flc_game_end(message: types.Message, state: FSMContext):
 
 
 async def flc_game_reverse_side(message: types.Message, state: FSMContext):
-    print('Обратная сторона')
     user_data = await state.get_data()
     card_back = user_data['card_back']
     await message.answer(f'Обратная сторона: {card_back}')
 
 
-def flashcard_generate(user_id, correct):
-    if len(correct) == 0:
+def flashcard_generate(user_id, user_data):
+    user_data = user_data
+    if len(user_data) == 0:
         flashcard = flashcard_dp_info_game(user_id, 0)
     else:
+        correct = user_data['correct']
         try:
             flashcard = flashcard_dp_info_game(user_id, correct)
         except IndexError:
