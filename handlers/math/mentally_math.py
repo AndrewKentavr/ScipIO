@@ -53,6 +53,8 @@ async def equation_mentally_beginning(message: types.Message, state: FSMContext)
         await message.answer('Вы написали что-то не то')
         return
     else:
+        await message.answer(
+            'Чтобы закончить выполненение или пропишите /end_mental, или нажмите на кнопку "Закончить"')
 
         # Генерирует пример ввида [equation, answer]
         equation = equation_generate()
@@ -84,7 +86,7 @@ async def equation_mentally_beginning(message: types.Message, state: FSMContext)
         attempt.append(0)
         await state.update_data(attempts=attempt)
 
-        await message.answer(f'Решите в уме:\n{equation[0]}')
+        await message.answer(f'Решите в уме:\n{equation[0]}', reply_markup=math_menu.get_keyboard_math_mentally_end())
         await Equation.equation_mentally.set()
 
 
@@ -135,6 +137,31 @@ async def equation_mentally(message: types.Message, state: FSMContext):
             await Equation.equation_mentally.set()
 
 
+async def equation_mentally_end(message: types.Message, state: FSMContext):
+    """
+    Функция присылает статистику по тренировке и закачивает тренировку
+
+    Вызов: 1.Если написали /end_mental
+           2.Если нажали на кнопку "Закончить"
+
+    :return: Конец тренировки, state.finish()
+    """
+    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
+    user_data = await state.get_data()
+
+    conditions = user_data['condition']
+    answer = user_data['answer']
+    attempt = user_data['attempts']
+
+    # мини статистика:
+    for i in range(len(conditions)):
+        # если количество попыток 0, то не присылает статистику по этому заданию
+        if int(attempt[i]) != 0:
+            await message.answer(
+                f'Условие задачи:\n{conditions[i]}\n    Ответ: {answer[i]}\n    Количество попыток: {attempt[i]}')
+    await state.finish()
+
+
 class Equation(StatesGroup):
     equation_mentally_beginning = State()
     equation_mentally = State()
@@ -164,6 +191,9 @@ def equation_generate():
 
 def register_handlers_math_mentally(dp: Dispatcher):
     dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')
+
+    dp.register_message_handler(equation_mentally_end, commands='end_mental', state='*')
+    dp.register_message_handler(equation_mentally_end, Text(equals="Закончить"), state='*')
 
     dp.register_message_handler(equation_mentally_start, Text(equals="Примеры для подсчёта в уме"))
     dp.register_message_handler(equation_mentally_start, commands="equation_mentally")
