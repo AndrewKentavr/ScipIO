@@ -94,6 +94,7 @@ async def flc_game_end(message: types.Message, state: FSMContext):
 
     Вызов: 1.Если написали /flash_end
            2.Если закончились flashcards у пользователя
+           3. Нажали на кнопку закончить
 
     :return: Конец тренировки, state.finish()
     """
@@ -135,6 +136,10 @@ class Flash_game(StatesGroup):
 def register_handlers_flashcards_training(dp: Dispatcher):
     dp.register_message_handler(flashcards_training_start, commands='flc_train', state='*')
     dp.register_message_handler(flc_game_end, commands='flash_end', state='*')
+
+    # Вот тут проблема с тем, что если писать "Закончить", то конец программы mentally_math
+    dp.register_message_handler(flc_game_end, Text(equals="Закончить тренировку"), state='*')
+
     dp.register_message_handler(flashcards_training_start, Text(equals="Начать учить карточки"), state='*')
     dp.register_message_handler(flc_game_reverse_side, Text(equals="Обратая сторона"), state='*')
     dp.register_message_handler(fls_game, state=Flash_game.fls_game)
