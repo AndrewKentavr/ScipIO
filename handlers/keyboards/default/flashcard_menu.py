@@ -7,8 +7,10 @@ def get_keyboard_flashcard_training_game():
         'Правильно',
         'Неправильно'
     ]
+    buttons_2 = 'Закончить тренировку'
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
+    keyboard.add(buttons_2)
     return keyboard
 
 

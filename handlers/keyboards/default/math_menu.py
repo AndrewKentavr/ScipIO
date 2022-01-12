@@ -15,30 +15,29 @@ def get_keyboard_math_start():
     return keyboard
 
 
-def get_keyboard_math_end():
-    buttons = [
-        'Продолжаем, я деньги за это заплатил',
-        'Закончить'
-    ]
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    keyboard.add(*buttons)
-    return keyboard
-
-
-def get_keyboard_math_end_problem():
-    buttons = [
-        'Продолжаем, я деньги за это заплатил',
-        'Закончить задачки'
-    ]
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    keyboard.add(*buttons)
-    return keyboard
-
-
 def get_keyboard_math_formulas():
     buttons = [
         'Продолжаем',
         'Закончить повторение'
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def get_keyboard_math_mentally_start():
+    buttons = [
+        'Да',
+        'Отмена'
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def get_keyboard_math_mentally_end():
+    buttons = [
+        'Закончить'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
