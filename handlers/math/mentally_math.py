@@ -1,3 +1,20 @@
+"""
+Основной алгоритм очень схож с flashcards_training, но у него есть некоторое отличие
+Из-за того, что тут требуется проверять постоянный ввод пользователя, то тут используется такая вещь - есть вводная
+    функция equation_mentally_beginning, которая
+        1) Проверяет, что написали "Да"
+        2) Создаёт user_data
+        3) Создаёт пример и создаёт вход в главную функцию equation_mentally
+
+Потом уже функция equation_mentally, генерирует примеры; отсекает неправильные варианты; и вызывает САМУ СЕБЯ.
+
+Если бы мы сделали сразу основную функцию без такой вводной, то нам было бы очень сложно различать сообщения
+    неправильные от правильных. Например: Пользователь присылает "Да" --> Пользователю присылается карточка и он
+    присылает "1570" --> Дальше программа будет сначала сравнивать, что это не "Да", что сходится ли оно с ответом и
+    т.д Поэтому мы укоротили этот пути и алгоритм работает с equation_mentally
+
+"""
+
 from random import choice, randint
 from aiogram.dispatcher import FSMContext
 from aiogram import types, Dispatcher
@@ -91,6 +108,15 @@ async def equation_mentally_beginning(message: types.Message, state: FSMContext)
 
 
 async def equation_mentally(message: types.Message, state: FSMContext):
+    """
+    Основаня функция
+
+    :param message: Ждёт сообщения соостоящее из цифр. Например "8371"
+
+    :return Вызывает саму себя, пока пользователь не закончит
+    """
+
+    # Проверка что сообщение - число
     try:
         msg = int(message.text)
     except ValueError:
@@ -103,13 +129,17 @@ async def equation_mentally(message: types.Message, state: FSMContext):
         attempts = user_data['attempts']
 
         # считает количество попыток и прибавляет
+        """
+        Cделанно это вначале, чтобы потом отсекать 0 варианты, потому что сообщение может показаться пользователю,
+            а он просто без попыток закончит тренировку
+        """
         cc = int(attempts[-1]) + 1
         attempts[-1] = cc
         await state.update_data(attempts=attempts)
 
         if msg != int(answers[-1]):
-
             await message.answer('Неправильно, попробуйте ещё раз')
+            # Если было уже 3 попытки, то пользователю предложит пройти теорию ещё раз
             if int(attempts[-1]) % 3 == 0:
                 await message.answer('Посмотрите ещё раз "подсказку":\n'
                                      'Для этого нажмите или наберите /mell_theory')
