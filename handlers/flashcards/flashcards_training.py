@@ -18,13 +18,13 @@
                 fls_game остаётся далье ждать действий от пользователя
 
             2. "Правильно" или "Неправильно". При нажатии на кнопку "Правильно" - пользователю при прохождении дальнейшей
-                тренировки больше не будет высвечиватся это карточка (id карточки добавляется в user_data, где потом
-                идёт простая проверка этого массива).
+                тренировки больше не будет высвечиватся это карточка (карточка удаляется из user_data['flashcards']).
                 При нажатии на "Неправильно" - эта карточка при тренировке ещё БУДЕТ показываться
 
             3. "Закончить". Вызывает функцию flc_game_end, которая присылвает статистику пользователю и соответственно
                 заканчивает тренировку.
 """
+from random import choice
 
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
@@ -51,14 +51,29 @@ async def fls_game(message: types.Message, state: FSMContext):
     if message.text == 'Да':
         await message.answer('Чтобы закончить изучение напишите /flash_end')
 
+        # Генерация массива карточек пользователя
+        flashcards = flashcard_generate(message.from_user.id)
+        await state.update_data(flashcards=flashcards)
+        # Генерация массива правильных карточек (потом для статистики используется)
+        await state.update_data(correct=[])
+
     elif message.text == 'Правильно' or message.text == 'Неправильно':
 
-        # если "правильно", то в user_data['correct'] добавляется id карточки
         if message.text == 'Правильно':
             user_data = await state.get_data()
+            # если "правильно", то в user_data['correct'] добавляется id карточки
             correct = user_data['correct']
             correct.append(user_data['card_id'])
             await state.update_data(correct=correct)
+
+            # удаление карточки из user_data['flashcards']  по его id
+            flashcards = user_data['flashcards']
+            for i in range(len(flashcards)):
+                if user_data['card_id'] == flashcards[i][0]:
+                    del flashcards[i]
+                    await state.update_data(flashcards=flashcards)
+                    break
+
 
     else:
         await message.answer('Вы написали что-то не то')
@@ -66,18 +81,16 @@ async def fls_game(message: types.Message, state: FSMContext):
         return
 
     user_data = await state.get_data()
-    # Генерация карточки
-    flashcard = flashcard_generate(message.from_user.id, user_data)
+    # Выбор РАНДОМНОЙ карточки из user_data['flashcards']
+    flashcard = user_data['flashcards']
 
     #  если карточки закончились то END
     if not flashcard:
         await flc_game_end(message, state)
     else:
-        card_id, card_front, card_back, show_card = flashcard
+        flashcard = choice(flashcard)
 
-        # если user_data - пустая, то создаётся массив correct
-        if len(user_data) == 0:
-            await state.update_data(correct=[])
+        card_id, card_front, card_back, show_card = flashcard
 
         await state.update_data(card_id=card_id)
         await state.update_data(card_back=card_back)
@@ -116,17 +129,20 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
     await message.answer(f'Обратная сторона: {card_back}')
 
 
-def flashcard_generate(user_id, user_data):
-    user_data = user_data
-    if len(user_data) == 0:
-        flashcard = flashcard_dp_info_game(user_id, 0)
-    else:
-        correct = user_data['correct']
-        try:
-            flashcard = flashcard_dp_info_game(user_id, correct)
-        except IndexError:
-            return False
-    return flashcard
+def flashcard_generate(user_id):
+    """
+
+    :return: массив карточек + карточки, которые должны показываться в обратную сторону
+    """
+    flashcards = flashcard_dp_info_game(user_id)
+    if len(flashcards) == 0:
+        return 'У вас нет карточек, создайте их'
+
+    flashcards_2 = []
+    for i in flashcards:
+        if i[3] == 'True':
+            flashcards_2.append((str(i[0]) + ' обрат.карт', i[2], i[1], i[3]))
+    return flashcards + flashcards_2
 
 
 class Flash_game(StatesGroup):
