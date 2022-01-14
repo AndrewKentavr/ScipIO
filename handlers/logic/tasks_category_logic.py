@@ -27,6 +27,7 @@ async def tasks_category_logic_print(call: types.CallbackQuery, callback_data: d
     """
     from handlers.keyboards.inline import logic_menu_inline
 
+    global category
     category = callback_data["category_logic"]
     list_info_problem = problem_category_random(category, 'logic')
     title = list_info_problem[0]
@@ -49,7 +50,27 @@ async def tasks_category_logic_print(call: types.CallbackQuery, callback_data: d
 
 async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_data: dict):
     translate = callback_data['translate_logic']
+    if translate == 'Следующее задание':     # Если нажать inline кнопку "Следующее задание" (Выводит следующее задание)
+        from handlers.keyboards.inline import logic_menu_inline
+        list_info_problem = problem_category_random(category, 'logic')
+        title = list_info_problem[0]
+        href = list_info_problem[1]
+        subcategory = list_info_problem[2]
+        complexity, classes = list_info_problem[3], list_info_problem[4]
+        condition = list_info_problem[5]
+        info_problem = list_info_problem[6:]
+        global problems_info_data_logic
+        problems_info_data_logic = info_problem
+        await call.message.answer(
+            f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+            reply_markup=types.ReplyKeyboardRemove())
+        await call.message.answer(f'{condition}',
+                                  reply_markup=logic_menu_inline.get_inline_logic_problems_category_info(info_problem))
+    if translate == 'Закончить':    # Если нажать inline кнопку "Закончить" (Выводит меню выбора категории задания в логике)
+        from handlers.keyboards.inline import logic_menu_inline
 
+        await call.message.answer('Выберете категорию заданий:',
+                             reply_markup=logic_menu_inline.get_inline_logic_problems_category())
     for i in range(len(problems_info_data_logic)):
         if translate in problems_info_data_logic[i]:
             await call.message.answer(f'{problems_info_data_logic[i]}')
@@ -64,6 +85,6 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
     dp.register_callback_query_handler(tasks_category_logic_print,
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
-    info = ['Solution 1', 'Solution 2', 'Decision', 'Answer', 'Hint', 'Remarks']
+    info = ['Solution 1', 'Solution 2', 'Decision', 'Answer', 'Hint', 'Remarks', 'Next', 'Finish']
     dp.register_callback_query_handler(tasks_category_logic_print_info,
                                        callback_problems_info_logic.filter(info_logic=info), state='*')
