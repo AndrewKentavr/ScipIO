@@ -60,6 +60,14 @@ def get_inline_logic_problems_category_info(info_problem):
                 types.InlineKeyboardButton(text='Замечания',
                                            callback_data=callback_problems_info_logic.new(info_logic='Remarks',
                                                                                           translate_logic='Замечания')))
+    buttons.append(
+        types.InlineKeyboardButton(text='Следующее задание',
+                                   callback_data=callback_problems_info_logic.new(info_logic='Next',
+                                                                                  translate_logic='Следующее задание')))
+    buttons.append(
+        types.InlineKeyboardButton(text='Закончить',
+                                   callback_data=callback_problems_info_logic.new(info_logic='Finish',
+                                                                                  translate_logic='Закончить')))
 
     keyboard = types.InlineKeyboardMarkup(row_width=3)
     keyboard.add(*buttons)
