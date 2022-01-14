@@ -34,7 +34,7 @@ def timer_interval_func():
     """
     Функция управляющая таймером
     """
-    scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp, ))
+    scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp,))
 
 
 async def main():
@@ -53,6 +53,8 @@ async def main():
     await bot.send_message(ADMINS, "Bot - on", reply_markup=types.ReplyKeyboardRemove())
 
     # Пропуск обновлений и запуск полинга
+    """ПОЧЕМУ ТО ОТВЕЧАЕТ ТОЛЬКО НА ПОСЛЕДНИЕ СООБЩЕНИЯ ПРИ ЗАПУСКЕ !!!!!!"""
+
     await dp.skip_updates()
     await dp.start_polling()
 
