@@ -6,7 +6,8 @@ from aiogram.dispatcher import FSMContext
 
 async def cmd_start(message: types.Message):
     await message.answer(f'Приветствуем на нашем обучающем проекте!' + emoji.emojize(":fire:"))
-    await message.answer(f'Мы создали его для людей которые хотят развить свои навыки или получить новые.' + emoji.emojize(":brain:"))
+    await message.answer(
+        f'Мы создали его для людей которые хотят развить свои навыки или получить новые.' + emoji.emojize(":brain:"))
     await message.answer(f'В функционал проекта входят:'
                          f'\n 1) Математические задачи'
                          f'\n 2) Математические примеры в уме'
@@ -21,6 +22,8 @@ async def cmd_start(message: types.Message):
                          f'\n 4) /timer - Таймер'
                          f'\n 5) /help - Просмотр функционала'
                          f'\n 6) /cancel - Отмена действия')
+
+
 async def cmd_cancel(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer("Действие отменено", reply_markup=types.ReplyKeyboardRemove())
