@@ -75,10 +75,7 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message):
 
     # Образка словаря
     info_problem = dict(list(dictionary_info_problem.items())[6:])
-
-    global problems_info_data_logic
-    problems_info_data_logic = info_problem
-
+    
     await message.answer(
         f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
         reply_markup=logic_menu.get_keyboard_logic_category())
