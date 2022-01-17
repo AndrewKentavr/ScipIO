@@ -10,7 +10,7 @@ MAX_LEN = 450
 
 
 async def flashcards_managing_start(message: types.Message):
-    await message.answer('Выберите, что вы хотите делать с flashcards ',
+    await message.answer('Вы можете создать или удалить собственные карточки, а также просмотреть информацию о них',
                          reply_markup=flashcard_menu.get_keyboard_flashcard_managing())
 
 
