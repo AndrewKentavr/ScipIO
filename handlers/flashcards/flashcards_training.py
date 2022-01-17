@@ -34,7 +34,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from data_b.dp_control import flashcard_dp_info_game
 from handlers.keyboards.default import flashcard_menu
 async def flashcards_training_theory(message: types.Message):
-    await message.answer('Лайфхаки для работы с карточками /flc_theory')
+    await message.answer('')
 
 
 

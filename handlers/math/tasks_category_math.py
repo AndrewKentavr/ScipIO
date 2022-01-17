@@ -10,7 +10,7 @@ callback_problems_info_math = CallbackData("values", "info", "translate")
 
 
 async def tasks_category_math_start(message: types.Message):
-    await message.answer('Выберете категорию заданий:',
+    await message.answer('Выберите категорию заданий:',
                          reply_markup=math_menu_inline.get_inline_math_problems_category())
 
 
