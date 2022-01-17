@@ -46,7 +46,7 @@ async def tasks_category_math_print_info(call: types.CallbackQuery, callback_dat
 
 
 def register_handlers_tasks_math_category(dp: Dispatcher):
-    dp.register_message_handler(tasks_category_math_start, Text(equals="Задания по категориям Математики"))
+    dp.register_message_handler(tasks_category_math_start, Text(equals="Задания из категорий Математики"))
 
     all_files_names = [i[0] for i in finding_categories_table('math')]
     dp.register_callback_query_handler(tasks_category_math_print,

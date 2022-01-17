@@ -3,7 +3,7 @@ from aiogram import types
 
 def get_keyboard_math_start():
     buttons_1 = [
-        'Задания по категориям Математики',
+        'Задания из категорий Математики',
     ]
     buttons_2 = 'Примеры для подсчёта в уме'
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)

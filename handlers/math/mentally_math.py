@@ -176,7 +176,7 @@ async def equation_mentally_end(message: types.Message, state: FSMContext):
 
     :return: Конец тренировки, state.finish()
     """
-    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Отличная работа', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
 
     conditions = user_data['condition']
