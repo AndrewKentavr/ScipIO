@@ -5,7 +5,7 @@ from handlers.keyboards.default import timer_menu
 
 
 async def timer_select(message: types.Message):
-    await message.answer('Выберете:', reply_markup=timer_menu.get_keyboard_timer())
+    await message.answer('Выберите:', reply_markup=timer_menu.get_keyboard_timer())
 
 
 def register_handlers_timer(dp: Dispatcher):

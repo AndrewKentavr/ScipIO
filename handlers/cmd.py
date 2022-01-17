@@ -4,11 +4,7 @@ from aiogram.dispatcher import FSMContext
 
 
 async def cmd_start(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button_1 = ["/math", ]
-    keyboard.add(*button_1)
-    await message.answer(f'Привет, {message.from_user.full_name}! '
-                         f'Посмотри на это:', reply_markup=keyboard)
+    await message.answer(f'Привет')
 
 
 async def cmd_cancel(message: types.Message, state: FSMContext):

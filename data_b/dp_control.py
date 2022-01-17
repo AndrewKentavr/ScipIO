@@ -1,6 +1,6 @@
 import sqlite3
 
-CONN = sqlite3.connect('C:/Users/andrt/PycharmProjects/Scipio/data_b/scipio.db')
+CONN = sqlite3.connect('data_b/scipio.db')
 cur = CONN.cursor()
 
 

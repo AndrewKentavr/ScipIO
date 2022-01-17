@@ -33,10 +33,13 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 
 from data_b.dp_control import flashcard_dp_info_game
 from handlers.keyboards.default import flashcard_menu
+async def flashcards_training_theory(message: types.Message):
+    await message.answer('Лайфхаки для работы с карточками /flc_theory')
+
 
 
 async def flashcards_training_start(message: types.Message):
-    await message.answer('Лайфхаки для работы с карточками /cards_info')
+    await message.answer('Лайфхаки для работы с карточками /flc_theory')
     await message.answer('Вы готовы?', reply_markup=flashcard_menu.get_keyboard_flashcard_training_start())
     await Flash_game.fls_game.set()
 
@@ -150,6 +153,7 @@ class Flash_game(StatesGroup):
 
 
 def register_handlers_flashcards_training(dp: Dispatcher):
+    dp.register_message_handler(flashcards_training_theory, commands='flc_theory', state='*')
     dp.register_message_handler(flashcards_training_start, commands='flc_train', state='*')
     dp.register_message_handler(flc_game_end, commands='flash_end', state='*')
 
