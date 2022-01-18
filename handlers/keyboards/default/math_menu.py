@@ -39,3 +39,12 @@ def get_keyboard_math_mentally_end():
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
     return keyboard
+
+
+def get_keyboard_math_category():
+    buttons = [
+        'Следующая задача',
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard

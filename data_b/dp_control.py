@@ -23,7 +23,7 @@ def problem_category_random(name_category, tasks_theme):
     :param tasks_theme: Передаётся название таблици
     из которой будут брать задачи. Например: 'math'
 
-    :return: Вся информация, что есть по задаче. Например в задаче
+    :return: Вся информация В СЛОВАРЕ, что есть по задаче. Например в задаче
     2 Условия и Ответ. Значит так и будет передоваться
     """
     cur.execute(
@@ -33,13 +33,16 @@ def problem_category_random(name_category, tasks_theme):
                                 WHERE value = '{name_category}')
                 ORDER BY RANDOM()
                 LIMIT 1;""")
+    columns = ['title', 'href', 'subcategory', 'complexity', 'classes', 'conditions', 'decisions_1',
+               'decisions_2', 'answer', 'remarks']
     result_0 = cur.fetchall()
-    result = []
-    for i in result_0[0]:
-        if i is not None:
-            result.append(i)
+    result = {}
+
+    for i in range(len(result_0[0])):
+        if result_0[0][i] is not None:
+            result[columns[i]] = result_0[0][i]
         else:
-            result.append('')
+            result[columns[i]] = ''
 
     return result
 

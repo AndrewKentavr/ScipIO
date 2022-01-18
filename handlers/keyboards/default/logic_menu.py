@@ -10,10 +10,9 @@ def get_keyboard_logic_start():
     return keyboard
 
 
-def get_keyboard_logic_categories():
+def get_keyboard_logic_category():
     buttons = [
-        'Зарубаха пидор',
-        'Зарубаха ебаный хуесос'
+        'Следующая задача',
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
