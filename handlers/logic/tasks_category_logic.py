@@ -18,7 +18,7 @@ callback_problems_info_logic = CallbackData("values_logic", "info_logic", "trans
 async def tasks_category_logic_start(message: types.Message):
     from handlers.keyboards.inline import logic_menu_inline
 
-    await message.answer('Выберете категорию заданий:',
+    await message.answer('Выберите категорию заданий:',
                          reply_markup=logic_menu_inline.get_inline_logic_problems_category())
 
 
@@ -103,7 +103,7 @@ async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_da
 
 
 def register_handlers_tasks_logic_category(dp: Dispatcher):
-    dp.register_message_handler(tasks_category_logic_start, Text(equals="Задания по категориям Логики"))
+    dp.register_message_handler(tasks_category_logic_start, Text(equals="Задания из категорий Логики"))
 
     all_files_names = [i[0] for i in finding_categories_table('logic')]
     dp.register_callback_query_handler(tasks_category_logic_print_keyboard_inline,

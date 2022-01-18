@@ -70,7 +70,7 @@ async def answer_func(call: types.CallbackQuery, state: FSMContext):
 
 
 async def math_formulas_end(message: types.Message, state: FSMContext):
-    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Отличная работа', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
 
     conditions = user_data['condition']

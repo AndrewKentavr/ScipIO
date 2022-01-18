@@ -10,7 +10,7 @@ MAX_LEN = 450
 
 
 async def flashcards_managing_start(message: types.Message):
-    await message.answer('Выберете, что вы хотите делать с flashcards ',
+    await message.answer('Вы можете создать или удалить собственные карточки, а также просмотреть информацию о них',
                          reply_markup=flashcard_menu.get_keyboard_flashcard_managing())
 
 
@@ -18,7 +18,7 @@ async def flashcards_managing_start(message: types.Message):
 
 
 async def flashcards_managing_create_start(message: types.Message):
-    await message.answer(f'Введите нужную вам карточку\n'
+    await message.answer(f'Введите слово или фразу, которое/ую хотите выучить\n'
                          f'Максимальное количество символов: <b>{MAX_LEN}</b>',
                          reply_markup=types.ReplyKeyboardRemove())
     await FlashcardManaging.flashcards_managing_create_middle.set()
@@ -33,7 +33,7 @@ async def flashcards_managing_create_middle(message: types.Message, state: FSMCo
     else:
         await state.update_data(front=msg)
 
-        await message.answer(f'Введите значение этой карточки\n'
+        await message.answer(f'Введите значение или перевод первой стороны карточки\n'
                              f'Максимальное количество символов: <b>{MAX_LEN}</b>')
         await FlashcardManaging.next()
 
@@ -70,7 +70,7 @@ async def flashcards_managing_create_end(message: types.Message, state: FSMConte
     await message.answer(f'Показывать карточку с двух сторон? - {msg}')
     try:
         flashcard_dp_create(message.from_user.id, user_data["front"], user_data["back"], show_card)
-        await message.answer(f'Всё успешно сохранилось', reply_markup=types.ReplyKeyboardRemove())
+        await message.answer(f'Карточка успешно сохранена', reply_markup=types.ReplyKeyboardRemove())
     except Exception:
         await message.answer(f'Что - то пошло не так')
     await state.finish()
@@ -78,7 +78,7 @@ async def flashcards_managing_create_end(message: types.Message, state: FSMConte
 
 # -----------------------------DEL FUNC-----------------------------------------
 async def flashcards_managing_del_start(message: types.Message):
-    await message.answer(f'Чтобы удалить карточку - напишите её id',
+    await message.answer(f'Чтобы удалить карточку - введите её id',
                          reply_markup=types.ReplyKeyboardRemove())
     all_cards = flashcard_dp_info(message.from_user.id)
     mes_print = 'id     :     front     :      back\n'

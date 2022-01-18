@@ -28,7 +28,7 @@ from handlers.keyboards.inline import math_menu_inline
 
 async def equation_mentally_theory(message: types.Message):
     await message.answer(
-        'Мы должны использовать: <b>Круглые Числа</b>\nОдин из самых распространённыхприёмов устного счёта'
+        'Мы должны использовать: <b>Круглые Числа</b>\nОдин из самых распространённых приёмов устного счёта'
         ' заключается в том, что любое число можно представить в виде суммы или разности чисел, одно или '
         'несколько из которых «круглое»', reply_markup=math_menu_inline.get_inline_math_url())
     photo = InputFile("data/math_1.jpg")
@@ -176,7 +176,7 @@ async def equation_mentally_end(message: types.Message, state: FSMContext):
 
     :return: Конец тренировки, state.finish()
     """
-    await message.answer('НУ и закончил', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Отличная работа', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
 
     conditions = user_data['condition']

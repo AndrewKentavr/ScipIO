@@ -35,8 +35,14 @@ from data_b.dp_control import flashcard_dp_info_game
 from handlers.keyboards.default import flashcard_menu
 
 
+async def flashcards_training_theory(message: types.Message):
+    await message.answer('Флеш-карточки - это удобный способ запоминания и повторения изучаемого материала. На одной стороне карточки пишется слово, фраза или термин, а на другой, перевод или значение.')
+    await message.answer('Чтобы процесс обучения был более эффективным вы можете придерживаться нескольких советов:')
+    await message.answer('1) Разбейте учебные сеансы на отрезки по 10-15 минут, так как их вполне хватит для повторения более 100 слов, и такое кол-во свободного времени найдется у любого человека.'
+                         '\n2) Чаще устраивайте себе экзамены, ведь чем чаще вы будете себя испытывать, тем лучше.'
+                         '\n3) Создайте подходящую для вас систему обучения, в данном случае дисциплина гораздо полезнее случайных занятий.')
 async def flashcards_training_start(message: types.Message):
-    await message.answer('Лайфхаки для работы с карточками /cards_info')
+    await message.answer('Принцип работы с карточками и советы /flc_theory')
     await message.answer('Вы готовы?', reply_markup=flashcard_menu.get_keyboard_flashcard_training_start())
     await Flash_game.fls_game.set()
 
@@ -150,6 +156,7 @@ class Flash_game(StatesGroup):
 
 
 def register_handlers_flashcards_training(dp: Dispatcher):
+    dp.register_message_handler(flashcards_training_theory, commands='flc_theory', state='*')
     dp.register_message_handler(flashcards_training_start, commands='flc_train', state='*')
     dp.register_message_handler(flc_game_end, commands='flash_end', state='*')
 
@@ -157,5 +164,5 @@ def register_handlers_flashcards_training(dp: Dispatcher):
     dp.register_message_handler(flc_game_end, Text(equals="Закончить тренировку"), state='*')
 
     dp.register_message_handler(flashcards_training_start, Text(equals="Начать учить карточки"), state='*')
-    dp.register_message_handler(flc_game_reverse_side, Text(equals="Обратая сторона"), state='*')
+    dp.register_message_handler(flc_game_reverse_side, Text(equals="Обратная сторона"), state='*')
     dp.register_message_handler(fls_game, state=Flash_game.fls_game)

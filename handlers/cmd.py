@@ -1,16 +1,26 @@
+import emoji
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters.builtin import CommandStart, CommandHelp, Text
 from aiogram.dispatcher import FSMContext
 
 
 async def cmd_start(message: types.Message):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button_1 = ["/math", ]
-    keyboard.add(*button_1)
-    await message.answer(f'Привет, {message.from_user.full_name}! '
-                         f'Посмотри на это:', reply_markup=keyboard)
-
-
+    await message.answer(f'Приветствуем на нашем обучающем проекте!' + emoji.emojize(":fire:"))
+    await message.answer(f'Мы создали его для людей которые хотят развить свои навыки или получить новые.' + emoji.emojize(":brain:"))
+    await message.answer(f'В функционал проекта входят:'
+                         f'\n 1) Математические задачи'
+                         f'\n 2) Математические примеры в уме'
+                         f'\n 3) Задачи на логику (данетки, загадки, логические задачи)'
+                         f'\n 4) Пользовательские карточки для обучения'
+                         f'\n 5) Таймер с оповещениями о занятиях')
+    await message.answer(f'Это только первая версия, в дальнейшем она будет улучшаться и функционал будет расширяться.')
+    await message.answer(f'Команды для взаимодействия с ботом:'
+                         f'\n 1) /math - Задачи по математике'
+                         f'\n 2) /logic - Задачи на логику'
+                         f'\n 3) /flashcard - Пользовательские карточки'
+                         f'\n 4) /timer - Таймер'
+                         f'\n 5) /help - Просмотр функционала'
+                         f'\n 6) /cancel - Отмена действия')
 async def cmd_cancel(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer("Действие отменено", reply_markup=types.ReplyKeyboardRemove())

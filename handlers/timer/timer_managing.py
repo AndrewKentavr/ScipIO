@@ -8,7 +8,7 @@ from handlers.keyboards.default import timer_menu
 
 
 async def timer_select(message: types.Message):
-    await message.answer('Выберете:', reply_markup=timer_menu.get_keyboard_timer())
+    await message.answer('Выберите:', reply_markup=timer_menu.get_keyboard_timer())
 
 
 async def timer_create_start(message: types.Message):
@@ -26,7 +26,7 @@ async def timer_create_middle(message: types.Message, state: FSMContext):
         await message.reply(check_func)
     else:
         await state.update_data(time=msg)
-        await message.answer('Выбери, что именно ты хочешь начать повторять',
+        await message.answer('Выберите, что вы хотите начать повторять',
                              reply_markup=timer_menu.get_keyboard_question_tasks())
         await Timer.timer_create_end.set()
 
@@ -89,7 +89,7 @@ class Timer(StatesGroup):
 def register_handlers_timer_managing(dp: Dispatcher):
     dp.register_message_handler(timer_create_start, Text(equals="Создать таймер", ignore_case=True))
     dp.register_message_handler(timer_del_start, Text(equals="Удалить таймер", ignore_case=True))
-    dp.register_message_handler(timer_info, Text(equals="Посмотреть все таймеры", ignore_case=True))
+    dp.register_message_handler(timer_info, Text(equals="Посмотреть ваши таймеры", ignore_case=True))
 
     dp.register_message_handler(timer_create_middle, state=Timer.timer_create_middle)
     dp.register_message_handler(timer_create_end, state=Timer.timer_create_end)
