@@ -109,7 +109,7 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
     dp.register_callback_query_handler(tasks_category_logic_print_keyboard_inline,
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
-    dp.register_message_handler(tasks_category_logic_print_keyboard_default, Text(equals="Следующая задача"))
+    dp.register_message_handler(tasks_category_logic_print_keyboard_default, Text(equals="Следующая задача логика"))
 
     info = ['Decision 1', 'Decision 2', 'Answer', 'Remarks']
     dp.register_callback_query_handler(tasks_category_logic_print_info,

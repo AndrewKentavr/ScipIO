@@ -15,7 +15,7 @@ async def tasks_category_math_start(message: types.Message):
                          reply_markup=math_menu_inline.get_inline_math_problems_category())
 
 
-async def tasks_category_math_print(call: types.CallbackQuery, callback_data: dict):
+async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
     global category
     category = callback_data["category"]
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
@@ -83,7 +83,7 @@ def register_handlers_tasks_math_category(dp: Dispatcher):
     dp.register_message_handler(tasks_category_math_start, Text(equals="Задания из категорий Математики"))
 
     all_files_names = [i[0] for i in finding_categories_table('math')]
-    dp.register_callback_query_handler(tasks_category_math_print,
+    dp.register_callback_query_handler(tasks_category_math_print_inline,
                                        callback_problems_math.filter(category=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_math_print_keyboard_default, Text(equals="Следующая задача"))

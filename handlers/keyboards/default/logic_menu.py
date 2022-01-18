@@ -12,7 +12,7 @@ def get_keyboard_logic_start():
 
 def get_keyboard_logic_category():
     buttons = [
-        'Следующая задача',
+        'Следующая задача логика',
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
