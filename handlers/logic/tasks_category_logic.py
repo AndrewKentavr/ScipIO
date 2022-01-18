@@ -58,7 +58,7 @@ async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_da
 
 
 def register_handlers_tasks_logic_category(dp: Dispatcher):
-    dp.register_message_handler(tasks_category_logic_start, Text(equals="Задания из категории Логика"))
+    dp.register_message_handler(tasks_category_logic_start, Text(equals="Задания из категорий Логики"))
 
     all_files_names = [i[0] for i in finding_categories_table('logic')]
     dp.register_callback_query_handler(tasks_category_logic_print,

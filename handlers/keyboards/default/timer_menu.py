@@ -5,7 +5,7 @@ def get_keyboard_timer():
     buttons = [
         'Создать таймер',
         'Удалить таймер',
-        'Посмотреть все таймеры'
+        'Посмотреть ваши таймеры'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
