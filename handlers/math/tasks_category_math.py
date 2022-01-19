@@ -53,11 +53,17 @@ async def tasks_category_math_print_keyboard_default(message: types.Message):
 
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
-    await message.answer(
-        f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
-        reply_markup=math_menu.get_keyboard_math_category())
-    await message.answer(f'{condition}',
-                         reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
+    global problems_info_data_math
+    problems_info_data_math = info_problem
+
+    try:
+        await message.answer(
+            f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+            reply_markup=math_menu.get_keyboard_math_category())
+        await message.answer(f'{condition}',
+                             reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
+    except Exception:
+        await message.answer('Сломанная задача')
 
 
 async def tasks_category_math_print_info(call: types.CallbackQuery, callback_data: dict):
@@ -66,15 +72,19 @@ async def tasks_category_math_print_info(call: types.CallbackQuery, callback_dat
     """
 
     translate = callback_data['translate']
+    try:
+        if translate == 'Решение 1':
+            await call.message.answer(f'{problems_info_data_math["decisions_1"]}')
 
-    if translate == 'Решение 1':
-        await call.message.answer(f'{problems_info_data_math["decisions_1"]}')
-    elif translate == 'Решение 2':
-        await call.message.answer(f'{problems_info_data_math["decisions_2"]}')
-    elif translate == 'Ответ':
-        await call.message.answer(f'{problems_info_data_math["answer"]}')
-    elif translate == 'Замечания':
-        await call.message.answer(f'{problems_info_data_math["remarks"]}')
+        elif translate == 'Решение 2':
+            await call.message.answer(f'{problems_info_data_math["decisions_2"]}')
+        elif translate == 'Ответ':
+            await call.message.answer(f'{problems_info_data_math["answer"]}')
+        elif translate == 'Замечания':
+            await call.message.answer(f'{problems_info_data_math["remarks"]}')
+
+    except Exception:
+        await call.message.answer(f'Ответ не выводится')
 
     await call.answer()
 
