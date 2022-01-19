@@ -26,8 +26,8 @@ def get_keyboard_flashcard_training_start():
 
 def get_keyboard_flashcard_start():
     buttons = [
-        'Начать учить карточки',
-        'Управление карточками',
+        emoji.emojize(":brain:") + ' Начать учить карточки',
+        emoji.emojize(":gear:") + ' Управление карточками',
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
@@ -36,9 +36,9 @@ def get_keyboard_flashcard_start():
 
 def get_keyboard_flashcard_managing():
     buttons = [
-        'Создать карточку',
-        'Удалить карточку',
-        'Информация о карточках'
+        emoji.emojize(":pencil2:") + ' Создать карточку',
+        emoji.emojize(":stop_sign:") + ' Удалить карточку',
+        emoji.emojize(":information_source:") + ' Информация о карточках'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

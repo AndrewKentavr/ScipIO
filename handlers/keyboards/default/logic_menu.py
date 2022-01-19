@@ -4,7 +4,7 @@ from aiogram.utils import emoji
 
 def get_keyboard_logic_start():
     buttons = [
-        'Задания из категорий Логики',
+        emoji.emojize(":book:") + ' Задания из категорий Логики',
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

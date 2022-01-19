@@ -230,7 +230,8 @@ def register_handlers_math_mentally(dp: Dispatcher):
     dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')
 
     dp.register_message_handler(equation_mentally_end, commands='end_mental', state='*')
-    dp.register_message_handler(equation_mentally_end, Text(equals="Закончить"), state='*')
+    dp.register_message_handler(equation_mentally_end,
+                                Text(equals=emoji.emojize(":stop_sign:") + " Закончить примеры в уме"), state='*')
 
     dp.register_message_handler(equation_mentally_start, commands="equation_mentally")
     dp.register_message_handler(equation_mentally_beginning, state=Equation.equation_mentally_beginning)

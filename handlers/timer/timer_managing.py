@@ -53,7 +53,7 @@ async def timer_create_end(message: types.Message, state: FSMContext):
 async def timer_del_start(message: types.Message):
     user_id = message.from_user.id
     await message.answer('Удалите таймер, написав время таймера сюда\n'
-                         '1 пример: <i>16:02</i>'
+                         '1 пример: <i>16:02</i>\n'
                          '2 пример: <i>05:59</i>', reply_markup=types.ReplyKeyboardRemove())
     await message.answer('Какой из таймеров вы хотите удалить?')
     all_timers = timer_info_dp(user_id)

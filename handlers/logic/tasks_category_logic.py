@@ -3,10 +3,10 @@
 
 ТАКЖЕ СДЕЛАНА НЕ ОЧЕНЬ КНОПКА "СЛЕДУЮЩЕЕ ЗАДАНИЕ"
 """
-import emoji
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
+from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 
 from data_b.dp_control import problem_category_random, finding_categories_table
@@ -112,7 +112,8 @@ async def tasks_category_logic_end(message: types.Message, state: FSMContext):
 
 
 def register_handlers_tasks_logic_category(dp: Dispatcher):
-    dp.register_message_handler(tasks_category_logic_start, Text(equals="Задания из категорий Логики"))
+    dp.register_message_handler(tasks_category_logic_start,
+                                Text(equals=emoji.emojize(":book:") + ' Задания из категорий Логики'))
 
     all_files_names = [i[0] for i in finding_categories_table('logic')]
     dp.register_callback_query_handler(tasks_category_logic_print_keyboard_inline,

@@ -2,6 +2,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
+from aiogram.utils import emoji
 
 from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del_check, flashcard_del
 from handlers.keyboards.default import flashcard_menu
@@ -136,10 +137,15 @@ class FlashcardManaging(StatesGroup):
 
 def register_handlers_flashcards_managing(dp: Dispatcher):
     dp.register_message_handler(flashcards_managing_start, commands='flc_man', state='*')
-    dp.register_message_handler(flashcards_managing_start, Text(equals="Управление карточками"), state='*')
-    dp.register_message_handler(flashcards_managing_create_start, Text(equals="Создать карточку"), state='*')
-    dp.register_message_handler(flashcards_managing_del_start, Text(equals="Удалить карточку"), state='*')
-    dp.register_message_handler(flashcards_managing_info, Text(equals="Информация о карточках"), state='*')
+    dp.register_message_handler(flashcards_managing_start,
+                                Text(equals=emoji.emojize(":gear:") + " Управление карточками"), state='*')
+    dp.register_message_handler(flashcards_managing_create_start,
+                                Text(equals=emoji.emojize(":pencil2:") + ' Создать карточку'), state='*')
+    dp.register_message_handler(flashcards_managing_del_start,
+                                Text(equals=emoji.emojize(":stop_sign:") + ' Удалить карточку'), state='*')
+    dp.register_message_handler(flashcards_managing_info,
+                                Text(equals=emoji.emojize(":information_source:") + ' Информация о карточках'),
+                                state='*')
 
     dp.register_message_handler(flashcards_managing_create_middle,
                                 state=FlashcardManaging.flashcards_managing_create_middle)

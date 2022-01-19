@@ -78,7 +78,8 @@ async def fls_game(message: types.Message, state: FSMContext):
         # Генерация массива правильных карточек (потом для статистики используется)
         await state.update_data(correct=[])
 
-    elif message.text == emoji.emojize(":white_check_mark:") + ' Правильно' or message.text == emoji.emojize(":x:") + ' Неправильно':
+    elif message.text == emoji.emojize(":white_check_mark:") + ' Правильно' or message.text == emoji.emojize(
+            ":x:") + ' Неправильно':
 
         if message.text == emoji.emojize(":white_check_mark:") + ' Правильно':
             user_data = await state.get_data()
@@ -183,5 +184,6 @@ def register_handlers_flashcards_training(dp: Dispatcher):
     dp.register_message_handler(flc_game_end, Text(equals="Закончить тренировку"), state='*')
 
     dp.register_message_handler(flc_game_reverse_side, Text(equals="Обратная сторона"), state='*')
-    dp.register_message_handler(flashcards_training_start, Text(equals="Начать учить карточки"), state='*')
+    dp.register_message_handler(flashcards_training_start,
+                                Text(equals=emoji.emojize(":brain:") + ' Начать учить карточки'), state='*')
     dp.register_message_handler(fls_game, state=Flash_game.fls_game)

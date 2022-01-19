@@ -35,7 +35,7 @@ def get_keyboard_math_mentally_start():
 
 def get_keyboard_math_mentally_end():
     buttons = [
-        'Закончить примеры в уме'
+        emoji.emojize(":stop_sign:") + " Закончить примеры в уме",
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
