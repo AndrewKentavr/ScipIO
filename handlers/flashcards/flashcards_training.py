@@ -30,6 +30,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
+from aiogram.utils import emoji
 
 from data_b.dp_control import flashcard_dp_info_game
 from handlers.keyboards.default import flashcard_menu
@@ -77,9 +78,9 @@ async def fls_game(message: types.Message, state: FSMContext):
         # Генерация массива правильных карточек (потом для статистики используется)
         await state.update_data(correct=[])
 
-    elif message.text == 'Правильно' or message.text == 'Неправильно':
+    elif message.text == emoji.emojize(":white_check_mark:") + ' Правильно' or message.text == emoji.emojize(":x:") + ' Неправильно':
 
-        if message.text == 'Правильно':
+        if message.text == emoji.emojize(":white_check_mark:") + ' Правильно':
             user_data = await state.get_data()
             # если "правильно", то в user_data['correct'] добавляется id карточки
             correct = user_data['correct']
@@ -130,12 +131,17 @@ async def flc_game_end(message: types.Message, state: FSMContext):
 
     :return: Конец тренировки, state.finish()
     """
-    await message.answer('Тренировка карточек закончена', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Тренировка карточек закончена',
+                         reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
     correct = user_data['correct']
 
-    await message.answer(f'Количество правильно отвеченных карточек: {len(correct)}\n'
-                         f'Id самих карточек: {[f"{i}, " for i in correct]}')
+    string_correct = ''
+    for i in range(len(correct)):
+        string_correct += f"{i + 1}: id - {correct[i]}\n"
+
+    await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
+                                                        f'{string_correct}')
     await state.finish()
 
 

@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.utils import emoji
 
 
 def get_keyboard_logic_start():
@@ -12,8 +13,8 @@ def get_keyboard_logic_start():
 
 def get_keyboard_logic_category():
     buttons = [
-        'Следующая задача логика',
-        'Закончить логику'
+        emoji.emojize(":arrow_right:") + ' Следующая задача логика',
+        emoji.emojize(":stop_sign:") + ' Закончить логику'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

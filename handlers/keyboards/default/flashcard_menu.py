@@ -1,16 +1,16 @@
 from aiogram import types
+from aiogram.utils import emoji
 
 
 def get_keyboard_flashcard_training_game():
     buttons = [
+        emoji.emojize(":white_check_mark:") + ' Правильно',
+        emoji.emojize(":x:") + ' Неправильно',
         'Обратная сторона',
-        'Правильно',
-        'Неправильно'
+        'Закончить тренировку'
     ]
-    buttons_2 = 'Закончить тренировку'
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
-    keyboard.add(buttons_2)
     return keyboard
 
 

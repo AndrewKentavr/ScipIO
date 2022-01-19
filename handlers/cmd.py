@@ -1,7 +1,7 @@
-import emoji
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters.builtin import CommandStart, CommandHelp, Text
 from aiogram.dispatcher import FSMContext
+from aiogram.utils import emoji
 
 
 async def cmd_start(message: types.Message):

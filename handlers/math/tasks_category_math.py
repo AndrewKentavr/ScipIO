@@ -1,7 +1,7 @@
-import emoji
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
+from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 
 from data_b.dp_control import problem_category_random, finding_categories_table
@@ -92,21 +92,23 @@ async def tasks_category_math_print_info(call: types.CallbackQuery, callback_dat
 
 
 async def tasks_category_math_end(message: types.Message, state: FSMContext):
-
     await state.finish()
-    await message.answer(emoji.emojize(":red_circle: ") + 'Выполнение задачек закончилось',
+    await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
                          reply_markup=types.ReplyKeyboardRemove())
 
 
 def register_handlers_tasks_math_category(dp: Dispatcher):
-    dp.register_message_handler(tasks_category_math_start, Text(equals="Задания из категорий Математики"))
+    dp.register_message_handler(tasks_category_math_start,
+                                Text(equals=emoji.emojize(":book:") + ' Задания из категорий Математики'))
 
     all_files_names = [i[0] for i in finding_categories_table('math')]
     dp.register_callback_query_handler(tasks_category_math_print_inline,
                                        callback_problems_math.filter(category=all_files_names), state='*')
 
-    dp.register_message_handler(tasks_category_math_print_keyboard_default, Text(equals="Следующая задача"))
-    dp.register_message_handler(tasks_category_math_end, Text(equals="Закончить математику"))
+    dp.register_message_handler(tasks_category_math_print_keyboard_default,
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'))
+    dp.register_message_handler(tasks_category_math_end,
+                                Text(equals=emoji.emojize(":stop_sign:") + ' Закончить математику'))
 
     info = ['Decision 1', 'Decision 2', 'Answer', 'Remarks']
     dp.register_callback_query_handler(tasks_category_math_print_info,

@@ -1,11 +1,12 @@
 from aiogram import types
+from aiogram.utils import emoji
 
 
 def get_keyboard_math_start():
     buttons_1 = [
-        'Задания из категорий Математики',
+        emoji.emojize(":book:") + ' Задания из категорий Математики',
     ]
-    buttons_2 = 'Примеры для подсчёта в уме'
+    buttons_2 = emoji.emojize(":brain:") + ' Примеры для подсчёта в уме'
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons_1)
     keyboard.add(buttons_2)
@@ -43,8 +44,8 @@ def get_keyboard_math_mentally_end():
 
 def get_keyboard_math_category():
     buttons = [
-        'Следующая задача',
-        'Закончить математику'
+        emoji.emojize(":arrow_right:") + ' Следующая задача',
+        emoji.emojize(":stop_sign:") + ' Закончить математику'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

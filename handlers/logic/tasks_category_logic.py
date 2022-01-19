@@ -108,8 +108,7 @@ async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_da
 
 async def tasks_category_logic_end(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer(emoji.emojize(":red_circle: ") + 'Выполнение задачек закончилось',
-                         reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Выполнение задачек закончилось', reply_markup=types.ReplyKeyboardRemove())
 
 
 def register_handlers_tasks_logic_category(dp: Dispatcher):
@@ -119,8 +118,10 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
     dp.register_callback_query_handler(tasks_category_logic_print_keyboard_inline,
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
-    dp.register_message_handler(tasks_category_logic_print_keyboard_default, Text(equals="Следующая задача логика"))
-    dp.register_message_handler(tasks_category_logic_end, Text(equals="Закончить логику"))
+    dp.register_message_handler(tasks_category_logic_print_keyboard_default,
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача логика'))
+    dp.register_message_handler(tasks_category_logic_end,
+                                Text(equals=emoji.emojize(":stop_sign:") + ' Закончить логику'))
 
     info = ['Decision 1', 'Decision 2', 'Answer', 'Remarks']
     dp.register_callback_query_handler(tasks_category_logic_print_info,

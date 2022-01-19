@@ -2,6 +2,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.filters import Text
+from aiogram.utils import emoji
 
 from data_b.dp_control import timer_create_dp, timer_info_dp, timer_del_dp
 from handlers.keyboards.default import timer_menu
@@ -86,17 +87,6 @@ class Timer(StatesGroup):
     timer_del = State()
 
 
-def register_handlers_timer_managing(dp: Dispatcher):
-    dp.register_message_handler(timer_create_start, Text(equals="Создать таймер", ignore_case=True))
-    dp.register_message_handler(timer_del_start, Text(equals="Удалить таймер", ignore_case=True))
-    dp.register_message_handler(timer_info, Text(equals="Посмотреть ваши таймеры", ignore_case=True))
-
-    dp.register_message_handler(timer_create_middle, state=Timer.timer_create_middle)
-    dp.register_message_handler(timer_create_end, state=Timer.timer_create_end)
-
-    dp.register_message_handler(timer_del, state=Timer.timer_del)
-
-
 def checking_message(msg):
     """
     Проверка на то что число написанно вот так:
@@ -122,3 +112,18 @@ def checking_message(msg):
             return 'Переборщили со знаками'
     else:
         return 'Забыли про знак ":"'
+
+
+def register_handlers_timer_managing(dp: Dispatcher):
+    dp.register_message_handler(timer_create_start,
+                                Text(equals=emoji.emojize(":pencil2:") + ' Создать таймер', ignore_case=True))
+    dp.register_message_handler(timer_del_start,
+                                Text(equals=emoji.emojize(":stop_sign:") + ' Удалить таймер', ignore_case=True))
+    dp.register_message_handler(timer_info,
+                                Text(equals=emoji.emojize(":information_source:") + ' Посмотреть ваши таймеры',
+                                     ignore_case=True))
+
+    dp.register_message_handler(timer_create_middle, state=Timer.timer_create_middle)
+    dp.register_message_handler(timer_create_end, state=Timer.timer_create_end)
+
+    dp.register_message_handler(timer_del, state=Timer.timer_del)

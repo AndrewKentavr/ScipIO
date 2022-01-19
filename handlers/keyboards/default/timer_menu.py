@@ -1,11 +1,12 @@
 from aiogram import types
+from aiogram.utils import emoji
 
 
 def get_keyboard_timer():
     buttons = [
-        'Создать таймер',
-        'Удалить таймер',
-        'Посмотреть ваши таймеры'
+        emoji.emojize(":pencil2:") + ' Создать таймер',
+        emoji.emojize(":stop_sign:") + ' Удалить таймер',
+        emoji.emojize(":information_source:") + ' Посмотреть ваши таймеры'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

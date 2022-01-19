@@ -21,6 +21,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import InputFile
+from aiogram.utils import emoji
 
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
@@ -223,12 +224,14 @@ def register_handlers_math_mentally(dp: Dispatcher):
     """
     Если меняете алгоритм, то незабудьте поменять state в таймере
     """
+    dp.register_message_handler(equation_mentally_start,
+                                Text(equals=emoji.emojize(":brain:") + ' Примеры для подсчёта в уме'))
+
     dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')
 
     dp.register_message_handler(equation_mentally_end, commands='end_mental', state='*')
     dp.register_message_handler(equation_mentally_end, Text(equals="Закончить"), state='*')
 
-    dp.register_message_handler(equation_mentally_start, Text(equals="Примеры для подсчёта в уме"))
     dp.register_message_handler(equation_mentally_start, commands="equation_mentally")
     dp.register_message_handler(equation_mentally_beginning, state=Equation.equation_mentally_beginning)
     dp.register_message_handler(equation_mentally, state=Equation.equation_mentally)
