@@ -16,7 +16,7 @@ class ThrottlingMiddleware(BaseMiddleware):
     Simple middleware
     """
 
-    def __init__(self, limit=3, key_prefix='antiflood_'):
+    def __init__(self, limit=2, key_prefix='antiflood_'):
         self.rate_limit = limit
         self.prefix = key_prefix
         super(ThrottlingMiddleware, self).__init__()
@@ -44,7 +44,8 @@ class ThrottlingMiddleware(BaseMiddleware):
             key = getattr(handler, 'throttling_key', f"{self.prefix}_{handler.__name__}")
         else:
             key = f"{self.prefix}_message"
-        delta = throttled.rate - throttled.delta
+        # delta = throttled.rate - throttled.delta
+        delta = 4
         if throttled.exceeded_count <= 2:
             await message.reply('Слишком много запросов!!!')
         await asyncio.sleep(delta)
