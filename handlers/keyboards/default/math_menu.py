@@ -34,7 +34,7 @@ def get_keyboard_math_mentally_start():
 
 def get_keyboard_math_mentally_end():
     buttons = [
-        'Закончить'
+        'Закончить примеры в уме'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
@@ -44,6 +44,7 @@ def get_keyboard_math_mentally_end():
 def get_keyboard_math_category():
     buttons = [
         'Следующая задача',
+        'Закончить математику'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

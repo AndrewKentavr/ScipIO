@@ -3,8 +3,9 @@
 
 ТАКЖЕ СДЕЛАНА НЕ ОЧЕНЬ КНОПКА "СЛЕДУЮЩЕЕ ЗАДАНИЕ"
 """
-
+import emoji
 from aiogram import types, Dispatcher
+from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.utils.callback_data import CallbackData
 
@@ -78,7 +79,7 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message):
 
     global problems_info_data_logic
     problems_info_data_logic = info_problem
-    
+
     await message.answer(
         f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
         reply_markup=logic_menu.get_keyboard_logic_category())
@@ -105,6 +106,12 @@ async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_da
     await call.answer()
 
 
+async def tasks_category_logic_end(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer(emoji.emojize(":red_circle: ") + 'Выполнение задачек закончилось',
+                         reply_markup=types.ReplyKeyboardRemove())
+
+
 def register_handlers_tasks_logic_category(dp: Dispatcher):
     dp.register_message_handler(tasks_category_logic_start, Text(equals="Задания из категорий Логики"))
 
@@ -113,6 +120,7 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_logic_print_keyboard_default, Text(equals="Следующая задача логика"))
+    dp.register_message_handler(tasks_category_logic_end, Text(equals="Закончить логику"))
 
     info = ['Decision 1', 'Decision 2', 'Answer', 'Remarks']
     dp.register_callback_query_handler(tasks_category_logic_print_info,
