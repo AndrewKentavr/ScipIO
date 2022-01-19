@@ -4,6 +4,7 @@ from aiogram import Bot, Dispatcher, executor, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 
+import middlewares
 from config import BOT_TOKEN, ADMINS
 import logging
 
@@ -39,10 +40,13 @@ def timer_interval_func():
 
 async def main():
     """
+    middlewares.setup(dp) - запуск против флуда
     scheduler.start(), check_func() - запуск таймера и функция работающая с ним
     set_commands - назначает комманды бота
     reg_cmd - регистрация фсех необходимых функция
     """
+
+    middlewares.setup(dp)
 
     scheduler.start()
     timer_interval_func()
