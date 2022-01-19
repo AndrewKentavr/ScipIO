@@ -220,6 +220,9 @@ def equation_generate():
 
 
 def register_handlers_math_mentally(dp: Dispatcher):
+    """
+    Если меняете алгоритм, то незабудьте поменять state в таймере
+    """
     dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')
 
     dp.register_message_handler(equation_mentally_end, commands='end_mental', state='*')

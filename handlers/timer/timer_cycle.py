@@ -5,7 +5,7 @@ from aiogram.dispatcher import FSMContext
 
 from data_b.dp_control import get_cursor
 from handlers.flashcards.flashcards_training import Flash_game
-from handlers.keyboards.default import flashcard_menu
+from handlers.keyboards.default import flashcard_menu, math_menu
 from handlers.keyboards.inline import math_menu_inline
 from handlers.math.mentally_math import Equation
 
@@ -31,7 +31,7 @@ async def time_cycle(dp):
             """
             state = dp.current_state(chat=user_id, user=user_id)
 
-            await dp.bot.send_message(user_id, 'Ежедневное задание',
+            await dp.bot.send_message(user_id, 'Ежедневное задание!',
                                       reply_markup=types.ReplyKeyboardRemove())
 
             # Дальше идёт проверка на то какие ежедневное задание какое типа выводить
@@ -43,8 +43,8 @@ async def time_cycle(dp):
 
             elif tasks == 'Математика в уме':
                 await dp.bot.send_message(user_id, 'Чтобы вызвать подсказку напишите /mell_theory')
-                await dp.bot.send_message(user_id, 'Вы готовы?', reply_markup=types.ReplyKeyboardRemove())
-                await state.set_state(Equation.equation_mentally)
+                await dp.bot.send_message(user_id, 'Вы готовы?', reply_markup=math_menu.get_keyboard_math_mentally_start())
+                await state.set_state(Equation.equation_mentally_beginning)
 
             elif tasks == 'Задачи по математике':
                 await dp.bot.send_message(user_id, 'Выберете категорию заданий:',

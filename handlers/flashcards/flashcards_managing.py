@@ -78,9 +78,15 @@ async def flashcards_managing_create_end(message: types.Message, state: FSMConte
 
 # -----------------------------DEL FUNC-----------------------------------------
 async def flashcards_managing_del_start(message: types.Message):
+    all_cards = flashcard_dp_info(message.from_user.id)
+    if len(all_cards) == 0:
+        await message.answer(f'У вас нет карточек, которые вы могли бы удалалять',
+                             reply_markup=types.ReplyKeyboardRemove())
+        await message.answer(f'Сначала создайте их')
+        return
+
     await message.answer(f'Чтобы удалить карточку - введите её id',
                          reply_markup=types.ReplyKeyboardRemove())
-    all_cards = flashcard_dp_info(message.from_user.id)
     mes_print = 'id     :     front     :      back\n'
     for i in all_cards:
         mes_print += f'{i[0]}: {i[1]} - {i[2]}\n'

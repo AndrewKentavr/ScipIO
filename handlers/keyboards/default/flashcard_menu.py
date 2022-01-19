@@ -3,7 +3,7 @@ from aiogram import types
 
 def get_keyboard_flashcard_training_game():
     buttons = [
-        'Обратая сторона',
+        'Обратная сторона',
         'Правильно',
         'Неправильно'
     ]

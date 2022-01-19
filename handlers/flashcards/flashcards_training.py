@@ -36,11 +36,15 @@ from handlers.keyboards.default import flashcard_menu
 
 
 async def flashcards_training_theory(message: types.Message):
-    await message.answer('Флеш-карточки - это удобный способ запоминания и повторения изучаемого материала. На одной стороне карточки пишется слово, фраза или термин, а на другой, перевод или значение.')
+    await message.answer(
+        'Флеш-карточки - это удобный способ запоминания и повторения изучаемого материала. На одной стороне карточки пишется слово, фраза или термин, а на другой, перевод или значение.')
     await message.answer('Чтобы процесс обучения был более эффективным вы можете придерживаться нескольких советов:')
-    await message.answer('1) Разбейте учебные сеансы на отрезки по 10-15 минут, так как их вполне хватит для повторения более 100 слов, и такое кол-во свободного времени найдется у любого человека.'
-                         '\n2) Чаще устраивайте себе экзамены, ведь чем чаще вы будете себя испытывать, тем лучше.'
-                         '\n3) Создайте подходящую для вас систему обучения, в данном случае дисциплина гораздо полезнее случайных занятий.')
+    await message.answer(
+        '1) Разбейте учебные сеансы на отрезки по 10-15 минут, так как их вполне хватит для повторения более 100 слов, и такое кол-во свободного времени найдется у любого человека.'
+        '\n2) Чаще устраивайте себе экзамены, ведь чем чаще вы будете себя испытывать, тем лучше.'
+        '\n3) Создайте подходящую для вас систему обучения, в данном случае дисциплина гораздо полезнее случайных занятий.')
+
+
 async def flashcards_training_start(message: types.Message):
     await message.answer('Принцип работы с карточками и советы /flc_theory')
     await message.answer('Вы готовы?', reply_markup=flashcard_menu.get_keyboard_flashcard_training_start())
@@ -55,10 +59,17 @@ async def fls_game(message: types.Message, state: FSMContext):
     """
 
     if message.text == 'Да':
-        await message.answer('Чтобы закончить изучение напишите /flash_end')
 
         # Генерация массива карточек пользователя
         flashcards = flashcard_generate(message.from_user.id)
+        if not flashcards:
+            await message.answer('У вас ещё нет карточек', reply_markup=types.ReplyKeyboardRemove())
+            await message.answer('Чтобы создать их, вам нужно прописать /flashcard, потом зайти в '
+                                 '"Управление карточками" и нажать на кнопку "Создать карточку"')
+            await state.finish()
+            return
+
+        await message.answer('Чтобы закончить изучение напишите /flash_end')
         await state.update_data(flashcards=flashcards)
         # Генерация массива правильных карточек (потом для статистики используется)
         await state.update_data(correct=[])
@@ -83,7 +94,6 @@ async def fls_game(message: types.Message, state: FSMContext):
 
     else:
         await message.answer('Вы написали что-то не то')
-        await state.finish()
         return
 
     user_data = await state.get_data()
@@ -142,7 +152,7 @@ def flashcard_generate(user_id):
     """
     flashcards = flashcard_dp_info_game(user_id)
     if len(flashcards) == 0:
-        return 'У вас нет карточек, создайте их'
+        return False
 
     flashcards_2 = []
     for i in flashcards:
@@ -163,6 +173,6 @@ def register_handlers_flashcards_training(dp: Dispatcher):
     # Вот тут проблема с тем, что если писать "Закончить", то конец программы mentally_math
     dp.register_message_handler(flc_game_end, Text(equals="Закончить тренировку"), state='*')
 
-    dp.register_message_handler(flashcards_training_start, Text(equals="Начать учить карточки"), state='*')
     dp.register_message_handler(flc_game_reverse_side, Text(equals="Обратная сторона"), state='*')
+    dp.register_message_handler(flashcards_training_start, Text(equals="Начать учить карточки"), state='*')
     dp.register_message_handler(fls_game, state=Flash_game.fls_game)
