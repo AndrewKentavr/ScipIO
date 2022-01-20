@@ -8,6 +8,9 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
+from aiogram.utils.markdown import hlink
+import aiogram.utils.markdown as fmt
+
 
 from data_b.dp_control import problem_category_random, finding_categories_table
 from handlers.keyboards.default import logic_menu
@@ -21,6 +24,12 @@ async def tasks_category_logic_start(message: types.Message):
 
     await message.answer('Выберите категорию заданий:',
                          reply_markup=logic_menu_inline.get_inline_logic_problems_category())
+
+    link_endrey = hlink('в этот телеграм', fmt.hide_link('https://t.me/Endrey_k'))
+    await message.answer(f'<u>Если задание неправильное или неправильно выводиться, то прошу написать {link_endrey}</u>'
+                         ' сообщение вида:\n'
+                         '(категория) - (id задачи или название) - (и часть условия)\n'
+                         'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
 
 
 async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, callback_data: dict):

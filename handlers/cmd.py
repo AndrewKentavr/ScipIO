@@ -1,10 +1,13 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters.builtin import CommandStart, CommandHelp, Text
 from aiogram.dispatcher import FSMContext
+from aiogram.types import InputFile
 from aiogram.utils import emoji
 
 
 async def cmd_start(message: types.Message):
+    photo = InputFile("data/text_scipio.jpg")
+    await message.answer_photo(photo=photo)
     await message.answer(f'Приветствуем на нашем обучающем проекте!' + emoji.emojize(":fire:"))
     await message.answer(
         f'Мы создали его для людей, которые хотят развить свои навыки или получить новые. ' + emoji.emojize(

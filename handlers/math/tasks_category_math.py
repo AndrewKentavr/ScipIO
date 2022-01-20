@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
+from aiogram.utils.markdown import hlink
 
 from data_b.dp_control import problem_category_random, finding_categories_table
 from handlers.keyboards.default import math_menu
@@ -15,6 +16,11 @@ callback_problems_info_math = CallbackData("values", "info", "translate")
 async def tasks_category_math_start(message: types.Message):
     await message.answer('Выберите категорию заданий:',
                          reply_markup=math_menu_inline.get_inline_math_problems_category())
+    link_endrey = hlink('в этот телеграм', 'https://t.me/Endrey_k')
+    await message.answer(f'<u>Если задание неправильное или неправильно выводиться, то прошу написать {link_endrey}</u>'
+                         ' сообщение вида:\n'
+                         '(категория) - (id задачи или название) - (и часть условия)\n'
+                         'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
 
 
 async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
