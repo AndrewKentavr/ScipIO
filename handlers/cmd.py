@@ -5,7 +5,8 @@ from aiogram.types import InputFile
 from aiogram.utils import emoji
 
 
-async def cmd_start(message: types.Message):
+async def cmd_start(message: types.Message, state: FSMContext):
+    await state.finish()
     photo = InputFile("data/text_scipio.jpg")
     await message.answer_photo(photo=photo)
     await message.answer(f'Приветствуем на нашем обучающем проекте!' + emoji.emojize(":fire:"))
@@ -39,7 +40,8 @@ async def cmd_start(message: types.Message):
                                                                                      f'· Максим Монахов - помощь в создании текстов и статей для бота\n')
 
 
-async def cmd_help(message: types.Message):
+async def cmd_help(message: types.Message, state: FSMContext):
+    await state.finish()
     await message.answer("Основные команды:"
                          f"\n <b>1)</b> /math - Задачи по математике. В данном алгоритме вы вибираете категорию задания,"
                          f" а потом просто проходите и нарешиваете соответствующие задания" + emoji.emojize(":book:") +
