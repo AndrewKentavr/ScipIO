@@ -25,7 +25,7 @@ async def tasks_category_logic_start(message: types.Message):
     await message.answer('Выберите категорию заданий:',
                          reply_markup=logic_menu_inline.get_inline_logic_problems_category())
 
-    link_endrey = hlink('в этот телеграм', fmt.hide_link('https://t.me/Endrey_k'))
+    link_endrey = hlink('в этот телеграм', 'https://t.me/Endrey_k')
     await message.answer(f'<u>Если задание неправильное или неправильно выводиться, то прошу написать {link_endrey}</u>'
                          ' сообщение вида:\n'
                          '(категория) - (id задачи или название) - (и часть условия)\n'

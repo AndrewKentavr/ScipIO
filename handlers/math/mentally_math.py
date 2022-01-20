@@ -215,7 +215,6 @@ def equation_generate():
         B = str(randint(11, 99))
     equation = f'{A} {sign} {B}'
     answer = eval(equation)
-    print(answer)
 
     return [equation, answer]
 
