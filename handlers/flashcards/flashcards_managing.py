@@ -136,7 +136,7 @@ class FlashcardManaging(StatesGroup):
 
 
 def register_handlers_flashcards_managing(dp: Dispatcher):
-    dp.register_message_handler(flashcards_managing_start, commands='flc_man', state='*')
+    dp.register_message_handler(flashcards_managing_start, commands='flc_mg', state='*')
     dp.register_message_handler(flashcards_managing_start,
                                 Text(equals=emoji.emojize(":gear:") + " Управление карточками"), state='*')
     dp.register_message_handler(flashcards_managing_create_start,
