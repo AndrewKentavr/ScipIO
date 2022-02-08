@@ -16,8 +16,7 @@ from handlers.register_cmd import reg_cmd
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
 logging.basicConfig(level=logging.INFO)
-# Минск, потому что в примере другого не было
-scheduler = AsyncIOScheduler(timezone="Europe/Minsk")
+scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
 
 async def set_commands(bot: Bot):
