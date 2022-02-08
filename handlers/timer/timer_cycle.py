@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 
@@ -8,13 +6,15 @@ from handlers.flashcards.flashcards_training import Flash_game
 from handlers.keyboards.default import flashcard_menu, math_menu
 from handlers.keyboards.inline import math_menu_inline
 from handlers.math.mentally_math import Equation
+import pytz
+from datetime import datetime
 
 
 async def time_cycle(dp):
     cur = get_cursor()
 
-    now = datetime.now()
-    time_now = now.strftime("%H:%M")
+    time_moscow = datetime.now(pytz.timezone('Europe/Moscow'))
+    time_now = time_moscow.strftime("%H:%M")
 
     cur.execute(f"""SELECT time, user_id, tasks FROM Time
                     where time == '{time_now}';""")
@@ -43,7 +43,8 @@ async def time_cycle(dp):
 
             elif tasks == 'Математика в уме':
                 await dp.bot.send_message(user_id, 'Чтобы вызвать подсказку напишите /mell_theory')
-                await dp.bot.send_message(user_id, 'Вы готовы?', reply_markup=math_menu.get_keyboard_math_mentally_start())
+                await dp.bot.send_message(user_id, 'Вы готовы?',
+                                          reply_markup=math_menu.get_keyboard_math_mentally_start())
                 await state.set_state(Equation.equation_mentally_beginning)
 
             elif tasks == 'Задачи по математике':
