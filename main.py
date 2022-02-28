@@ -54,7 +54,7 @@ async def main():
     await set_commands(bot)
     # функция регистрации "register_message_handler"
     reg_cmd(dp)
-    await bot.send_message(ADMINS, "Bot - on", reply_markup=types.ReplyKeyboardRemove())
+    # await bot.send_message(ADMINS, "Bot - on", reply_markup=types.ReplyKeyboardRemove())
 
     # Пропуск обновлений и запуск полинга
     """ПОЧЕМУ ТО ОТВЕЧАЕТ ТОЛЬКО НА ПОСЛЕДНИЕ СООБЩЕНИЯ ПРИ ЗАПУСКЕ !!!!!!"""

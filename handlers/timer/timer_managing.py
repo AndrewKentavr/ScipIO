@@ -57,9 +57,9 @@ async def timer_del_start(message: types.Message):
         await message.answer('У вас нет таймеров', reply_markup=types.ReplyKeyboardRemove())
         return
 
-    await message.answer('Удалите таймер, написав время таймера сюда\n'
-                         '1 пример: <i>16:02</i>\n'
-                         '2 пример: <i>05:59</i>', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Удалите таймер, написав номер таймера/таймеров\n'
+                         '1 пример: 1\n'
+                         '2 пример: 1 3', reply_markup=types.ReplyKeyboardRemove())
     await message.answer('Какой из таймеров вы хотите удалить?')
 
     string_timer = ''
@@ -71,14 +71,25 @@ async def timer_del_start(message: types.Message):
 
 
 async def timer_del(message: types.Message, state: FSMContext):
-    msg = message.text
-    check_func = checking_message(msg)
-    if isinstance(check_func, str):  # Проверка на то, что 'check_func' выводит ошибку, типа string
-        await message.reply(check_func)
-    else:
-        timer_del_dp(message.from_user.id, msg)
-        await message.reply('Таймер удалён')
+    check_func = checking_message_del(message.text)
+    if not(isinstance(check_func, str)):
+        user_id = message.from_user.id
+        all_timers = timer_info_dp(user_id)
+        string_timer = ''
+        for i in range(len(all_timers)):
+            string_timer += f'{i + 1}: {all_timers[i]}\n'
+        string_timer = string_timer.split()
+
+        time_number_list = list(message.text.replace(' ', ''))
+        for i in range(len(time_number_list)):
+            time_number = time_number_list[i] + ':'
+            msg = string_timer[string_timer.index(time_number) + 1]
+            timer_del_dp(message.from_user.id, msg)
+            await message.answer(f'Таймер {string_timer[string_timer.index(time_number) + 1]} удалён')
         await state.finish()
+    else:
+        await message.reply(check_func)
+
 
 
 async def timer_info(message: types.Message):
@@ -105,7 +116,7 @@ class Timer(StatesGroup):
 def checking_message(msg):
     """
     Проверка на то что число написанно вот так:
-    16:02
+    13:02
     """
     if ':' in msg:
         c = msg.split(':')
@@ -127,6 +138,19 @@ def checking_message(msg):
             return 'Переборщили со знаками'
     else:
         return 'Забыли про знак ":"'
+
+
+def checking_message_del(msg):
+    """
+        Проверка на то что число написанно вот так:
+        1 3 или 1
+    """
+    for i in range(len(msg.split())):
+        try:
+            int(msg.split()[i])
+        except ValueError:
+            return 'Введено не число'
+    return True
 
 
 def register_handlers_timer_managing(dp: Dispatcher):
