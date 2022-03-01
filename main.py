@@ -45,6 +45,7 @@ async def main():
     set_commands - назначает комманды бота
     reg_cmd - регистрация фсех необходимых функция
     """
+    # Удаление последний сообщений
     await bot.delete_webhook(drop_pending_updates=True)
     middlewares.setup(dp)
 
@@ -56,9 +57,7 @@ async def main():
     reg_cmd(dp)
     # await bot.send_message(ADMINS, "Bot - on", reply_markup=types.ReplyKeyboardRemove())
 
-    # Пропуск обновлений и запуск полинга
-    """ПОЧЕМУ ТО ОТВЕЧАЕТ ТОЛЬКО НА ПОСЛЕДНИЕ СООБЩЕНИЯ ПРИ ЗАПУСКЕ !!!!!!"""
-
+    # Запуск полинга
     await dp.start_polling()
 
 

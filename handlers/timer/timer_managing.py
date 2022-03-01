@@ -31,6 +31,7 @@ async def timer_create_middle(message: types.Message, state: FSMContext):
     if isinstance(check_func, str):  # Проверка на то, что 'check_func' выводит ошибку, типа string
         await message.reply(check_func)
     else:
+        # Проверка на то что введеный таймер не существует
         if msg not in all_timers:
             await state.update_data(time=msg)
             await message.answer('Выберите, что вы хотите начать повторять',
@@ -88,9 +89,11 @@ async def timer_del(message: types.Message, state: FSMContext):
     # Проверка на то что check_func == True
     if not (isinstance(id_timer_list_str, str)):
         user_id = message.from_user.id
+        # Список таймеров пользователя
         all_timers = timer_info_dp(user_id)
 
         for i in range(len(id_timer_list_str)):
+            # Проверка на то что номер введенного таймера существует
             if len(all_timers) >= int(id_timer_list_str[i]) > 0:
                 count_id = int(id_timer_list_str[i]) - 1
                 timer_del_dp(message.from_user.id, all_timers[count_id])
