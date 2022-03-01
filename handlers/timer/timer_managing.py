@@ -84,9 +84,12 @@ async def timer_del(message: types.Message, state: FSMContext):
         all_timers = timer_info_dp(user_id)
 
         for i in range(len(id_timer_list_str)):
-            count_id = int(id_timer_list_str[i]) - 1
-            timer_del_dp(message.from_user.id, all_timers[count_id])
-            await message.answer(f'Таймер {all_timers[count_id]} удалён')
+            if len(all_timers) >= int(id_timer_list_str[i]) > 0:
+                count_id = int(id_timer_list_str[i]) - 1
+                timer_del_dp(message.from_user.id, all_timers[count_id])
+                await message.answer(f'Таймер {all_timers[count_id]} удалён')
+            else:
+                await message.answer(f'Таймера под номером {id_timer_list_str[i]} не существует')
 
         await state.finish()
     else:
