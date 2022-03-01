@@ -45,7 +45,7 @@ async def main():
     set_commands - назначает комманды бота
     reg_cmd - регистрация фсех необходимых функция
     """
-
+    await bot.delete_webhook(drop_pending_updates=True)
     middlewares.setup(dp)
 
     scheduler.start()
@@ -59,7 +59,6 @@ async def main():
     # Пропуск обновлений и запуск полинга
     """ПОЧЕМУ ТО ОТВЕЧАЕТ ТОЛЬКО НА ПОСЛЕДНИЕ СООБЩЕНИЯ ПРИ ЗАПУСКЕ !!!!!!"""
 
-    await dp.skip_updates()
     await dp.start_polling()
 
 
