@@ -100,10 +100,11 @@ async def timer_del(message: types.Message, state: FSMContext):
                 await message.answer(f'Таймер {all_timers[count_id]} удалён')
             else:
                 await message.answer(f'Таймера под номером {id_timer_list_str[i]} не существует')
-
+                await Timer.timer_del.set()
         await state.finish()
     else:
         await message.reply(id_timer_list_str)
+        await Timer.timer_del.set()
 
 
 # ----------------------------------INFO TIMER----------------------------------------

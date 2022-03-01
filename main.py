@@ -45,7 +45,7 @@ async def main():
     set_commands - назначает комманды бота
     reg_cmd - регистрация фсех необходимых функция
     """
-    # Удаление последний сообщений
+    # Удаление последнего сообщения
     await bot.delete_webhook(drop_pending_updates=True)
     middlewares.setup(dp)
 
