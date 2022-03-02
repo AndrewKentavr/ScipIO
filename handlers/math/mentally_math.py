@@ -224,7 +224,7 @@ def register_handlers_math_mentally(dp: Dispatcher):
     Если меняете алгоритм, то незабудьте поменять state в таймере
     """
     dp.register_message_handler(equation_mentally_start,
-                                Text(equals=emoji.emojize(":brain:") + ' Примеры для подсчёта в уме'))
+                                Text(equals=emoji.emojize(":brain:") + ' Примеры для подсчёта в уме'), state='*')
     dp.register_message_handler(equation_mentally_start, commands="equation_mentally")
 
     dp.register_message_handler(equation_mentally_theory, commands='mell_theory', state='*')

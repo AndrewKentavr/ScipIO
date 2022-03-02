@@ -5,6 +5,8 @@ from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
 
+from handlers.math.math import math_next_problem
+
 from data_b.dp_control import problem_category_random, finding_categories_table
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
@@ -21,6 +23,7 @@ async def tasks_category_math_start(message: types.Message):
                          ' сообщение вида:\n'
                          '(категория) - (id задачи или название) - (и часть условия)\n'
                          'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
+
 
 
 async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
@@ -50,7 +53,7 @@ async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_d
     await call.answer()
 
 
-async def tasks_category_math_print_keyboard_default(message: types.Message):
+async def tasks_category_math_print_keyboard_default(message: types.Message, state: FSMContext):
     dictionary_info_problem = problem_category_random(category, 'math')
 
     title = dictionary_info_problem['title']
@@ -105,14 +108,15 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
 
 def register_handlers_tasks_math_category(dp: Dispatcher):
     dp.register_message_handler(tasks_category_math_start,
-                                Text(equals=emoji.emojize(":book:") + ' Задания из категорий Математики'))
+                                Text(equals=emoji.emojize(":book:") + ' Задания из категорий Математики'),
+                                state=math_next_problem.next_problem)
 
     all_files_names = [i[0] for i in finding_categories_table('math')]
     dp.register_callback_query_handler(tasks_category_math_print_inline,
                                        callback_problems_math.filter(category=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_math_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'))
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'), state=math_next_problem.next_problem)
     dp.register_message_handler(tasks_category_math_end,
                                 Text(equals=emoji.emojize(":stop_sign:") + ' Закончить математику'))
 
