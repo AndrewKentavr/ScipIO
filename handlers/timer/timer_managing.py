@@ -12,6 +12,7 @@ async def timer_select(message: types.Message):
     await message.answer('Выберите:', reply_markup=timer_menu.get_keyboard_timer())
 
 
+# ----------------------------------CREATE TIMER----------------------------------------
 async def timer_create_start(message: types.Message):
     await message.answer('Введите нужное вам время в формате:\n'
                          '<i>16:02</i>\n'
@@ -21,15 +22,23 @@ async def timer_create_start(message: types.Message):
 
 
 async def timer_create_middle(message: types.Message, state: FSMContext):
+    user_id = message.from_user.id
+    all_timers = timer_info_dp(user_id)
+
     msg = message.text
+
     check_func = checking_message(msg)
     if isinstance(check_func, str):  # Проверка на то, что 'check_func' выводит ошибку, типа string
         await message.reply(check_func)
     else:
-        await state.update_data(time=msg)
-        await message.answer('Выберите, что вы хотите начать повторять',
-                             reply_markup=timer_menu.get_keyboard_question_tasks())
-        await Timer.timer_create_end.set()
+        # Проверка на то что введеный таймер не существует
+        if msg not in all_timers:
+            await state.update_data(time=msg)
+            await message.answer('Выберите, что вы хотите начать повторять',
+                                 reply_markup=timer_menu.get_keyboard_question_tasks())
+            await Timer.timer_create_end.set()
+        else:
+            await message.reply('Такой таймер уже существует')
 
 
 async def timer_create_end(message: types.Message, state: FSMContext):
@@ -50,6 +59,8 @@ async def timer_create_end(message: types.Message, state: FSMContext):
         await Timer.timer_create_end.set()
 
 
+# ----------------------------------DEL TIMER----------------------------------------
+
 async def timer_del_start(message: types.Message):
     user_id = message.from_user.id
     all_timers = timer_info_dp(user_id)
@@ -57,11 +68,12 @@ async def timer_del_start(message: types.Message):
         await message.answer('У вас нет таймеров', reply_markup=types.ReplyKeyboardRemove())
         return
 
-    await message.answer('Удалите таймер, написав время таймера сюда\n'
-                         '1 пример: <i>16:02</i>\n'
-                         '2 пример: <i>05:59</i>', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Удалите таймер, написав номер таймера/таймеров\n'
+                         '1 пример: 1\n'
+                         '2 пример: 1 3', reply_markup=types.ReplyKeyboardRemove())
     await message.answer('Какой из таймеров вы хотите удалить?')
 
+    # Вывод информации о таймерах
     string_timer = ''
     for i in range(len(all_timers)):
         string_timer += f'{i + 1}: {all_timers[i]}\n'
@@ -72,13 +84,30 @@ async def timer_del_start(message: types.Message):
 
 async def timer_del(message: types.Message, state: FSMContext):
     msg = message.text
-    check_func = checking_message(msg)
-    if isinstance(check_func, str):  # Проверка на то, что 'check_func' выводит ошибку, типа string
-        await message.reply(check_func)
-    else:
-        timer_del_dp(message.from_user.id, msg)
-        await message.reply('Таймер удалён')
+
+    id_timer_list_str = checking_message_del(msg)
+    # Проверка на то что check_func == True
+    if not (isinstance(id_timer_list_str, str)):
+        user_id = message.from_user.id
+        # Список таймеров пользователя
+        all_timers = timer_info_dp(user_id)
+
+        for i in range(len(id_timer_list_str)):
+            # Проверка на то что номер введенного таймера существует
+            if len(all_timers) >= int(id_timer_list_str[i]) > 0:
+                count_id = int(id_timer_list_str[i]) - 1
+                timer_del_dp(message.from_user.id, all_timers[count_id])
+                await message.answer(f'Таймер {all_timers[count_id]} удалён')
+            else:
+                await message.answer(f'Таймера под номером {id_timer_list_str[i]} не существует')
+                await Timer.timer_del.set()
         await state.finish()
+    else:
+        await message.reply(id_timer_list_str)
+        await Timer.timer_del.set()
+
+
+# ----------------------------------INFO TIMER----------------------------------------
 
 
 async def timer_info(message: types.Message):
@@ -105,7 +134,7 @@ class Timer(StatesGroup):
 def checking_message(msg):
     """
     Проверка на то что число написанно вот так:
-    16:02
+    13:02
     """
     if ':' in msg:
         c = msg.split(':')
@@ -127,6 +156,22 @@ def checking_message(msg):
             return 'Переборщили со знаками'
     else:
         return 'Забыли про знак ":"'
+
+
+def checking_message_del(msg):
+    """
+    Проверка на то что число написанно вот так:
+    1 3 или 1
+    """
+    # Список id таймеров (который ввёл пользователь)
+    id_timer_list_str = msg.split()
+
+    for i in range(len(id_timer_list_str)):
+        try:
+            int(id_timer_list_str[i])
+        except ValueError:
+            return 'Введено не число'
+    return id_timer_list_str
 
 
 def register_handlers_timer_managing(dp: Dispatcher):

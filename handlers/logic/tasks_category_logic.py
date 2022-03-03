@@ -6,14 +6,14 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
+from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
-import aiogram.utils.markdown as fmt
-
 
 from data_b.dp_control import problem_category_random, finding_categories_table
 from handlers.keyboards.default import logic_menu
+from handlers.logic.logic import LogicButCategory
 
 callback_problems_logic = CallbackData("problems_logic", "category_logic")
 callback_problems_info_logic = CallbackData("values_logic", "info_logic", "translate_logic")
@@ -30,13 +30,13 @@ async def tasks_category_logic_start(message: types.Message):
                          ' сообщение вида:\n'
                          '(категория) - (id задачи или название) - (и часть условия)\n'
                          'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
+    await LogicCategory.logic_step.set()
 
 
 async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, callback_data: dict):
     # НУЖНЫ ИЗМЕНЕНИЯ В КОММЕНТАРИИ
 
     """
-
     :param call: Это ответ на нажатие INLINE кнопки КАТЕГОРИЯ
     :param callback_data: Это значения INLINE кнопки, то есть это информация
     о категории (её вроде бы info_logic, translate_logic)
@@ -71,7 +71,7 @@ async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, 
     await call.answer()
 
 
-async def tasks_category_logic_print_keyboard_default(message: types.Message):
+async def tasks_category_logic_print_keyboard_default(message: types.Message, state: FSMContext):
     from handlers.keyboards.inline import logic_menu_inline
 
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
@@ -120,18 +120,26 @@ async def tasks_category_logic_end(message: types.Message, state: FSMContext):
     await message.answer('Выполнение задачек закончилось', reply_markup=types.ReplyKeyboardRemove())
 
 
+class LogicCategory(StatesGroup):
+    """Данные state нужен, чтобы отделять одинаковые кнопки 'Закончить' и 'Следующая задача'"""
+    logic_step = State()
+
+
 def register_handlers_tasks_logic_category(dp: Dispatcher):
     dp.register_message_handler(tasks_category_logic_start,
-                                Text(equals=emoji.emojize(":book:") + ' Задания из категорий Логики'))
+                                Text(equals=emoji.emojize(":book:") + ' Задания из категорий'),
+                                state=LogicButCategory.logic_category_step)
 
     all_files_names = [i[0] for i in finding_categories_table('logic')]
     dp.register_callback_query_handler(tasks_category_logic_print_keyboard_inline,
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_logic_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача логика'))
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'),
+                                state=LogicCategory.logic_step)
     dp.register_message_handler(tasks_category_logic_end,
-                                Text(equals=emoji.emojize(":stop_sign:") + ' Закончить логику'))
+                                Text(equals=emoji.emojize(":stop_sign:") + ' Закончить'),
+                                state=LogicCategory.logic_step)
 
     info = ['Decision 1', 'Decision 2', 'Answer', 'Remarks']
     dp.register_callback_query_handler(tasks_category_logic_print_info,
