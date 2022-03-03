@@ -9,11 +9,11 @@ from aiogram.dispatcher.filters import Text
 from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
-import aiogram.utils.markdown as fmt
 
 
 from data_b.dp_control import problem_category_random, finding_categories_table
 from handlers.keyboards.default import logic_menu
+from handlers.logic.logic import logic_next_problem
 
 callback_problems_logic = CallbackData("problems_logic", "category_logic")
 callback_problems_info_logic = CallbackData("values_logic", "info_logic", "translate_logic")
@@ -129,7 +129,7 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_logic_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача логика'), state=math_next_problem.next_problem)
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача логика'), state=logic_next_problem.next_problem)
     dp.register_message_handler(tasks_category_logic_end,
                                 Text(equals=emoji.emojize(":stop_sign:") + ' Закончить логику'))
 
