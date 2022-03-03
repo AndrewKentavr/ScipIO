@@ -1,15 +1,15 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
+from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
 
-from handlers.math.math import MathButtons
-
 from data_b.dp_control import problem_category_random, finding_categories_table
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
+from handlers.math.math import MathButCategory
 
 callback_problems_math = CallbackData("problems", "category")
 callback_problems_info_math = CallbackData("values", "info", "translate")
@@ -23,7 +23,6 @@ async def tasks_category_math_start(message: types.Message):
                          ' сообщение вида:\n'
                          '(категория) - (id задачи или название) - (и часть условия)\n'
                          'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
-
 
 
 async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
@@ -43,14 +42,18 @@ async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_d
 
     global problems_info_data_math
     problems_info_data_math = info_problem
+    try:
+        await call.message.answer(
+            f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+            reply_markup=math_menu.get_keyboard_math_category())
+        await call.message.answer(f'{condition}',
+                                  reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
 
-    await call.message.answer(
-        f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
-        reply_markup=math_menu.get_keyboard_math_category())
-    await call.message.answer(f'{condition}',
-                              reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
+        await call.answer()
+        await MathCategory.math_step.set()
 
-    await call.answer()
+    except Exception:
+        await call.message.answer('Сломанная задача')
 
 
 async def tasks_category_math_print_keyboard_default(message: types.Message, state: FSMContext):
@@ -73,6 +76,8 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
             reply_markup=math_menu.get_keyboard_math_category())
         await message.answer(f'{condition}',
                              reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
+        await MathCategory.math_step.set()
+
     except Exception:
         await message.answer('Сломанная задача')
 
@@ -106,19 +111,25 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
                          reply_markup=types.ReplyKeyboardRemove())
 
 
+class MathCategory(StatesGroup):
+    """Данные state нужен, чтобы отделять одинаковые кнопки 'Закончить' и 'Следующая задача'"""
+    math_step = State()
+
+
 def register_handlers_tasks_math_category(dp: Dispatcher):
     dp.register_message_handler(tasks_category_math_start,
                                 Text(equals=emoji.emojize(":book:") + ' Задания из категорий'),
-                                state=MathButtons.next_problem)
+                                state=MathButCategory.math_category_step)
 
     all_files_names = [i[0] for i in finding_categories_table('math')]
     dp.register_callback_query_handler(tasks_category_math_print_inline,
                                        callback_problems_math.filter(category=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_math_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'), state=MathButtons.next_problem)
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'),  state=MathCategory.math_step)
     dp.register_message_handler(tasks_category_math_end,
-                                Text(equals=emoji.emojize(":stop_sign:") + ' Закончить'), state=MathButtons.next_problem)
+                                Text(equals=emoji.emojize(":stop_sign:") + ' Закончить'),
+                                state=MathCategory.math_step)
 
     info = ['Decision 1', 'Decision 2', 'Answer', 'Remarks']
     dp.register_callback_query_handler(tasks_category_math_print_info,
