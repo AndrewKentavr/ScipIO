@@ -71,7 +71,7 @@ async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, 
     await call.answer()
 
 
-async def tasks_category_logic_print_keyboard_default(message: types.Message):
+async def tasks_category_logic_print_keyboard_default(message: types.Message, state: FSMContext):
     from handlers.keyboards.inline import logic_menu_inline
 
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
@@ -129,7 +129,7 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_logic_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача логика'))
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача логика'), state=math_next_problem.next_problem)
     dp.register_message_handler(tasks_category_logic_end,
                                 Text(equals=emoji.emojize(":stop_sign:") + ' Закончить логику'))
 
