@@ -101,6 +101,13 @@ def flashcard_del(user_id, front_card, back_card):
     return
 
 
+def flashcard_one(user_id, id):
+    cur.execute(f"""select id, front_card, back_card from flashcards
+                where user_id = {user_id} and id = {id};""")
+    result = cur.fetchall()
+    return result
+
+
 # -----------------------------TIMER-----------------------------------------
 
 def timer_create_dp(user_id, time, tasks):

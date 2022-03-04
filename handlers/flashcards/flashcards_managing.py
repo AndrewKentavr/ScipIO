@@ -100,13 +100,14 @@ async def flashcards_managing_del_start(message: types.Message):
 async def flashcards_managing_del_end(message: types.Message, state: FSMContext):
     msg = message.text
     all_flash = flashcard_dp_info(message.from_user.id)
-    print(all_flash)
     list_id = msg.split(', ')
+    list_id = sorted(list_id, reverse=True)
     for card_id in list_id:
         if card_id.isdigit():
-            if int(message.text) <= len(flashcard_dp_info(message.from_user.id)):
+            if int(card_id) <= len(flashcard_dp_info(message.from_user.id)):
                 flashcard_del(message.from_user.id, all_flash[int(card_id)-1][1], all_flash[int(card_id)-1][2])
                 await message.reply(f'Карточка {card_id} успешно удалена')
+
                 await state.finish()
 
             else:

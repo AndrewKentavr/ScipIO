@@ -33,7 +33,16 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
 from data_b.dp_control import flashcard_dp_info_game
+from data_b.dp_control import flashcard_dp_info
+from data_b.dp_control import flashcard_one
 from handlers.keyboards.default import flashcard_menu
+
+from handlers.flashcards.create_flashcard_photo import create_photo
+from config import BOT_TOKEN
+from aiogram import Bot
+import os
+
+bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 
 
 async def flashcards_training_theory(message: types.Message):
@@ -113,12 +122,29 @@ async def fls_game(message: types.Message, state: FSMContext):
 
         card_id, card_front, card_back, show_card = flashcard
 
+        card_id_split = str(card_id).split()
+        try:
+            str(card_id_split[1])
+            side = 'Обратная сторона'
+        except:
+            side = 'Лицевая сторона'
+
         await state.update_data(card_id=card_id)
         await state.update_data(card_back=card_back)
 
-        await message.answer(f'Карточка: {card_id}\n'
-                             f'Первая сторона: {card_front}',
-                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+        await message.answer(
+            f'-                                             {side}                                             -',
+            reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+
+        create_photo(card_front, message.from_user.id)
+
+        photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
+
+        await bot.send_photo(message.chat.id, photo=photo)
+
+        os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
+        os.remove(f'handlers/flashcards/{message.from_user.id}')
+
         await Flash_game.fls_game.set()
 
 
@@ -139,7 +165,14 @@ async def flc_game_end(message: types.Message, state: FSMContext):
 
     string_correct = ''
     for i in range(len(correct)):
-        string_correct += f"{i + 1}: id - {correct[i]}\n"
+        if type(correct[i]) == int:
+            a = flashcard_one(message.from_user.id, correct[i])[0]
+            string_correct += f"{i + 1}: {a[1]} => {a[2]}\n"
+        else:
+            a = flashcard_one(message.from_user.id, correct[i].split()[0])[0]
+            string_correct += f"{i + 1}: {a[2]} => {a[1]}\n"
+
+
 
     await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
                                                         f'{string_correct}')
