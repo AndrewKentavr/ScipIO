@@ -112,17 +112,17 @@ async def timer_del(message: types.Message, state: FSMContext):
 
 async def timer_info(message: types.Message):
     user_id = message.from_user.id
-    await message.answer('Вот все ваши таймеры:')
     all_timers = timer_info_dp(user_id)
     if len(all_timers) == 0:
-        await message.answer('У вас нет таймеров', reply_markup=types.ReplyKeyboardRemove())
-        return
+        await message.answer('У вас нет таймеров')
+    else:
+        await message.answer('Вот все ваши таймеры:')
 
-    string_timer = ''
-    for i in range(len(all_timers)):
-        string_timer += f'{i + 1}: {all_timers[i]}\n'
+        string_timer = ''
+        for i in range(len(all_timers)):
+            string_timer += f'{i + 1}: {all_timers[i]}\n'
 
-    await message.answer(string_timer)
+        await message.answer(string_timer)
 
 
 class Timer(StatesGroup):

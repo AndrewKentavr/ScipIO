@@ -94,18 +94,9 @@ def flashcard_dp_info_game(user_id):
     return result
 
 
-def flashcard_del_check(card_id):
-    cur.execute(f"""select count(*) from flashcards
-        where id = {card_id};""")
-    result = cur.fetchall()
-    if result[0][0] == 0:
-        return False
-    return True
-
-
-def flashcard_del(card_id):
+def flashcard_del(user_id, front_card, back_card):
     cur.execute(f"""DELETE FROM flashcards
-        where id = {card_id};""")
+        where user_id = {user_id} and front_card = '{front_card}' and back_card = '{back_card}';""")
     cur.connection.commit()
     return
 
