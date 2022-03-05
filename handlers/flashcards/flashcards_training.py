@@ -168,10 +168,10 @@ async def flc_game_end(message: types.Message, state: FSMContext):
     for i in range(len(correct)):
         if type(correct[i]) == int:
             a = flashcard_one(message.from_user.id, correct[i])[0]
-            string_correct += f"{i + 1}: {a[1]} => {a[2]}\n"
+            string_correct += f"{i + 1}: {a[1]} <u><b>=></b></u> {a[2]}\n"
         else:
             a = flashcard_one(message.from_user.id, correct[i].split()[0])[0]
-            string_correct += f"{i + 1}: {a[2]} => {a[1]}\n"
+            string_correct += f"{i + 1}: {a[2]} <u><b>=></b></u> {a[1]}\n"
 
     await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
                                                         f'{string_correct}')

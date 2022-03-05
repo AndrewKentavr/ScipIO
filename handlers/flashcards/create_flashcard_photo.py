@@ -24,10 +24,40 @@ def create_photo(msg, id):
     width, height = image.size
     editable_image = ImageDraw.Draw(image)
     font_size = find_font_size(text, font_family, image, width_ratio)
+    # Чтобы текст не был слишком большим или слишком маленьким
     if font_size > 200:
         font_size = 200
+    elif font_size < 40:
+        font_size = 40
+
     font = ImageFont.truetype(font_family, font_size)
 
-    editable_image.text((width / 2, (height - 20) / 2), text, font=font, fill='black', anchor="mm")
+    list_line = []
+    list_words = text.split()
+
+    if len(list_words) > 1:
+        if get_text_size(text, image, font)[0] > 715:
+            count = ''
+            for i in range(len(list_words)):
+                if get_text_size(count + list_words[i] + ' ', image, font)[0] <= 715:
+                    count += list_words[i] + ' '
+                else:
+                    list_line.append(count[:-1])
+                    count = list_words[i] + ' '
+            list_line.append(count[:-1])
+    else:
+        editable_image.text((width / 2, height / 2), text, font=font, fill='black', anchor="mm")
+
+    if len(list_line) % 2 == 0:
+        count = (len(list_line) // 2) * get_text_size(text, image, font)[1]
+        for i in range(len(list_line)):
+            editable_image.text((width / 2, (height + 60) / 2 - count), list_line[i], font=font, fill='black', anchor="mm")
+            count -= get_text_size(text, image, font)[1]
+    else:
+        count = (len(list_line) - 1) // 2 * get_text_size(text, image, font)[1] + get_text_size(text, image, font)[
+            1] / 2
+        for i in range(len(list_line)):
+            editable_image.text((width / 2, height / 2 - count), list_line[i], font=font, fill='black', anchor="mm")
+            count -= get_text_size(text, image, font)[1]
 
     image.save(f'handlers/flashcards/{id}:front.png')
