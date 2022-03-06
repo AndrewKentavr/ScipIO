@@ -1,7 +1,9 @@
 from aiogram import types
 
-from data_b.dp_control import finding_categories_table
-from handlers.math.tasks_category_math import callback_problems_math, callback_problems_info_math
+from data_b.dp_control import finding_categories_table, finding_one_categories_table
+from data_b.dp_control import finding_main_categories_table
+from handlers.math.tasks_category_math import callback_main_problems_math, callback_problems_info_math, \
+    callback_problems_math
 
 
 def get_inline_math_url():
@@ -40,7 +42,51 @@ def get_inline_math_problems_category():
         translated_name = i[1]  # НАПРИМЕР --- "Загадки"
         buttons.append(
             types.InlineKeyboardButton(text=translated_name,
-                                       callback_data=callback_problems_math.new(category=category_name)))
+                                       callback_data=callback_main_problems_math.new(category=category_name)))
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    keyboard.add(*buttons)
+
+    return keyboard
+
+
+def get_inline_main_math_problems_category():
+    """
+    НУЖНО НАПИСАТЬ ЕЩЁ
+
+    :return: Создаёт ко всем категориям Logic - INLINE кнопки
+    """
+    buttons = []
+
+    # Находит все категории, которые есть в таблице math
+    list_all_categorys = sorted(finding_main_categories_table('math'))
+
+    for i in list_all_categorys:
+        category_name = i[0]  # НАПРИМЕР --- "riddles"
+        translated_name = i[1]  # НАПРИМЕР --- "Загадки"
+        if types.InlineKeyboardButton(text=translated_name, callback_data=callback_main_problems_math.new(
+                category=category_name)) not in buttons:
+            buttons.append(
+                types.InlineKeyboardButton(text=translated_name,
+                                           callback_data=callback_main_problems_math.new(category=category_name)))
+    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    keyboard.add(*buttons)
+
+    return keyboard
+
+
+def get_inline_one_main_math_problems_category(category):
+
+    list_all_categorys = sorted(finding_one_categories_table(category))
+    buttons = []
+    print(list_all_categorys)
+    for i in list_all_categorys:
+        category_name = i[0]  # НАПРИМЕР --- "riddles"
+        translated_name = i[1]  # НАПРИМЕР --- "Загадки"
+        if types.InlineKeyboardButton(text=translated_name, callback_data=callback_problems_math.new(
+                category=category_name)) not in buttons:
+            buttons.append(
+                types.InlineKeyboardButton(text=translated_name,
+                                           callback_data=callback_problems_math.new(category=category_name)))
     keyboard = types.InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
 

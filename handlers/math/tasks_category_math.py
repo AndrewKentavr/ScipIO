@@ -6,18 +6,20 @@ from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
 
-from data_b.dp_control import problem_category_random, finding_categories_table
+from data_b.dp_control import problem_category_random, finding_categories_table, finding_one_categories_table, \
+    finding_main_categories_table
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
 from handlers.math.math import MathButCategory
 
 callback_problems_math = CallbackData("problems", "category")
 callback_problems_info_math = CallbackData("values", "info", "translate")
+callback_main_problems_math = CallbackData("problems", "category")
 
 
 async def tasks_category_math_start(message: types.Message):
     await message.answer('Выберите категорию заданий:',
-                         reply_markup=math_menu_inline.get_inline_math_problems_category())
+                         reply_markup=math_menu_inline.get_inline_main_math_problems_category())
     link_endrey = hlink('в этот телеграм', 'https://t.me/Endrey_k')
     await message.answer(f'<u>Если задание неправильное или неправильно выводиться, то прошу написать {link_endrey}</u>'
                          ' сообщение вида:\n'
@@ -25,9 +27,16 @@ async def tasks_category_math_start(message: types.Message):
                          'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
 
 
+async def one_tasks_category(call: types.CallbackQuery, callback_data: dict):
+    await call.message.answer('Выберите подкатегорию заданий:',
+                              reply_markup=math_menu_inline.get_inline_one_main_math_problems_category(
+                                  callback_data["category"]))
+
+
 async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
     global category
     category = callback_data["category"]
+    print(category)
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'math')
 
@@ -121,12 +130,17 @@ def register_handlers_tasks_math_category(dp: Dispatcher):
                                 Text(equals=emoji.emojize(":book:") + ' Задания из категорий'),
                                 state=MathButCategory.math_category_step)
 
+    all_main_files_names = [i[0] for i in finding_main_categories_table('math')]
+    dp.register_callback_query_handler(one_tasks_category,
+                                       callback_main_problems_math.filter(category=all_main_files_names), state='*')
+
     all_files_names = [i[0] for i in finding_categories_table('math')]
     dp.register_callback_query_handler(tasks_category_math_print_inline,
                                        callback_problems_math.filter(category=all_files_names), state='*')
 
     dp.register_message_handler(tasks_category_math_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'),  state=MathCategory.math_step)
+                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'),
+                                state=MathCategory.math_step)
     dp.register_message_handler(tasks_category_math_end,
                                 Text(equals=emoji.emojize(":stop_sign:") + ' Закончить'),
                                 state=MathCategory.math_step)

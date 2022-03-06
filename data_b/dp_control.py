@@ -54,6 +54,20 @@ def finding_categories_table(tasks_theme):
     return result_0
 
 
+def finding_main_categories_table(tasks_theme):
+    cur.execute(f"""SELECT main_value, main_translate_category FROM category
+        WHERE id in (SELECT DISTINCT id_category FROM tasks_{tasks_theme});""")
+    result_0 = set(cur.fetchall())
+    return result_0
+
+
+def finding_one_categories_table(tasks_theme):
+    cur.execute(f"""SELECT value, translate_category FROM category
+        WHERE main_value = '{tasks_theme}';""")
+    result_0 = cur.fetchall()
+    return result_0
+
+
 # -----------------------------MATH-----------------------------------------
 
 
