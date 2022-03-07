@@ -28,9 +28,41 @@ async def tasks_category_math_start(message: types.Message):
 
 
 async def one_tasks_category(call: types.CallbackQuery, callback_data: dict):
-    await call.message.answer('Выберите подкатегорию заданий:',
-                              reply_markup=math_menu_inline.get_inline_one_main_math_problems_category(
-                                  callback_data["category"]))
+    categories = finding_one_categories_table(call["data"][9:])
+    if len(categories) == 1:
+        global category
+        category = callback_data["category"][:-5]
+        # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
+        dictionary_info_problem = problem_category_random(category, 'math')
+
+        title = dictionary_info_problem['title']
+        href = dictionary_info_problem['href']
+        subcategory = dictionary_info_problem['subcategory']
+        complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
+        condition = dictionary_info_problem['conditions']
+
+        # Образка словаря
+        info_problem = dict(list(dictionary_info_problem.items())[6:])
+
+        global problems_info_data_math
+        problems_info_data_math = info_problem
+        try:
+            await call.message.answer(
+                f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+                reply_markup=math_menu.get_keyboard_math_category())
+            await call.message.answer(f'{condition}',
+                                      reply_markup=math_menu_inline.get_inline_math_problems_category_info(
+                                          info_problem))
+
+            await call.answer()
+            await MathCategory.math_step.set()
+
+        except Exception:
+            await call.message.answer('Сломанная задача')
+    else:
+        await call.message.answer('Выберите подкатегорию заданий:',
+                                  reply_markup=math_menu_inline.get_inline_one_main_math_problems_category(
+                                      callback_data["category"]))
 
 
 async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
