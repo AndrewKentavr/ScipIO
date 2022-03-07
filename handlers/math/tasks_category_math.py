@@ -36,7 +36,6 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict):
 async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
     global category
     category = callback_data["category"]
-    print(category)
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'math')
 

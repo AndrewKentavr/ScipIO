@@ -78,7 +78,6 @@ def get_inline_one_main_math_problems_category(category):
 
     list_all_categorys = sorted(finding_one_categories_table(category))
     buttons = []
-    print(list_all_categorys)
     for i in list_all_categorys:
         category_name = i[0]  # НАПРИМЕР --- "riddles"
         translated_name = i[1]  # НАПРИМЕР --- "Загадки"
