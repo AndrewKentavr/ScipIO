@@ -11,13 +11,15 @@ from data_b.dp_control import problem_category_random, finding_categories_table,
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
 from handlers.math.math import MathButCategory
+import pyshorteners
 
 callback_problems_math = CallbackData("problems", "category")
 callback_problems_info_math = CallbackData("values", "info", "translate")
 callback_main_problems_math = CallbackData("problems", "category")
 
 
-async def tasks_category_math_start(message: types.Message):
+async def tasks_category_math_start(message: types.Message, state: FSMContext):
+    await state.update_data(correct=[])
     await message.answer('Выберите категорию заданий:',
                          reply_markup=math_menu_inline.get_inline_main_math_problems_category())
     link_endrey = hlink('в этот телеграм', 'https://t.me/Endrey_k')
@@ -27,7 +29,7 @@ async def tasks_category_math_start(message: types.Message):
                          'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
 
 
-async def one_tasks_category(call: types.CallbackQuery, callback_data: dict):
+async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     categories = finding_one_categories_table(call["data"][9:])
     if len(categories) == 1:
         global category
@@ -36,10 +38,12 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict):
         dictionary_info_problem = problem_category_random(category, 'math')
 
         title = dictionary_info_problem['title']
-        href = dictionary_info_problem['href']
+        href = pyshorteners.Shortener().tinyurl.short(dictionary_info_problem['href'])
         subcategory = dictionary_info_problem['subcategory']
         complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
         condition = dictionary_info_problem['conditions']
+
+        await state.update_data(card_id=href)
 
         # Образка словаря
         info_problem = dict(list(dictionary_info_problem.items())[6:])
@@ -65,17 +69,19 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict):
                                       callback_data["category"]))
 
 
-async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict):
+async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     global category
     category = callback_data["category"]
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'math')
 
     title = dictionary_info_problem['title']
-    href = dictionary_info_problem['href']
+    href = pyshorteners.Shortener().tinyurl.short(dictionary_info_problem['href'])
     subcategory = dictionary_info_problem['subcategory']
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
+
+    await state.update_data(card_id=href)
 
     # Образка словаря
     info_problem = dict(list(dictionary_info_problem.items())[6:])
@@ -100,10 +106,12 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
     dictionary_info_problem = problem_category_random(category, 'math')
 
     title = dictionary_info_problem['title']
-    href = dictionary_info_problem['href']
+    href = pyshorteners.Shortener().tinyurl.short(dictionary_info_problem['href'])
     subcategory = dictionary_info_problem['subcategory']
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
+
+    await state.update_data(card_id=href)
 
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
@@ -111,6 +119,12 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
     problems_info_data_math = info_problem
 
     try:
+        if message.text == emoji.emojize(":white_check_mark:") + ' Правильно':
+            user_data = await state.get_data()
+            # если "правильно", то в user_data['correct'] добавляется id карточки
+            correct = user_data['correct']
+            correct.append(user_data['card_id'])
+            await state.update_data(correct=correct)
         await message.answer(
             f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
             reply_markup=math_menu.get_keyboard_math_category())
@@ -146,7 +160,16 @@ async def tasks_category_math_print_info(call: types.CallbackQuery, callback_dat
 
 
 async def tasks_category_math_end(message: types.Message, state: FSMContext):
+
+    user_data = await state.get_data()
+    correct = user_data['correct']
     await state.finish()
+    string_correct = ''
+    for i in range(len(correct)):
+        string_correct += f"{i + 1}: id - {correct[i][52:]} ({pyshorteners.Shortener().tinyurl.short(correct[i])})\n"
+
+    await message.answer(emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct)}\n{string_correct}")
+
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
                          reply_markup=types.ReplyKeyboardRemove())
 
@@ -154,6 +177,7 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
 class MathCategory(StatesGroup):
     """Данные state нужен, чтобы отделять одинаковые кнопки 'Закончить' и 'Следующая задача'"""
     math_step = State()
+    math_choose = State()
 
 
 def register_handlers_tasks_math_category(dp: Dispatcher):
@@ -169,8 +193,9 @@ def register_handlers_tasks_math_category(dp: Dispatcher):
     dp.register_callback_query_handler(tasks_category_math_print_inline,
                                        callback_problems_math.filter(category=all_files_names), state='*')
 
+    choose = [emoji.emojize(":white_check_mark:") + ' Правильно', emoji.emojize(":x:") + ' Неправильно']
     dp.register_message_handler(tasks_category_math_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'),
+                                Text(choose),
                                 state=MathCategory.math_step)
     dp.register_message_handler(tasks_category_math_end,
                                 Text(equals=emoji.emojize(":stop_sign:") + ' Закончить'),
