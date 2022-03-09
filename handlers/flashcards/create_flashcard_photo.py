@@ -29,21 +29,22 @@ def create_photo(msg, id):
     list_line = []
     list_words = text.split()
 
-    if font_size > 200:
-        font_size = 200
-    elif font_size < 40:
-        font_size = 40
+    if font_size > 120:
+        font_size = 120
+    elif font_size < 15:
+        font_size = 15
 
     font = ImageFont.truetype(font_family, font_size)
 
     if len(list_words) > 1:
-        if font_size <= 60:
-            font_size = 60
+        if font_size <= 15:
+            font_size = 15
         font = ImageFont.truetype(font_family, font_size)
-        if get_text_size(text, image, font)[0] > 715:
+        print(get_text_size(text, image, font)[0])
+        if get_text_size(text, image, font)[0] > 200:
             count = ''
             for i in range(len(list_words)):
-                if get_text_size(count + list_words[i] + ' ', image, font)[0] <= 715:
+                if get_text_size(count + list_words[i] + ' ', image, font)[0] <= 200:
                     count += list_words[i] + ' '
                 else:
                     list_line.append(count[:-1])
@@ -53,14 +54,14 @@ def create_photo(msg, id):
         if len(list_line) % 2 == 0:
             count = (len(list_line) // 2) * get_text_size(text, image, font)[1]
             for i in range(len(list_line)):
-                editable_image.text((width / 2, (height + 65) / 2 - count), list_line[i], font=font, fill='black',
+                editable_image.text((width / 2, (height + 30) / 2 - count), list_line[i], font=font, fill='black',
                                     anchor="mm")
                 count -= get_text_size(text, image, font)[1]
         else:
             count = (len(list_line) - 1) // 2 * get_text_size(text, image, font)[1] + get_text_size(text, image, font)[
                 1] / 2
             for i in range(len(list_line)):
-                editable_image.text((width / 2, (height + 60) / 2 - count), list_line[i], font=font, fill='black', anchor="mm")
+                editable_image.text((width / 2, (height + 30) / 2 - count), list_line[i], font=font, fill='black', anchor="mm")
                 count -= get_text_size(text, image, font)[1]
 
     else:
