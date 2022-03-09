@@ -64,6 +64,7 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
         except Exception:
             await call.message.answer('Сломанная задача')
     else:
+        await call.answer()
         await call.message.answer('Выберите подкатегорию заданий:',
                                   reply_markup=math_menu_inline.get_inline_one_main_math_problems_category(
                                       callback_data["category"]))
