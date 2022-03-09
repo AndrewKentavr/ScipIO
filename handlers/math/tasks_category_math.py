@@ -161,15 +161,15 @@ async def tasks_category_math_print_info(call: types.CallbackQuery, callback_dat
 
 
 async def tasks_category_math_end(message: types.Message, state: FSMContext):
-
     user_data = await state.get_data()
     correct = user_data['correct']
     await state.finish()
     string_correct = ''
     for i in range(len(correct)):
-        string_correct += f"{i + 1}: id - {correct[i][52:]} ({pyshorteners.Shortener().tinyurl.short(correct[i])})\n"
+        string_correct += f"{i + 1}: id - {correct[i][52:]} ({correct[i]})\n"
 
-    await message.answer(emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct)}\n{string_correct}")
+    await message.answer(
+        emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct)}\n{string_correct}")
 
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
                          reply_markup=types.ReplyKeyboardRemove())
