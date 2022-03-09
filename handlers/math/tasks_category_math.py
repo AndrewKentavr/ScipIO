@@ -11,7 +11,6 @@ from data_b.dp_control import problem_category_random, finding_categories_table,
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
 from handlers.math.math import MathButCategory
-import pyshorteners
 
 callback_problems_math = CallbackData("problems", "category")
 callback_problems_info_math = CallbackData("values", "info", "translate")
@@ -38,7 +37,7 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
         dictionary_info_problem = problem_category_random(category, 'math')
 
         title = dictionary_info_problem['title']
-        href = pyshorteners.Shortener().tinyurl.short(dictionary_info_problem['href'])
+        href = dictionary_info_problem['href']
         subcategory = dictionary_info_problem['subcategory']
         complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
         condition = dictionary_info_problem['conditions']
@@ -51,8 +50,9 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
         global problems_info_data_math
         problems_info_data_math = info_problem
         try:
+            link_problems = hlink('Ссылка на задачу', href)
             await call.message.answer(
-                f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+                f'Название задания или его ID: {title}\n{link_problems}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
                 reply_markup=math_menu.get_keyboard_math_category())
             await call.message.answer(f'{condition}',
                                       reply_markup=math_menu_inline.get_inline_math_problems_category_info(
@@ -77,7 +77,7 @@ async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_d
     dictionary_info_problem = problem_category_random(category, 'math')
 
     title = dictionary_info_problem['title']
-    href = pyshorteners.Shortener().tinyurl.short(dictionary_info_problem['href'])
+    href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
@@ -90,8 +90,9 @@ async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_d
     global problems_info_data_math
     problems_info_data_math = info_problem
     try:
+        link_problems = hlink('Ссылка на задачу', href)
         await call.message.answer(
-            f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+            f'Название задания или его ID: {title}\n{link_problems}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
             reply_markup=math_menu.get_keyboard_math_category())
         await call.message.answer(f'{condition}',
                                   reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
@@ -107,7 +108,7 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
     dictionary_info_problem = problem_category_random(category, 'math')
 
     title = dictionary_info_problem['title']
-    href = pyshorteners.Shortener().tinyurl.short(dictionary_info_problem['href'])
+    href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
@@ -126,8 +127,9 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
             correct = user_data['correct']
             correct.append(user_data['card_id'])
             await state.update_data(correct=correct)
+        link_problems = hlink('Ссылка на задачу', href)
         await message.answer(
-            f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+            f'Название задания или его ID: {title}\n{link_problems}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
             reply_markup=math_menu.get_keyboard_math_category())
         await message.answer(f'{condition}',
                              reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
@@ -166,7 +168,9 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
     await state.finish()
     string_correct = ''
     for i in range(len(correct)):
-        string_correct += f"{i + 1}: id - {correct[i][52:]} ({correct[i]})\n"
+        link_problems = hlink('Ссылка на задачу', correct[i])
+        string_correct += f"{i + 1}: id - {correct[i][52:]} ({link_problems})\n"
+
 
     await message.answer(
         emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct)}\n{string_correct}")
