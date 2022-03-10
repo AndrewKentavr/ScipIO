@@ -6,6 +6,7 @@ from aiogram.utils import emoji
 
 from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del
 from handlers.keyboards.default import flashcard_menu
+from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
 
 MAX_LEN = 450
 
@@ -106,7 +107,7 @@ async def flashcards_managing_del_end(message: types.Message, state: FSMContext)
         if card_id.isdigit():
             if int(card_id) <= len(flashcard_dp_info(message.from_user.id)):
                 flashcard_del(message.from_user.id, all_flash[int(card_id)-1][1], all_flash[int(card_id)-1][2])
-                await message.reply(f'Карточка {card_id} успешно удалена')
+                await message.reply(f'Карточка {card_id} успешно удалена',reply_markup=get_keyboard_flashcard_start())
 
                 await state.finish()
 

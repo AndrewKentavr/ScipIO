@@ -42,6 +42,8 @@ from config import BOT_TOKEN
 from aiogram import Bot
 import os
 
+from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
+
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 
 
@@ -77,8 +79,9 @@ async def fls_game(message: types.Message, state: FSMContext):
         flashcards = flashcard_generate(message.from_user.id)
         if not flashcards:
             await message.answer('У вас ещё нет карточек', reply_markup=types.ReplyKeyboardRemove())
-            await message.answer('Чтобы создать их, вам нужно прописать /flashcard, потом зайти в '
-                                 '"Управление карточками" и нажать на кнопку "Создать карточку"')
+            await message.answer('Чтобы создать их, вам нужно зайти в '
+                                 '"Управление карточками" и нажать на кнопку "Создать карточку"',
+                                 reply_markup=get_keyboard_flashcard_start())
             await state.finish()
             return
 
@@ -201,7 +204,7 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         os.remove(f'handlers/flashcards/{message.from_user.id}')
     else:
         await message.answer(f'{side}:\n{card_back}',
-                                 reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
     await Flash_game.fls_game.set()
 
 

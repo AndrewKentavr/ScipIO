@@ -21,7 +21,7 @@ def get_text_size(text, image, font):
 
 def create_photo(msg, id):
     width_ratio = 1.5  # Portion of the image the text width should be (between 0 and 1)
-    font_family = "C:/Users/ahmed/PycharmProjects/ScipIO/handlers/flashcards/pillow.ttf"
+    font_family = "handlers/flashcards/pillow.ttf"
     text = msg
 
     image = Image.open('handlers/flashcards/base.jpg')
@@ -48,8 +48,12 @@ def create_photo(msg, id):
                     list_line.append(count[:-1])
                     count = list_words[i] + ' '
             list_line.append(count[:-1])
+        else:
+            list_line.append(text)
 
         if len(list_line) % 2 == 0:
+            print(list_line)
+            print(get_text_size(text, image, font))
             count = (len(list_line) // 2) * get_text_size(text, image, font)[1]
             for i in range(len(list_line)):
                 editable_image.text((width / 2, (height + 30) / 2 - count), list_line[i], font=font, fill='black',
