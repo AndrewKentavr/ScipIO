@@ -13,7 +13,8 @@ def get_keyboard_logic_start():
 
 def get_keyboard_logic_category():
     buttons = [
-        emoji.emojize(":arrow_right:") + ' Следующая задача',
+        emoji.emojize(":white_check_mark:") + ' Правильно',
+        emoji.emojize(":x:") + ' Неправильно',
         emoji.emojize(":stop_sign:") + ' Закончить'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)

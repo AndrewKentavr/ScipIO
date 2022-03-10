@@ -27,13 +27,13 @@ def problem_category_random(name_category, tasks_theme):
     2 Условия и Ответ. Значит так и будет передоваться
     """
     cur.execute(
-        f"""SELECT title, href, subcategory, complexity, classes, conditions, decisions_1, 
+        f"""SELECT id, title, href, subcategory, complexity, classes, conditions, decisions_1, 
         decisions_2, answer, remarks FROM tasks_{tasks_theme}
                 WHERE id_category = (SELECT id FROM category
                                 WHERE value = '{name_category}')
                 ORDER BY RANDOM()
                 LIMIT 1;""")
-    columns = ['title', 'href', 'subcategory', 'complexity', 'classes', 'conditions', 'decisions_1',
+    columns = ['id', 'title', 'href', 'subcategory', 'complexity', 'classes', 'conditions', 'decisions_1',
                'decisions_2', 'answer', 'remarks']
     result_0 = cur.fetchall()
     result = {}
@@ -50,6 +50,20 @@ def problem_category_random(name_category, tasks_theme):
 def finding_categories_table(tasks_theme):
     cur.execute(f"""SELECT value, translate_category FROM category
         WHERE id in (SELECT DISTINCT id_category FROM tasks_{tasks_theme});""")
+    result_0 = cur.fetchall()
+    return result_0
+
+
+def finding_main_categories_table(tasks_theme):
+    cur.execute(f"""SELECT main_value, main_translate_category FROM category
+        WHERE id in (SELECT DISTINCT id_category FROM tasks_{tasks_theme});""")
+    result_0 = set(cur.fetchall())
+    return result_0
+
+
+def finding_one_categories_table(tasks_theme):
+    cur.execute(f"""SELECT value, translate_category FROM category
+        WHERE main_value = '{tasks_theme}';""")
     result_0 = cur.fetchall()
     return result_0
 
