@@ -47,6 +47,7 @@ async def main():
     """
     # Удаление последнего сообщения
     await bot.delete_webhook(drop_pending_updates=True)
+    middlewares.setup(dp)
 
     scheduler.start()
     timer_interval_func()
