@@ -40,7 +40,7 @@ def create_photo(msg, id):
         if font_size <= 15:
             font_size = 15
         font = ImageFont.truetype(font_family, font_size)
-        print(get_text_size(text, image, font)[0])
+
         if get_text_size(text, image, font)[0] > 200:
             count = ''
             for i in range(len(list_words)):
