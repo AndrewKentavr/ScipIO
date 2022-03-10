@@ -11,7 +11,7 @@ from aiogram.utils import emoji
 from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
 
-from data_b.dp_control import problem_category_random, finding_categories_table
+from data_b.dp_control import problem_category_random, finding_categories_table, action_add
 from handlers.keyboards.default import logic_menu
 from handlers.logic.logic import LogicButCategory
 
@@ -100,6 +100,11 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
             correct.append(title)
         correct.append(href)
         await state.update_data(correct=correct)
+
+        # добавление action cat_logic в бд
+        action_add(message.from_user.id, 'cat_logic', True)
+    else:
+        action_add(message.from_user.id, 'cat_logic', False)
 
     # Образка словаря
     info_problem = dict(list(dictionary_info_problem.items())[6:])

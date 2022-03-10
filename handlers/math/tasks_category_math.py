@@ -7,7 +7,7 @@ from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
 
 from data_b.dp_control import problem_category_random, finding_categories_table, finding_one_categories_table, \
-    finding_main_categories_table
+    finding_main_categories_table, action_add
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
 from handlers.math.math import MathButCategory
@@ -128,6 +128,11 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
             correct = user_data['correct']
             correct.append(href)
             await state.update_data(correct=correct)
+
+            # добавление action cat_math в бд
+            action_add(message.from_user.id, 'cat_math', True)
+        else:
+            action_add(message.from_user.id, 'cat_math', False)
 
         link_problems = hlink('Ссылка на задачу', href)
         dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
