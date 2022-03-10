@@ -133,15 +133,12 @@ async def fls_game(message: types.Message, state: FSMContext):
         await state.update_data(card_back=card_back)
         await state.update_data(side=side)
 
-        await message.answer(
-            f'{side}:',
-            reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
-
         create_photo(card_front, message.from_user.id)
 
         photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
 
-        await bot.send_photo(message.chat.id, photo=photo)
+        await bot.send_photo(message.chat.id, photo=photo, caption=side,
+                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
         os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
         os.remove(f'handlers/flashcards/{message.from_user.id}')
@@ -189,14 +186,12 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         side = 'Обратная сторона'
     else:
         side = 'Лицевая сторона'
-    await message.answer(
-        f'{side}:')
 
     create_photo(card_back, message.from_user.id)
 
     photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
 
-    await bot.send_photo(message.chat.id, photo=photo)
+    await bot.send_photo(message.chat.id, photo=photo, caption=side)
 
     os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
     os.remove(f'handlers/flashcards/{message.from_user.id}')
