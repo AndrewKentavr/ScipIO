@@ -25,7 +25,8 @@ async def tasks_category_math_start(message: types.Message, state: FSMContext):
     await message.answer(f'<u>Если задание неправильное или неправильно выводиться, то прошу написать {link_endrey}</u>'
                          ' сообщение вида:\n'
                          '(категория) - (id задачи или название) - (и часть условия)\n'
-                         'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
+                         'Например: Математика - 35793 - Дан тетраэдр, у которого пери...',
+                         disable_web_page_preview=True)
 
 
 async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
@@ -178,7 +179,9 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
         string_correct += f"{i + 1}: id - {correct[i][52:]} ({link_problems})\n"
 
     await message.answer(
-        emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct)}\n{string_correct}")
+        emoji.emojize(
+            ":bar_chart:") + f"Количество правильно решённых задач: {len(correct)}\n{string_correct}",
+        disable_web_page_preview=True)
 
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
                          reply_markup=types.ReplyKeyboardRemove())

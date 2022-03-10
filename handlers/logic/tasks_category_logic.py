@@ -31,7 +31,8 @@ async def tasks_category_logic_start(message: types.Message, state: FSMContext):
     await message.answer(f'<u>Если задание неправильное или неправильно выводиться, то прошу написать {link_endrey}</u>'
                          ' сообщение вида:\n'
                          '(категория) - (id задачи или название) - (и часть условия)\n'
-                         'Например: Математика - 35793 - Дан тетраэдр, у которого пери...')
+                         'Например: Математика - 35793 - Дан тетраэдр, у которого пери...',
+                         disable_web_page_preview=True)
     await LogicCategory.logic_step.set()
 
 
@@ -149,7 +150,8 @@ async def tasks_category_logic_end(message: types.Message, state: FSMContext):
         count += 1
 
     await message.answer(
-        emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct) // 2}\n{string_correct}")
+        emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct) // 2}\n{string_correct}",
+        disable_web_page_preview=True)
 
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
                          reply_markup=types.ReplyKeyboardRemove())
