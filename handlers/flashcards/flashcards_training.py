@@ -133,15 +133,19 @@ async def fls_game(message: types.Message, state: FSMContext):
         await state.update_data(card_back=card_back)
         await state.update_data(side=side)
 
-        create_photo(card_front, message.from_user.id)
+        if len(card_front) <= 250:
+            create_photo(card_front, message.from_user.id)
 
-        photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
+            photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
 
-        await bot.send_photo(message.chat.id, photo=photo, caption=side,
-                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+            await bot.send_photo(message.chat.id, photo=photo, caption=side,
+                                 reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
-        os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
-        os.remove(f'handlers/flashcards/{message.from_user.id}')
+            os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
+            os.remove(f'handlers/flashcards/{message.from_user.id}')
+        else:
+            await message.answer(f'{side}:\n{card_front}',
+                                 reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
         await Flash_game.fls_game.set()
 
@@ -165,10 +169,10 @@ async def flc_game_end(message: types.Message, state: FSMContext):
     for i in range(len(correct)):
         if type(correct[i]) == int:
             a = flashcard_one(message.from_user.id, correct[i])[0]
-            string_correct += f"{i + 1}: {a[1]} <u><b>=></b></u> {a[2]}\n"
+            string_correct += f"<u>{i + 1}</u>: {a[1]} <u><b>=></b></u> {a[2]}\n"
         else:
             a = flashcard_one(message.from_user.id, correct[i].split()[0])[0]
-            string_correct += f"{i + 1}: {a[2]} <u><b>=></b></u> {a[1]}\n"
+            string_correct += f"<u>{i + 1}</u>: {a[2]} <u><b>=></b></u> {a[1]}\n"
 
     await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
                                                         f'{string_correct}')
@@ -186,16 +190,18 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         side = 'Обратная сторона'
     else:
         side = 'Лицевая сторона'
+    if len(card_back) <= 250:
+        create_photo(card_back, message.from_user.id)
 
-    create_photo(card_back, message.from_user.id)
+        photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
 
-    photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
+        await bot.send_photo(message.chat.id, photo=photo, caption=side)
 
-    await bot.send_photo(message.chat.id, photo=photo, caption=side)
-
-    os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
-    os.remove(f'handlers/flashcards/{message.from_user.id}')
-
+        os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
+        os.remove(f'handlers/flashcards/{message.from_user.id}')
+    else:
+        await message.answer(f'{side}:\n{card_back}',
+                                 reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
     await Flash_game.fls_game.set()
 
 

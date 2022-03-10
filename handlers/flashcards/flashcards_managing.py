@@ -100,7 +100,7 @@ async def flashcards_managing_del_start(message: types.Message):
 async def flashcards_managing_del_end(message: types.Message, state: FSMContext):
     msg = message.text
     all_flash = flashcard_dp_info(message.from_user.id)
-    list_id = msg.split(', ')
+    list_id = msg.split()
     list_id = sorted(list_id, reverse=True)
     for card_id in list_id:
         if card_id.isdigit():
