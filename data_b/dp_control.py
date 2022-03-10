@@ -1,3 +1,4 @@
+import datetime
 import sqlite3
 
 CONN = sqlite3.connect('data_b/scipio.db')
@@ -89,7 +90,7 @@ def formulas_search_random():
 # -----------------------------FLASHCARD-----------------------------------------
 def flashcard_dp_create(user_id, front, back, show):
     cur.execute(f"""INSERT INTO flashcards (user_id, front_card, back_card, show_card)
-VALUES ({user_id}, '{front}', '{back}', '{show}');""")  # Без этого новые карточки не сохранялись
+VALUES ({user_id}, '{front}', '{back}', {show});""")  # Без этого новые карточки не сохранялись
     cur.connection.commit()
     return
 
@@ -146,5 +147,24 @@ where user_id == {user_id};""")
     c = cur.fetchall()
     all_timers = list(map(lambda x: x[0], c))
     return all_timers
+
+
+# -----------------------------add_action-----------------------------------------
+def action_add(telegram_user_id, action, correct=None, id_category=None):
+    """
+    :param action: 'flc', 'mentally_math', 'cat_logic', 'cat_math'
+    :param correct: добавляется для flashcard и mentally_math
+    :param id_category: нужно только когда это задача из category
+    """
+    if id_category == None:
+        id_category = 'Null'
+
+    if correct == None:
+        correct = 'Null'
+
+    cur.execute(f"""INSERT INTO actions (telegram_user_id, action, correct, time_action, id_category)
+VALUES ({telegram_user_id}, '{action}', {correct}, '{datetime.datetime.now()}', {id_category});""")
+    cur.connection.commit()
+    return
 
 # https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays
