@@ -19,8 +19,10 @@ callback_problems_logic = CallbackData("problems_logic", "category_logic")
 callback_problems_info_logic = CallbackData("values_logic", "info_logic", "translate_logic")
 
 
-async def tasks_category_logic_start(message: types.Message):
+async def tasks_category_logic_start(message: types.Message, state: FSMContext):
     from handlers.keyboards.inline import logic_menu_inline
+
+    await state.update_data(correct=[])
 
     await message.answer('Выберите категорию заданий:',
                          reply_markup=logic_menu_inline.get_inline_logic_problems_category())
@@ -62,8 +64,10 @@ async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, 
     global problems_info_data_logic
     problems_info_data_logic = info_problem
 
+    link_problems = hlink('Ссылка на задачу', href)
+    dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
     await call.message.answer(
-        f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+        f'Название задания или его ID: {title}\n{link_problems}',
         reply_markup=logic_menu.get_keyboard_logic_category())
     await call.message.answer(f'{condition}',
                               reply_markup=logic_menu_inline.get_inline_logic_problems_category_info(info_problem))
@@ -77,11 +81,23 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'logic')
 
+    id = dictionary_info_problem['id']
     title = dictionary_info_problem['title']
     href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
+
+    if message.text == emoji.emojize(":white_check_mark:") + ' Правильно':
+        user_data = await state.get_data()
+        # если "правильно", то в user_data['correct'] добавляется id карточки
+        correct = user_data['correct']
+        if title == 'None':
+            correct.append(id)
+        else:
+            correct.append(title)
+        correct.append(href)
+        await state.update_data(correct=correct)
 
     # Образка словаря
     info_problem = dict(list(dictionary_info_problem.items())[6:])
@@ -89,8 +105,10 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
     global problems_info_data_logic
     problems_info_data_logic = info_problem
 
+    link_problems = hlink('Ссылка на задачу', href)
+    dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
     await message.answer(
-        f'Название задания или его ID: {title}\nСсылка на задание: {href}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+        f'Название задания или его ID: {title}\n{link_problems}',
         reply_markup=logic_menu.get_keyboard_logic_category())
     await message.answer(f'{condition}',
                          reply_markup=logic_menu_inline.get_inline_logic_problems_category_info(info_problem))
@@ -116,8 +134,21 @@ async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_da
 
 
 async def tasks_category_logic_end(message: types.Message, state: FSMContext):
+    user_data = await state.get_data()
+    correct = user_data['correct']
     await state.finish()
-    await message.answer('Выполнение задачек закончилось', reply_markup=types.ReplyKeyboardRemove())
+    string_correct = ''
+    count = 1
+    for i in range(0, len(correct), 2):
+        link_problems = hlink('Ссылка на задачу', correct[i + 1])
+        string_correct += f"{count}: id - {correct[i]} ({link_problems})\n"
+        count += 1
+
+    await message.answer(
+        emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct) // 2}\n{string_correct}")
+
+    await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
+                         reply_markup=types.ReplyKeyboardRemove())
 
 
 class LogicCategory(StatesGroup):
@@ -133,9 +164,9 @@ def register_handlers_tasks_logic_category(dp: Dispatcher):
     all_files_names = [i[0] for i in finding_categories_table('logic')]
     dp.register_callback_query_handler(tasks_category_logic_print_keyboard_inline,
                                        callback_problems_logic.filter(category_logic=all_files_names), state='*')
-
+    choose = [emoji.emojize(":white_check_mark:") + ' Правильно', emoji.emojize(":x:") + ' Неправильно']
     dp.register_message_handler(tasks_category_logic_print_keyboard_default,
-                                Text(equals=emoji.emojize(":arrow_right:") + ' Следующая задача'),
+                                Text(choose),
                                 state=LogicCategory.logic_step)
     dp.register_message_handler(tasks_category_logic_end,
                                 Text(equals=emoji.emojize(":stop_sign:") + ' Закончить'),

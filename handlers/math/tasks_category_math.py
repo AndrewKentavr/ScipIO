@@ -51,8 +51,9 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
         problems_info_data_math = info_problem
         try:
             link_problems = hlink('Ссылка на задачу', href)
+            dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
             await call.message.answer(
-                f'Название задания или его ID: {title}\n{link_problems}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+                f'Название задания или его ID: {title}\n{link_problems}{dop_info}',
                 reply_markup=math_menu.get_keyboard_math_category())
             await call.message.answer(f'{condition}',
                                       reply_markup=math_menu_inline.get_inline_math_problems_category_info(
@@ -91,8 +92,9 @@ async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_d
     problems_info_data_math = info_problem
     try:
         link_problems = hlink('Ссылка на задачу', href)
+        dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
         await call.message.answer(
-            f'Название задания или его ID: {title}\n{link_problems}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+            f'Название задания или его ID: {title}\n{link_problems}{dop_info}',
             reply_markup=math_menu.get_keyboard_math_category())
         await call.message.answer(f'{condition}',
                                   reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
@@ -113,8 +115,6 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
 
-    await state.update_data(card_id=href)
-
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
     global problems_info_data_math
@@ -125,11 +125,12 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
             user_data = await state.get_data()
             # если "правильно", то в user_data['correct'] добавляется id карточки
             correct = user_data['correct']
-            correct.append(user_data['card_id'])
+            correct.append(href)
             await state.update_data(correct=correct)
         link_problems = hlink('Ссылка на задачу', href)
+        dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
         await message.answer(
-            f'Название задания или его ID: {title}\n{link_problems}\nПодкатегория: {subcategory}\n{complexity}, {classes}',
+            f'Название задания или его ID: {title}\n{link_problems}{dop_info}',
             reply_markup=math_menu.get_keyboard_math_category())
         await message.answer(f'{condition}',
                              reply_markup=math_menu_inline.get_inline_math_problems_category_info(info_problem))
@@ -170,7 +171,6 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
     for i in range(len(correct)):
         link_problems = hlink('Ссылка на задачу', correct[i])
         string_correct += f"{i + 1}: id - {correct[i][52:]} ({link_problems})\n"
-
 
     await message.answer(
         emoji.emojize(":bar_chart:") + f"Количество правильно решённых задач: {len(correct)}\n{string_correct}")
