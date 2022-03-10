@@ -105,26 +105,22 @@ def get_inline_math_problems_category_info(info_problem):
     if info_problem['decisions_1'] != '':
         buttons.append(types.InlineKeyboardButton(text='Решение 1',
                                                   callback_data=callback_problems_info_math.new(
-                                                      info='Decision 1',
-                                                      translate='Решение 1')))
+                                                      info='Decision 1')))
 
     if info_problem['decisions_2'] != '':
         buttons.append(types.InlineKeyboardButton(text='Решение 2',
                                                   callback_data=callback_problems_info_math.new(
-                                                      info='Decision 2',
-                                                      translate='Решение 2')))
+                                                      info='Decision 2')))
 
     if info_problem['answer'] != '':
         buttons.append(types.InlineKeyboardButton(text='Ответ',
                                                   callback_data=callback_problems_info_math.new(
-                                                      info='Answer',
-                                                      translate='Ответ')))
+                                                      info='Answer')))
 
     if info_problem['remarks'] != '':
         buttons.append(types.InlineKeyboardButton(text='Замечания',
                                                   callback_data=callback_problems_info_math.new(
-                                                      info='Remarks',
-                                                      translate='Замечания')))
+                                                      info='Remarks')))
 
     keyboard = types.InlineKeyboardMarkup(row_width=3)
     keyboard.add(*buttons)

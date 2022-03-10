@@ -88,10 +88,11 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
 
+    # если "правильно", то в user_data['correct'] добавляется id карточки
     if message.text == emoji.emojize(":white_check_mark:") + ' Правильно':
         user_data = await state.get_data()
-        # если "правильно", то в user_data['correct'] добавляется id карточки
         correct = user_data['correct']
+        # Если названия задачки не существует, то в вывод подается не название задача и id задачи
         if title == 'None':
             correct.append(id)
         else:
@@ -106,6 +107,7 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
     problems_info_data_logic = info_problem
 
     link_problems = hlink('Ссылка на задачу', href)
+    # В задачках логики нет сложности, классов и подкатегорий, поэтому вынес в отдельную переменную
     dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
     await message.answer(
         f'Название задания или его ID: {title}\n{link_problems}',
@@ -135,10 +137,12 @@ async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_da
 
 async def tasks_category_logic_end(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
+    # Список correct содержит id задач и сразу после id идет ссылка на задачу
     correct = user_data['correct']
     await state.finish()
     string_correct = ''
     count = 1
+    # Создание статистики
     for i in range(0, len(correct), 2):
         link_problems = hlink('Ссылка на задачу', correct[i + 1])
         string_correct += f"{count}: id - {correct[i]} ({link_problems})\n"

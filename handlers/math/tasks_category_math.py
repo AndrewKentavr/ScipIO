@@ -13,7 +13,7 @@ from handlers.keyboards.inline import math_menu_inline
 from handlers.math.math import MathButCategory
 
 callback_problems_math = CallbackData("problems", "category")
-callback_problems_info_math = CallbackData("values", "info", "translate")
+callback_problems_info_math = CallbackData("values", "info")
 callback_main_problems_math = CallbackData("problems", "category")
 
 
@@ -121,12 +121,13 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
     problems_info_data_math = info_problem
 
     try:
+        # если "правильно", то в user_data['correct'] добавляется id карточки
         if message.text == emoji.emojize(":white_check_mark:") + ' Правильно':
             user_data = await state.get_data()
-            # если "правильно", то в user_data['correct'] добавляется id карточки
             correct = user_data['correct']
             correct.append(href)
             await state.update_data(correct=correct)
+
         link_problems = hlink('Ссылка на задачу', href)
         dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
         await message.answer(
@@ -145,16 +146,18 @@ async def tasks_category_math_print_info(call: types.CallbackQuery, callback_dat
     ВОТ ТУТ НУЖНО ИСПРАВЛЯТЬ, Т.К ТУТ НЕПОНЯТНО ЗАЧЕМ НУЖЕН TRANSLATE, ЕСЛИ ЕСТЬ info_math
     """
 
-    translate = callback_data['translate']
+    info = callback_data['info']
     try:
-        if translate == 'Решение 1':
+        if info == 'Decision 1':
             await call.message.answer(f'{problems_info_data_math["decisions_1"]}')
 
-        elif translate == 'Решение 2':
+        elif info == 'Decision 2':
             await call.message.answer(f'{problems_info_data_math["decisions_2"]}')
-        elif translate == 'Ответ':
+
+        elif info == 'Answer':
             await call.message.answer(f'{problems_info_data_math["answer"]}')
-        elif translate == 'Замечания':
+
+        elif info == 'Remarks':
             await call.message.answer(f'{problems_info_data_math["remarks"]}')
 
     except Exception:
@@ -165,9 +168,11 @@ async def tasks_category_math_print_info(call: types.CallbackQuery, callback_dat
 
 async def tasks_category_math_end(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
+    # Список correct содержит ссылки на задачи(в каждой ссылке есть id задачи)
     correct = user_data['correct']
     await state.finish()
     string_correct = ''
+    # Создание статистики
     for i in range(len(correct)):
         link_problems = hlink('Ссылка на задачу', correct[i])
         string_correct += f"{i + 1}: id - {correct[i][52:]} ({link_problems})\n"
