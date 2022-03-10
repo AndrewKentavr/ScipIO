@@ -152,7 +152,8 @@ where user_id == {user_id};""")
 # -----------------------------add_action-----------------------------------------
 def action_add(telegram_user_id, action, correct=None, id_category=None):
     """
-    :param action: 'flc', 'men_math', 'cat_logic', 'cat_math'
+
+    :param action: 'flc', 'mentally_math', 'cat_logic', 'cat_math'
     :param correct: добавляется для flashcard и mentally_math
     :param id_category: нужно только когда это задача из category
     """
