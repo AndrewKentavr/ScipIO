@@ -21,12 +21,13 @@ scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command="/timer", description="Таймер"),
+        BotCommand(command="/cancel", description="Отмена действия"),
+        BotCommand(command="/help", description="Просмотр функционала"),
         BotCommand(command="/math", description="Задания по математике"),
         BotCommand(command="/logic", description="Задания по логике"),
         BotCommand(command="/flashcard", description="Карточки для запомнинания"),
-        BotCommand(command="/cancel", description="Отмена действия"),
-        BotCommand(command="/help", description="Просмотр функционала")
+        BotCommand(command="/statistics", description="Просмотр статистики"),
+        BotCommand(command="/timer", description="Таймер")
     ]
     await bot.set_my_commands(commands)
 
