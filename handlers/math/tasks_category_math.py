@@ -1,3 +1,19 @@
+"""
+Основная идея алгоритма в том чтобы отправлять задачи пользвателю после того как он нажмет "Правильно" или "Неправильно".
+
+Сначал пользователю предоставляется выбор основной категории(функция: tasks_category_math_start), после того как пользователь выберет основную категори
+    пользователь должен будет выбрать подкатегрию(функция: one_tasks_category), если подкатегории нет, то пользователю сразу присылется задача.
+
+Основной алгоритм:
+    1) Предоставляется выбор основной категории. Функция: tasks_category_math_start
+    2) Проверка есть ли подкатегория. Если подкатегории нет, то задача отправляется сразу. Если подкатегория есть
+    то пользователь выбирает подкатегорию. Функция: one_tasks_category
+    3) После выбора подкатегории, пользователю отправляется первая задача. Функция: tasks_category_math_print_keyboard_inline
+    4) Когда пользователь ответит "Правильно" или "Неправильно" то вызывается функция: tasks_category_math_print_keyboard_default
+    5) Чтобы закончить решение задач, пользователь может прописать "🛑 Закончить математику"
+
+"""
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -72,7 +88,7 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
                                       callback_data["category"]))
 
 
-async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
+async def tasks_category_math_print_keyboard_inline(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     global category
     category = callback_data["category"]
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
@@ -203,7 +219,7 @@ def register_handlers_tasks_math_category(dp: Dispatcher):
                                        callback_main_problems_math.filter(category=all_main_files_names), state='*')
 
     all_files_names = [i[0] for i in finding_categories_table('math')]
-    dp.register_callback_query_handler(tasks_category_math_print_inline,
+    dp.register_callback_query_handler(tasks_category_math_print_keyboard_inline,
                                        callback_problems_math.filter(category=all_files_names), state='*')
 
     choose = [emoji.emojize(":white_check_mark:") + ' Правильно', emoji.emojize(":x:") + ' Неправильно']
