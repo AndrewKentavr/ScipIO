@@ -168,4 +168,22 @@ VALUES ({telegram_user_id}, '{action}', {correct}, '{datetime.datetime.now()}', 
     cur.connection.commit()
     return
 
+
+# -----------------------------statistics-----------------------------------------
+def stat_general_bd(telegram_user_id):
+    """
+    :param
+    :return: info[0] - количество показов flashcard(flc)
+             info[1] - количество попыток mentally_math
+             info[2] - количество показов category_math
+             info[3] - количество показов category_logic
+    """
+    cur.execute(f"""SELECT count(*) AS flc, 
+(SELECT count(*) FROM actions WHERE action='men_math' and telegram_user_id={telegram_user_id}) AS men_math,
+(SELECT count(*) FROM actions WHERE action='cat_math' and telegram_user_id={telegram_user_id}) AS cat_math,
+(SELECT count(*) FROM actions WHERE action='cat_logic' and telegram_user_id={telegram_user_id}) AS cat_logic
+FROM actions WHERE action='flc' and telegram_user_id={telegram_user_id};""")
+    info = cur.fetchall()
+    return info
+
 # https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays
