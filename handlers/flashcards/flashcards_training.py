@@ -33,7 +33,6 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
 from data_b.dp_control import flashcard_dp_info_game
-from data_b.dp_control import flashcard_dp_info
 from data_b.dp_control import flashcard_one
 from handlers.keyboards.default import flashcard_menu
 
@@ -107,8 +106,6 @@ async def fls_game(message: types.Message, state: FSMContext):
                     del flashcards[i]
                     await state.update_data(flashcards=flashcards)
                     break
-
-
     else:
         await message.answer('Вы написали что-то не то')
         return
@@ -122,10 +119,11 @@ async def fls_game(message: types.Message, state: FSMContext):
         await flc_game_end(message, state)
     else:
         flashcard = choice(flashcard)
-
+        # card_id  содежит либо номер карточки, Пример: 54, либо номер каточки и сторону, Пример: 54 обрат.карт
         card_id, card_front, card_back, show_card = flashcard
 
         card_id_split = str(card_id).split()
+        # Если у списка card_id_split существует первый элмент, то значит это обратная сторона
         try:
             str(card_id_split[1])
             side = 'Обратная сторона'
@@ -135,17 +133,16 @@ async def fls_game(message: types.Message, state: FSMContext):
         await state.update_data(card_id=card_id)
         await state.update_data(card_back=card_back)
         await state.update_data(side=side)
-
+        # Если длина стороны будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
         if len(card_front) <= 250:
             create_photo(card_front, message.from_user.id)
 
-            photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
+            photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
             await bot.send_photo(message.chat.id, photo=photo, caption=side,
                                  reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
-            os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
-            os.remove(f'handlers/flashcards/{message.from_user.id}')
+            os.remove(f'handlers/flashcards/{message.from_user.id}.png')
         else:
             await message.answer(f'{side}:\n{card_front}',
                                  reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
@@ -167,15 +164,16 @@ async def flc_game_end(message: types.Message, state: FSMContext):
                          reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
     correct = user_data['correct']
-
+    # Создание статистики
     string_correct = ''
     for i in range(len(correct)):
         if type(correct[i]) == int:
-            a = flashcard_one(message.from_user.id, correct[i])[0]
-            string_correct += f"<u>{i + 1}</u>: {a[1]} <u><b>=></b></u> {a[2]}\n"
+            # Пример списка info_one_card: [55, "cat", "кошка"] или ["55 обрат.карт", "dog", "собака"]
+            info_one_card = flashcard_one(message.from_user.id, correct[i])[0]
+            string_correct += f"<u>{i + 1}</u>: {info_one_card[1]} <u><b>=></b></u> {info_one_card[2]}\n"
         else:
-            a = flashcard_one(message.from_user.id, correct[i].split()[0])[0]
-            string_correct += f"<u>{i + 1}</u>: {a[2]} <u><b>=></b></u> {a[1]}\n"
+            info_one_card = flashcard_one(message.from_user.id, correct[i].split()[0])[0]
+            string_correct += f"<u>{i + 1}</u>: {info_one_card[2]} <u><b>=></b></u> {info_one_card[1]}\n"
 
     await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
                                                         f'{string_correct}')
@@ -196,12 +194,11 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
     if len(card_back) <= 250:
         create_photo(card_back, message.from_user.id)
 
-        photo = open(f'handlers/flashcards/{message.from_user.id}:front.png', 'rb')
+        photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
         await bot.send_photo(message.chat.id, photo=photo, caption=side)
 
-        os.remove(f'handlers/flashcards/{message.from_user.id}:front.png')
-        os.remove(f'handlers/flashcards/{message.from_user.id}')
+        os.remove(f'handlers/flashcards/{message.from_user.id}.png')
     else:
         await message.answer(f'{side}:\n{card_back}',
                              reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())

@@ -52,8 +52,6 @@ def create_photo(msg, id):
             list_line.append(text)
 
         if len(list_line) % 2 == 0:
-            print(list_line)
-            print(get_text_size(text, image, font))
             count = (len(list_line) // 2) * get_text_size(text, image, font)[1]
             for i in range(len(list_line)):
                 editable_image.text((width / 2, (height + 30) / 2 - count), list_line[i], font=font, fill='black',
@@ -70,4 +68,4 @@ def create_photo(msg, id):
     else:
         editable_image.text((width / 2, height / 2), text, font=font, fill='black', anchor="mm")
 
-    image.save(f'handlers/flashcards/{id}:front.png')
+    image.save(f'handlers/flashcards/{id}.png')
