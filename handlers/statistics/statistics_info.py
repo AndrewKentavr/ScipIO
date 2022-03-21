@@ -1,8 +1,8 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.utils import emoji
-from data_b.dp_control import stat_general_bd
-from handlers.statistics.charts import pie_chart
+from data_b.dp_control import stat_general_bd, stat_bar_general
+from handlers.statistics.charts import pie_chart, bar_chart
 from aiogram.types import InputFile
 import os
 
@@ -21,6 +21,14 @@ async def stat_general(message: types.Message):
     photo = InputFile(f"handlers/statistics/data_figure/{user_id}.png")
     await message.answer_photo(photo=photo)
     os.remove(f"handlers/statistics/data_figure/{user_id}.png")
+
+    list_time = stat_bar_general(user_id)
+    bar_chart(list_time, user_id)
+    photo = InputFile(f"handlers/statistics/data_figure/{user_id}.png")
+    await message.answer_photo(photo=photo)
+    os.remove(f"handlers/statistics/data_figure/{user_id}.png")
+
+    return
 
 
 def register_handlers_statistics_info(dp: Dispatcher):

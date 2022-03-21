@@ -1,6 +1,8 @@
 import datetime
 import sqlite3
 
+import pytz
+
 CONN = sqlite3.connect('data_b/scipio.db')
 cur = CONN.cursor()
 
@@ -185,5 +187,24 @@ def stat_general_bd(telegram_user_id):
 FROM actions WHERE action='flc' and telegram_user_id={telegram_user_id};""")
     info = cur.fetchall()
     return info
+
+
+def stat_bar_general(telegram_user_id):
+    """
+    Вся данная функция работает очень медленно и требует дальнейшей доработки
+    """
+
+    time_moscow = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
+    arr_time_week = [(time_moscow - datetime.timedelta(days=6 - i)).strftime("%m-%d") for i in range(7)]
+
+    list_time = []
+    actions = ['flc', 'men_math', 'cat_math', 'cat_logic']
+
+    for action in actions:
+        cur.execute(f"""SELECT time_action FROM actions
+        WHERE action='{action}' and telegram_user_id={telegram_user_id} and (strftime('%m-%d', `time_action`) = '{arr_time_week[0]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[1]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[2]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[3]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[4]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[5]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[6]}');""")
+        list_time.append([i[0][5:10] for i in cur.fetchall()])
+
+    return list_time
 
 # https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays
