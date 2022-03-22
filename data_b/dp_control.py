@@ -11,7 +11,37 @@ def get_cursor():
     return cur
 
 
+# -----------------------------Users-----------------------------------------
+def dp_all_users_list():
+    cur.execute("""SELECT telegram_user_id FROM users;""")
+    result = cur.fetchall()
+    users_telegram_id_list = [i[0] for i in result]
+    return users_telegram_id_list
+
+
+def dp_user_create(telegram_user_id):
+    cur.execute(f"""INSERT INTO users (telegram_user_id, date_reg)
+VALUES ({telegram_user_id}, '{datetime.datetime.now()}');""")
+    cur.connection.commit()
+    return
+
+
 # -----------------------------ANYTHING-----------------------------------------
+
+
+def dp_all_telegram_id_flc_list():
+    cur.execute("""SELECT DISTINCT user_id FROM flashcards;""")
+    result = cur.fetchall()
+    flashcards_telegram_id_list = [i[0] for i in result]
+    return flashcards_telegram_id_list
+
+
+def dp_all_telegram_id_time_list():
+    cur.execute("""SELECT DISTINCT user_id FROM time;""")
+    result = cur.fetchall()
+    time_telegram_id_list = [i[0] for i in result]
+    return time_telegram_id_list
+
 
 def problem_translate_name(name):
     cur.execute(f"""SELECT translate_category FROM category
@@ -154,7 +184,6 @@ where user_id == {user_id};""")
 # -----------------------------add_action-----------------------------------------
 def action_add(telegram_user_id, action, correct=None, id_category=None):
     """
-
     :param action: 'flc', 'mentally_math', 'cat_logic', 'cat_math'
     :param correct: добавляется для flashcard и mentally_math
     :param id_category: нужно только когда это задача из category
@@ -206,5 +235,7 @@ def stat_bar_general(telegram_user_id):
         list_time.append([i[0][5:10] for i in cur.fetchall()])
 
     return list_time
+
+# -----------------------------main-----------------------------------------
 
 # https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays

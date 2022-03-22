@@ -63,4 +63,20 @@ async def main():
 
 
 if __name__ == "__main__":
+    from data_b.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp_user_create, \
+        dp_all_telegram_id_time_list
+
+    all_users_list = dp_all_users_list()
+    all_telegram_id_flc = dp_all_telegram_id_flc_list()
+
+    for i in all_telegram_id_flc:
+        if i not in all_users_list:
+            dp_user_create(i)
+
+    all_telegram_id_time = dp_all_telegram_id_time_list()
+
+    for i in all_telegram_id_time:
+        if i not in all_users_list:
+            dp_user_create(i)
+
     asyncio.run(main())
