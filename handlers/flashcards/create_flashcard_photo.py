@@ -1,7 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 
-# Функция определяющая шрифт текста
+# Функция определяющая размер шрифта текста
 def find_font_size(text, font, image, target_width_ratio):
     tested_font_size = 100
     tested_font = ImageFont.truetype(font, tested_font_size)
