@@ -32,7 +32,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_info_game
+from data_b.dp_control import flashcard_dp_info_game, action_add
 from handlers.keyboards.default import flashcard_menu
 
 
@@ -95,7 +95,10 @@ async def fls_game(message: types.Message, state: FSMContext):
                     del flashcards[i]
                     await state.update_data(flashcards=flashcards)
                     break
-
+            # добавление action flc в бд
+            action_add(message.from_user.id, 'flc', True)
+        else:
+            action_add(message.from_user.id, 'flc', False)
     else:
         await message.answer('Вы написали что-то не то')
         return

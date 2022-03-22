@@ -1,4 +1,7 @@
+import datetime
 import sqlite3
+
+import pytz
 
 CONN = sqlite3.connect('data_b/scipio.db')
 cur = CONN.cursor()
@@ -8,7 +11,37 @@ def get_cursor():
     return cur
 
 
+# -----------------------------Users-----------------------------------------
+def dp_all_users_list():
+    cur.execute("""SELECT telegram_user_id FROM users;""")
+    result = cur.fetchall()
+    users_telegram_id_list = [i[0] for i in result]
+    return users_telegram_id_list
+
+
+def dp_user_create(telegram_user_id):
+    cur.execute(f"""INSERT INTO users (telegram_user_id, date_reg)
+VALUES ({telegram_user_id}, '{datetime.datetime.now()}');""")
+    cur.connection.commit()
+    return
+
+
 # -----------------------------ANYTHING-----------------------------------------
+
+
+def dp_all_telegram_id_flc_list():
+    cur.execute("""SELECT DISTINCT user_id FROM flashcards;""")
+    result = cur.fetchall()
+    flashcards_telegram_id_list = [i[0] for i in result]
+    return flashcards_telegram_id_list
+
+
+def dp_all_telegram_id_time_list():
+    cur.execute("""SELECT DISTINCT user_id FROM time;""")
+    result = cur.fetchall()
+    time_telegram_id_list = [i[0] for i in result]
+    return time_telegram_id_list
+
 
 def problem_translate_name(name):
     cur.execute(f"""SELECT translate_category FROM category
@@ -89,7 +122,7 @@ def formulas_search_random():
 # -----------------------------FLASHCARD-----------------------------------------
 def flashcard_dp_create(user_id, front, back, show):
     cur.execute(f"""INSERT INTO flashcards (user_id, front_card, back_card, show_card)
-VALUES ({user_id}, '{front}', '{back}', '{show}');""")  # Без этого новые карточки не сохранялись
+VALUES ({user_id}, '{front}', '{back}', {show});""")  # Без этого новые карточки не сохранялись
     cur.connection.commit()
     return
 
@@ -146,5 +179,77 @@ where user_id == {user_id};""")
     c = cur.fetchall()
     all_timers = list(map(lambda x: x[0], c))
     return all_timers
+
+
+def dp_timer_circle_user_time(time_now):
+    cur.execute(f"""SELECT user_id, tasks FROM Time
+                    where time == '{time_now}';""")
+    results = cur.fetchall()
+    return results
+
+
+# -----------------------------add_action-----------------------------------------
+def action_add(telegram_user_id, action, correct=None, id_category=None):
+    """
+    :param action: 'flc', 'mentally_math', 'cat_logic', 'cat_math'
+    :param correct: добавляется для flashcard и mentally_math
+    :param id_category: нужно только когда это задача из category
+    """
+
+    # ---------Данный алгоритм, лишь на короткое время-------------
+    all_users_list = dp_all_users_list()
+    if telegram_user_id not in all_users_list:
+        dp_user_create(telegram_user_id)
+    # -------------------------------------------------------------
+
+    if id_category == None:
+        id_category = 'Null'
+
+    if correct == None:
+        correct = 'Null'
+
+    cur.execute(f"""INSERT INTO actions (telegram_user_id, action, correct, time_action, id_category)
+VALUES ({telegram_user_id}, '{action}', {correct}, '{datetime.datetime.now()}', {id_category});""")
+    cur.connection.commit()
+    return
+
+
+# -----------------------------statistics-----------------------------------------
+def stat_general_bd(telegram_user_id):
+    """
+    :param
+    :return: info[0] - количество показов flashcard(flc)
+             info[1] - количество попыток mentally_math
+             info[2] - количество показов category_math
+             info[3] - количество показов category_logic
+    """
+    cur.execute(f"""SELECT count(*) AS flc, 
+(SELECT count(*) FROM actions WHERE action='men_math' and telegram_user_id={telegram_user_id}) AS men_math,
+(SELECT count(*) FROM actions WHERE action='cat_math' and telegram_user_id={telegram_user_id}) AS cat_math,
+(SELECT count(*) FROM actions WHERE action='cat_logic' and telegram_user_id={telegram_user_id}) AS cat_logic
+FROM actions WHERE action='flc' and telegram_user_id={telegram_user_id};""")
+    info = cur.fetchall()
+    return info
+
+
+def stat_bar_general(telegram_user_id):
+    """
+    Вся данная функция работает очень медленно и требует дальнейшей доработки
+    """
+
+    time_moscow = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
+    arr_time_week = [(time_moscow - datetime.timedelta(days=6 - i)).strftime("%m-%d") for i in range(7)]
+
+    list_time = []
+    actions = ['flc', 'men_math', 'cat_math', 'cat_logic']
+
+    for action in actions:
+        cur.execute(f"""SELECT time_action FROM actions
+        WHERE action='{action}' and telegram_user_id={telegram_user_id} and (strftime('%m-%d', `time_action`) = '{arr_time_week[0]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[1]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[2]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[3]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[4]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[5]}' or strftime('%m-%d', `time_action`) = '{arr_time_week[6]}');""")
+        list_time.append([i[0][5:10] for i in cur.fetchall()])
+
+    return list_time
+
+# -----------------------------main-----------------------------------------
 
 # https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays

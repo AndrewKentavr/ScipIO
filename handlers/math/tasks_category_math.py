@@ -23,7 +23,7 @@ from aiogram.utils.callback_data import CallbackData
 from aiogram.utils.markdown import hlink
 
 from data_b.dp_control import problem_category_random, finding_categories_table, finding_one_categories_table, \
-    finding_main_categories_table
+    finding_main_categories_table, action_add
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
 from handlers.math.math import MathButCategory
@@ -49,7 +49,7 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
     categories = finding_one_categories_table(call["data"][9:])
     if len(categories) == 1:
         global category
-        category = callback_data["category"][:-5]
+        category = callback_data["category"]
         # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
         dictionary_info_problem = problem_category_random(category, 'math')
 
@@ -144,6 +144,11 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
             correct = user_data['correct']
             correct.append(href)
             await state.update_data(correct=correct)
+
+            # добавление action cat_math в бд
+            action_add(message.from_user.id, 'cat_math', True)
+        else:
+            action_add(message.from_user.id, 'cat_math', False)
 
         link_problems = hlink('Ссылка на задачу', href)
         dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'

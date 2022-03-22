@@ -4,9 +4,16 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import InputFile
 from aiogram.utils import emoji
 
+from data_b.dp_control import dp_all_users_list, dp_user_create
+
 
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
+
+    all_users_list = dp_all_users_list()
+    if message.from_user.id not in all_users_list:
+        dp_user_create(message.from_user.id)
+
     photo = InputFile("data/text_scipio.jpg")
     await message.answer_photo(photo=photo)
     await message.answer(f'Приветствуем на нашем обучающем проекте!' + emoji.emojize(":fire:"))
