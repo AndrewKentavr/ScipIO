@@ -120,7 +120,7 @@ async def flashcards_managing_del_end(message: types.Message, state: FSMContext)
 async def flashcards_managing_info(message: types.Message):
     await message.answer('Все ваши карточки:', reply_markup=types.ReplyKeyboardRemove())
     all_cards = flashcard_dp_info(message.from_user.id)
-    mes_print = 'id     :     front     :      back\n'
+    mes_print = 'id     :     front     -      back\n'
     for i in all_cards:
         mes_print += f'{i[0]}: {i[1]} - {i[2]}\n'
 

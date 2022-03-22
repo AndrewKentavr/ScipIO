@@ -4,7 +4,7 @@ from aiogram.utils import emoji
 
 def get_keyboard_math_start():
     buttons_1 = [
-        emoji.emojize(":book:") + ' Задания из категорий Математики',
+        emoji.emojize(":book:") + ' Задания из категорий',
     ]
     buttons_2 = emoji.emojize(":brain:") + ' Примеры для подсчёта в уме'
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
@@ -35,7 +35,7 @@ def get_keyboard_math_mentally_start():
 
 def get_keyboard_math_mentally_end():
     buttons = [
-        emoji.emojize(":stop_sign:") + " Закончить примеры в уме",
+        emoji.emojize(":stop_sign:") + " Закончить",
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
@@ -44,8 +44,9 @@ def get_keyboard_math_mentally_end():
 
 def get_keyboard_math_category():
     buttons = [
-        emoji.emojize(":arrow_right:") + ' Следующая задача',
-        emoji.emojize(":stop_sign:") + ' Закончить математику'
+        emoji.emojize(":white_check_mark:") + ' Правильно',
+        emoji.emojize(":x:") + ' Неправильно',
+        emoji.emojize(":stop_sign:") + ' Закончить'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

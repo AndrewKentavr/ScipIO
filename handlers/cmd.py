@@ -68,7 +68,7 @@ async def cmd_help(message: types.Message, state: FSMContext):
                          '\n <b>2)</b> /equation_mentally - тренировка для подсчёта в уме'
                          '\n <b>3)</b> /mell_theory - теория для подсчёта в уме'
                          '\n <b>4)</b> /flc_mg - управление карточек'
-                         '\n <b>5)</b> /flc_train - тенировка с карточками'
+                         '\n <b>5)</b> /flc_train - тренировка с карточками'
                          '\n <b>6)</b> /flc_theory - теория по карточкам')
 
 
