@@ -119,7 +119,7 @@ async def fls_game(message: types.Message, state: FSMContext):
         await flc_game_end(message, state)
     else:
         flashcard = choice(flashcard)
-        # card_id  содежит либо номер карточки, Пример: 54, либо номер каточки и сторону, Пример: 54 обрат.карт
+        # card_id содежит либо номер карточки, Пример: 54, либо номер каточки и сторону, Пример: 54 обрат.карт
         card_id, card_front, card_back, show_card = flashcard
         list_words = card_front.split()
         card_id_split = str(card_id).split()
@@ -133,7 +133,7 @@ async def fls_game(message: types.Message, state: FSMContext):
         await state.update_data(card_id=card_id)
         await state.update_data(card_back=card_back)
         await state.update_data(side=side)
-        # Если длина стороны будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
+        # Если количество букв будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
         if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
 
             create_photo(card_back, message.from_user.id)
@@ -191,6 +191,7 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         side = 'Обратная сторона'
     else:
         side = 'Лицевая сторона'
+
     if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
 
         create_photo(card_back, message.from_user.id)

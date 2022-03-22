@@ -37,7 +37,8 @@ async def tasks_category_math_print_inline(call: types.CallbackQuery, callback_d
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
 
-    # Образка словаря
+    # dict(list(dictionary_info_problem.items())) - Словарь сожержащий всю информацию о задаче
+    # dict(list(dictionary_info_problem.items())[6:]) - словарь с двумя решениями, ответом и подсказкой
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
     global problems_info_data_math
@@ -65,6 +66,8 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
 
+    # dict(list(dictionary_info_problem.items())) - Словарь сожержащий всю информацию о задаче
+    # dict(list(dictionary_info_problem.items())[6:]) - словарь с двумя решениями, ответом и подсказкой
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
     global problems_info_data_math
