@@ -121,7 +121,7 @@ async def fls_game(message: types.Message, state: FSMContext):
         flashcard = choice(flashcard)
         # card_id  содежит либо номер карточки, Пример: 54, либо номер каточки и сторону, Пример: 54 обрат.карт
         card_id, card_front, card_back, show_card = flashcard
-
+        list_words = card_front.split()
         card_id_split = str(card_id).split()
         # Если у списка card_id_split существует первый элмент, то значит это обратная сторона
         try:
@@ -134,17 +134,16 @@ async def fls_game(message: types.Message, state: FSMContext):
         await state.update_data(card_back=card_back)
         await state.update_data(side=side)
         # Если длина стороны будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
-        if len(card_front) <= 250:
-            create_photo(card_front, message.from_user.id)
+        if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
 
+            create_photo(card_back, message.from_user.id)
             photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
-            await bot.send_photo(message.chat.id, photo=photo, caption=side,
-                                 reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+            await bot.send_photo(message.chat.id, photo=photo, caption=side)
 
             os.remove(f'handlers/flashcards/{message.from_user.id}.png')
         else:
-            await message.answer(f'{side}:\n{card_front}',
+            await message.answer(f'{side}:\n{card_back}',
                                  reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
         await Flash_game.fls_game.set()
@@ -186,14 +185,15 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
     """
     user_data = await state.get_data()
     card_back = user_data['card_back']
+    list_words = card_back.split()
     side = user_data['side']
     if side == 'Лицевая сторона':
         side = 'Обратная сторона'
     else:
         side = 'Лицевая сторона'
-    if len(card_back) <= 250:
-        create_photo(card_back, message.from_user.id)
+    if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
 
+        create_photo(card_back, message.from_user.id)
         photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
         await bot.send_photo(message.chat.id, photo=photo, caption=side)
