@@ -195,6 +195,12 @@ def dp_timer_circle_user_time(time_now):
     return results
 
 
+def del_user(user_id):
+    cur.execute(f"""
+        DELETE FROM time WHERE user_id = {user_id};
+    """)
+
+
 # -----------------------------add_action-----------------------------------------
 def action_add(telegram_user_id, action, correct=None, id_category=None):
     """
