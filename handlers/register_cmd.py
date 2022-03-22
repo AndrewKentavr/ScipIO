@@ -3,7 +3,7 @@
 """
 
 # ------main-------
-from handlers.cart import register_handlers_cart
+# from handlers.cart import register_handlers_cart
 from handlers.cmd import register_handlers_start
 
 # ------math-------
@@ -34,7 +34,7 @@ from handlers.statistics.statistics import register_handlers_statistics
 def reg_cmd(dp):
     # ------main-------
     register_handlers_start(dp)
-    register_handlers_cart(dp)
+    # register_handlers_cart(dp)
 
     # ------math-------
     register_handlers_math(dp)

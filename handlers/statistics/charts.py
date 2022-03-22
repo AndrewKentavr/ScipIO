@@ -22,7 +22,7 @@ def pie_chart(info_general, telegram_user_id):
     # text = ax.text(-0.2, 1.05, "Aribitrary text", transform=ax.transAxes)
     # fig.savefig('saved_figure.png', bbox_extra_artists=(lgd, text), bbox_inches='tight')
     ax.set_title('Процент всех задач', fontsize=18, fontweight='bold')
-    fig.savefig(f'handlers/statistics/data_figure/{telegram_user_id}.png', dpi=100)
+    fig.savefig(f'handlers/statistics/{telegram_user_id}.png', dpi=100)
     return
 
 
@@ -82,6 +82,6 @@ def bar_chart(list_time, telegram_user_id):
                     title="Категории заданий", loc="upper left", bbox_to_anchor=(1, 0, 0.5, 1))
     text = ax.text(-0.2, 1.05, 'Выполненые задачи за неделю', fontsize=18, fontweight='bold', transform=ax.transAxes)
 
-    fig.savefig(f'handlers/statistics/data_figure/{telegram_user_id}.png', bbox_extra_artists=(lgd, text),
+    fig.savefig(f'handlers/statistics/{telegram_user_id}.png', bbox_extra_artists=(lgd, text),
                 bbox_inches='tight')
     return
