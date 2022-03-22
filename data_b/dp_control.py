@@ -188,6 +188,13 @@ def action_add(telegram_user_id, action, correct=None, id_category=None):
     :param correct: добавляется для flashcard и mentally_math
     :param id_category: нужно только когда это задача из category
     """
+
+    # ---------Данный алгоритм, лишь на короткое время-------------
+    all_users_list = dp_all_users_list()
+    if telegram_user_id not in all_users_list:
+        dp_user_create(telegram_user_id)
+    # -------------------------------------------------------------
+
     if id_category == None:
         id_category = 'Null'
 
