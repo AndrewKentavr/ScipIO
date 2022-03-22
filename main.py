@@ -34,35 +34,47 @@ async def set_commands(bot: Bot):
 
 def timer_interval_func():
     """
-    Функция управляющая таймером
+    Запускает функцию time_cycle, каждые 60 секунд
     """
     scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp,))
 
 
 async def main():
     """
-    middlewares.setup(dp) - запуск против флуда
-    scheduler.start(), check_func() - запуск таймера и функция работающая с ним
-    set_commands - назначает комманды бота
-    reg_cmd - регистрация фсех необходимых функция
+    await bot.delete_webhook(drop_pending_updates=True) - в новых версиях aiogram есть проблема, то что при запуске бота,
+        он реагирует на сообщения, которые были отправленны ему, пока он был выключен и это не чинилось dp.skip_updates()
+        подробнее об этой ошибке: https://github.com/aiogram/aiogram/issues/418
     """
     # Удаление последнего сообщения
     await bot.delete_webhook(drop_pending_updates=True)
+
+    # Запуск "антифлуда"
     middlewares.setup(dp)
 
+    # scheduler.start() - это запуск таймера AsyncIOScheduler
     scheduler.start()
+    # timer_interval_func() - запуск функции таймера
     timer_interval_func()
 
     await set_commands(bot)
+
     # функция регистрации "register_message_handler"
     reg_cmd(dp)
-    # await bot.send_message(ADMINS, "Bot - on", reply_markup=types.ReplyKeyboardRemove())
 
     # Запуск полинга
     await dp.start_polling()
 
 
 if __name__ == "__main__":
+
+    # ------------------------------------------------------
+    """
+        Это блок добавления пользователей в таблицу(users)
+    
+        Сделанн он, чтобы добавить всех пользователей в таблицу(users), у которых есть карточки flashcards и timer,
+            т.к там хранится их 'telegram_user_id'
+    """
+
     from data_b.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp_user_create, \
         dp_all_telegram_id_time_list
 
@@ -78,5 +90,7 @@ if __name__ == "__main__":
     for i in all_telegram_id_time:
         if i not in all_users_list:
             dp_user_create(i)
+    # ------------------------------------------------------
 
+    # Ассинхронный запуск бота
     asyncio.run(main())

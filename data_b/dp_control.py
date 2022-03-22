@@ -181,6 +181,13 @@ where user_id == {user_id};""")
     return all_timers
 
 
+def dp_timer_circle_user_time(time_now):
+    cur.execute(f"""SELECT user_id, tasks FROM Time
+                    where time == '{time_now}';""")
+    results = cur.fetchall()
+    return results
+
+
 # -----------------------------add_action-----------------------------------------
 def action_add(telegram_user_id, action, correct=None, id_category=None):
     """
