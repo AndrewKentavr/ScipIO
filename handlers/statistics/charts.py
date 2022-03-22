@@ -28,7 +28,10 @@ def pie_chart(info_general, telegram_user_id):
 
 def bar_chart(list_time, telegram_user_id):
     time_moscow = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
-    arr_time_week = [(time_moscow - datetime.timedelta(days=6 - i)).strftime("%m-%d") for i in range(7)]
+    arr_time_week_0 = [(time_moscow - datetime.timedelta(days=6 - i)).strftime("%m-%d %w").split() for i in
+                       range(7)]
+    arr_time_week_days = [i[1] for i in arr_time_week_0]
+    arr_time_week = [i[0] for i in arr_time_week_0]
     arr_time_week_dict = Counter(dict.fromkeys(arr_time_week, [0, 0, 0, 0]))
 
     flc_0, men_math_0, cat_math_0, cat_logic_0 = list_time
@@ -61,15 +64,17 @@ def bar_chart(list_time, telegram_user_id):
     cat_math_data = [arr_time_week_dict[i][2] for i in time_week_data]
     cat_logic_data = [arr_time_week_dict[i][3] for i in time_week_data]
 
-    x = ['Пон.', 'Вт.', 'Ср.', 'Чет.', 'Пт.', 'Суб.', 'Вс.']
+    rus_weekdays = {'0': 'Вс.', '1': 'Пон.', '2': 'Вт.', '3': 'Ср.', '4': 'Чет.', '5': 'Пт.', '6': 'Суб.'}
+
+    x = [rus_weekdays[i] for i in arr_time_week_days]
 
     fig = plt.figure(figsize=(6, 5), facecolor='#b7e5db')
     ax = fig.add_subplot()
 
     ax.bar(x, flc_data, color='#1dceb2')
     ax.bar(x, men_math_data, bottom=flc_data, color='#DD80CC')
-    ax.bar(x, cat_math_data, bottom=flc_data, color='#EF3038')
-    ax.bar(x, cat_logic_data, bottom=flc_data, color='#FFCF40')
+    ax.bar(x, cat_math_data, bottom=[sum(i) for i in zip(flc_data, men_math_data)], color='#EF3038')
+    ax.bar(x, cat_logic_data, bottom=[sum(i) for i in zip(flc_data, men_math_data, cat_math_data)], color='#FFCF40')
 
     ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
@@ -77,6 +82,6 @@ def bar_chart(list_time, telegram_user_id):
                     title="Категории заданий", loc="upper left", bbox_to_anchor=(1, 0, 0.5, 1))
     text = ax.text(-0.2, 1.05, 'Выполненые задачи за неделю', fontsize=18, fontweight='bold', transform=ax.transAxes)
 
-    fig.savefig(f'handlers/statistics/data_figure/{telegram_user_id}.png', bbox_extra_artists=(lgd, text), bbox_inches='tight')
-
+    fig.savefig(f'handlers/statistics/data_figure/{telegram_user_id}.png', bbox_extra_artists=(lgd, text),
+                bbox_inches='tight')
     return
