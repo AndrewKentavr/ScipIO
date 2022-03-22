@@ -1,8 +1,3 @@
-"""
-Какая - то тут жопа с CallbackData, а конкретнее нужно посмотреть что за translate
-
-ТАКЖЕ СДЕЛАНА НЕ ОЧЕНЬ КНОПКА "СЛЕДУЮЩЕЕ ЗАДАНИЕ"
-"""
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
