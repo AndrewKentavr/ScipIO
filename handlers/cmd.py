@@ -4,9 +4,16 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import InputFile
 from aiogram.utils import emoji
 
+from data_b.dp_control import dp_all_users_list, dp_user_create
+
 
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
+
+    all_users_list = dp_all_users_list()
+    if message.from_user.id not in all_users_list:
+        dp_user_create(message.from_user.id)
+
     photo = InputFile("data/text_scipio.jpg")
     await message.answer_photo(photo=photo)
     await message.answer(f'Приветствуем на нашем обучающем проекте!' + emoji.emojize(":fire:"))
@@ -68,7 +75,7 @@ async def cmd_help(message: types.Message, state: FSMContext):
                          '\n <b>2)</b> /equation_mentally - тренировка для подсчёта в уме'
                          '\n <b>3)</b> /mell_theory - теория для подсчёта в уме'
                          '\n <b>4)</b> /flc_mg - управление карточек'
-                         '\n <b>5)</b> /flc_train - тенировка с карточками'
+                         '\n <b>5)</b> /flc_train - тренировка с карточками'
                          '\n <b>6)</b> /flc_theory - теория по карточкам')
 
 

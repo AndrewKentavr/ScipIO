@@ -1,7 +1,11 @@
-from aiogram import types
-from aiogram.dispatcher import FSMContext
+"""
+    Алгоритм таймера работает следующим образом:
+    Раз в 60 секунд запускается проверка, есть ли данное время (например 16:03) в базе данных time
+        и если есть то выводит "Ежедневное задание"
+"""
 
-from data_b.dp_control import get_cursor
+from aiogram import types
+from data_b.dp_control import dp_timer_circle_user_time
 from handlers.flashcards.flashcards_training import Flash_game
 from handlers.keyboards.default import flashcard_menu, math_menu
 from handlers.keyboards.inline import math_menu_inline
@@ -11,30 +15,29 @@ from datetime import datetime
 
 
 async def time_cycle(dp):
-    cur = get_cursor()
-
+    # Определение времени по московскому времени (небходимо для сервера, чтобы он определял какое время сейчас в Москве)
     time_moscow = datetime.now(pytz.timezone('Europe/Moscow'))
     time_now = time_moscow.strftime("%H:%M")
 
-    cur.execute(f"""SELECT time, user_id, tasks FROM Time
-                    where time == '{time_now}';""")
-    time_results = cur.fetchall()
+    # Массив telegram_user_id и tasks, таймер которых совпал с нужным временем
+    time_results = dp_timer_circle_user_time(time_now)
+
     if time_results:
         for i in time_results:
-            user_id = i[1]
-            tasks = i[2]
+            user_id = i[0]
+            tasks = i[1]
 
             """
             Без создания state, на версии 2.16 aiogram выдаёт ошибку:
-            AttributeError: 'NoneType' object has no attribute 'current_state'
-            Поэтому надо создавать state вручную
+                AttributeError: 'NoneType' object has no attribute 'current_state'
+                Поэтому надо создавать state вручную
             """
             state = dp.current_state(chat=user_id, user=user_id)
 
             await dp.bot.send_message(user_id, 'Ежедневное задание!',
                                       reply_markup=types.ReplyKeyboardRemove())
 
-            # Дальше идёт проверка на то какие ежедневное задание какое типа выводить
+            # Идёт проверка какого типо tasks
             if tasks == 'Карточки (Flashcards)':
                 await dp.bot.send_message(user_id, 'Лайфхаки для работы с карточками /cards_info')
                 await dp.bot.send_message(user_id, 'Вы готовы?',

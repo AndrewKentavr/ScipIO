@@ -23,6 +23,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import InputFile
 from aiogram.utils import emoji
 
+from data_b.dp_control import action_add
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
 
@@ -145,6 +146,9 @@ async def equation_mentally(message: types.Message, state: FSMContext):
                 await message.answer('Посмотрите ещё раз "подсказку":\n'
                                      'Для этого нажмите или наберите /mell_theory')
             await message.answer(f'Решите в уме:\n{conditions[-1]}')
+
+            # добавление action men_math в бд
+            action_add(message.from_user.id, 'men_math', False)
             return
         else:
             await message.answer('Правильно, следующее задание')
@@ -164,6 +168,8 @@ async def equation_mentally(message: types.Message, state: FSMContext):
             await state.update_data(attempts=attempts)
 
             await message.answer(f'Решите в уме:\n{equation[0]}')
+
+            action_add(message.from_user.id, 'men_math', True)
 
             await Equation.equation_mentally.set()
 

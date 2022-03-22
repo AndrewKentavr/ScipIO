@@ -44,7 +44,8 @@ def get_keyboard_math_mentally_end():
 
 def get_keyboard_math_category():
     buttons = [
-        emoji.emojize(":arrow_right:") + ' Следующая задача',
+        emoji.emojize(":white_check_mark:") + ' Правильно',
+        emoji.emojize(":x:") + ' Неправильно',
         emoji.emojize(":stop_sign:") + ' Закончить'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
