@@ -4,9 +4,11 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del_check, flashcard_del
+from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del
 from handlers.keyboards.default import flashcard_menu
+from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
 
+# Максимальное количество символов на одной стороне
 MAX_LEN = 450
 
 
@@ -25,6 +27,7 @@ async def flashcards_managing_create_start(message: types.Message):
     await FlashcardManaging.flashcards_managing_create_middle.set()
 
 
+# Запист передней стороны
 async def flashcards_managing_create_middle(message: types.Message, state: FSMContext):
     msg = message.text
     if len(msg) > MAX_LEN:
@@ -39,6 +42,7 @@ async def flashcards_managing_create_middle(message: types.Message, state: FSMCo
         await FlashcardManaging.next()
 
 
+# Запист задней стороны
 async def flashcards_managing_create_middle_2(message: types.Message, state: FSMContext):
     msg = message.text
     if len(msg) > MAX_LEN:
@@ -54,6 +58,7 @@ async def flashcards_managing_create_middle_2(message: types.Message, state: FSM
 
 async def flashcards_managing_create_end(message: types.Message, state: FSMContext):
     msg = message.text
+    # Если пользователь нажал "да" то при тренировке карточка будет показываться с двух сторон
     if msg == 'Да' or msg == 'Нет':
         if msg == 'Да':
             show_card = True
@@ -71,26 +76,30 @@ async def flashcards_managing_create_end(message: types.Message, state: FSMConte
     await message.answer(f'Показывать карточку с двух сторон? - {msg}')
     try:
         flashcard_dp_create(message.from_user.id, user_data["front"], user_data["back"], show_card)
-        await message.answer(f'Карточка успешно сохранена', reply_markup=types.ReplyKeyboardRemove())
+        await message.answer(f'Карточка успешно создана', reply_markup=types.ReplyKeyboardRemove())
     except Exception:
-        await message.answer(f'Что - то пошло не так')
+        await message.answer(f'Что - то пошло не так, попробуйте снова')
     await state.finish()
 
 
 # -----------------------------DEL FUNC-----------------------------------------
 async def flashcards_managing_del_start(message: types.Message):
+    # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
     all_cards = flashcard_dp_info(message.from_user.id)
     if len(all_cards) == 0:
         await message.answer(f'У вас нет карточек, которые вы могли бы удалалять',
                              reply_markup=types.ReplyKeyboardRemove())
-        await message.answer(f'Сначала создайте их')
+        await message.answer(f'Сначала создайте их', reply_markup=flashcard_menu.get_keyboard_flashcard_managing())
         return
 
-    await message.answer(f'Чтобы удалить карточку - введите её id',
+    await message.answer(f'Чтобы удалить карточку - введите её id\n'
+                         'Первый пример: 1\n'
+                         'Второй пример: 1 2 5',
                          reply_markup=types.ReplyKeyboardRemove())
-    mes_print = 'id     :     front     :      back\n'
-    for i in all_cards:
-        mes_print += f'{i[0]}: {i[1]} - {i[2]}\n'
+    # Создание сообщения с информацией о всех каточках
+    mes_print = ''
+    for i in range(len(all_cards)):
+        mes_print += f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
 
     await message.answer(mes_print)
     await FlashcardManaging.flashcards_managing_del_end.set()
@@ -98,12 +107,20 @@ async def flashcards_managing_del_start(message: types.Message):
 
 async def flashcards_managing_del_end(message: types.Message, state: FSMContext):
     msg = message.text
-    list_id = msg.split(', ')
+    # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
+    all_flash = flashcard_dp_info(message.from_user.id)
+    list_id = msg.split()
+    list_id = sorted(list_id, reverse=True)
     for card_id in list_id:
         if card_id.isdigit():
-            if flashcard_del_check(card_id):
-                flashcard_del(card_id)
-                await message.reply(f'Карточка - {card_id} успешно удалена')
+            # Провекра что номер меньше чем количество карточек
+            if int(card_id) <= len(flashcard_dp_info(message.from_user.id)):
+                # Удаление карточки
+                # all_flash[int(card_id) - 1][1] - передняя сторона карточки,
+                # all_flash[int(card_id) - 1][2] - задняя сторона карточки
+                flashcard_del(message.from_user.id, all_flash[int(card_id) - 1][1], all_flash[int(card_id) - 1][2])
+                await message.reply(f'Карточка {card_id} успешно удалена', reply_markup=get_keyboard_flashcard_start())
+
                 await state.finish()
 
             else:
@@ -112,19 +129,24 @@ async def flashcards_managing_del_end(message: types.Message, state: FSMContext)
         else:
             await message.answer('Вы неправильно ввели id карточки\n'
                                  'Напишите как показано в примере:\n'
-                                 'Если карточка одна: 3242\n'
-                                 'Если карточек несколько: 3242, 3346, 7285\n')
+                                 'Если карточка одна: 1\n'
+                                 'Если карточек несколько: 1 2 5\n')
             await FlashcardManaging.flashcards_managing_del_end.set()
 
 
 async def flashcards_managing_info(message: types.Message):
-    await message.answer('Все ваши карточки:', reply_markup=types.ReplyKeyboardRemove())
-    all_cards = flashcard_dp_info(message.from_user.id)
-    mes_print = 'id     :     front     -      back\n'
-    for i in all_cards:
-        mes_print += f'{i[0]}: {i[1]} - {i[2]}\n'
+    if len(flashcard_dp_info(message.from_user.id)) > 0:
+        await message.answer('Все ваши карточки:', reply_markup=types.ReplyKeyboardRemove())
+        # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
+        all_cards = flashcard_dp_info(message.from_user.id)
+        # Создание сообщения с информацией о всех каточках
+        mes_print = ''
+        for i in range(len(all_cards)):
+            mes_print += f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
 
-    await message.answer(mes_print)
+        await message.answer(mes_print)
+    else:
+        await message.answer('У вас нет карточек')
 
 
 class FlashcardManaging(StatesGroup):

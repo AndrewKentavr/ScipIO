@@ -32,8 +32,17 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_info_game, action_add
+from data_b.dp_control import flashcard_dp_info_game, action_add, flashcard_one
 from handlers.keyboards.default import flashcard_menu
+
+from handlers.flashcards.create_flashcard_photo import create_photo
+from config import BOT_TOKEN
+from aiogram import Bot
+import os
+
+from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
+
+bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 
 
 async def flashcards_training_theory(message: types.Message):
@@ -68,8 +77,9 @@ async def fls_game(message: types.Message, state: FSMContext):
         flashcards = flashcard_generate(message.from_user.id)
         if not flashcards:
             await message.answer('У вас ещё нет карточек', reply_markup=types.ReplyKeyboardRemove())
-            await message.answer('Чтобы создать их, вам нужно прописать /flashcard, потом зайти в '
-                                 '"Управление карточками" и нажать на кнопку "Создать карточку"')
+            await message.answer('Чтобы создать их, вам нужно зайти в '
+                                 '"Управление карточками" и нажать на кнопку "Создать карточку"',
+                                 reply_markup=get_keyboard_flashcard_start())
             await state.finish()
             return
 
@@ -112,15 +122,33 @@ async def fls_game(message: types.Message, state: FSMContext):
         await flc_game_end(message, state)
     else:
         flashcard = choice(flashcard)
-
+        # card_id содежит либо номер карточки, Пример: 54, либо номер каточки и сторону, Пример: 54 обрат.карт
         card_id, card_front, card_back, show_card = flashcard
+        list_words = card_front.split()
+        card_id_split = str(card_id).split()
+        # Если у списка card_id_split существует первый элмент, то значит это обратная сторона
+        try:
+            str(card_id_split[1])
+            side = 'Обратная сторона'
+        except:
+            side = 'Лицевая сторона'
 
         await state.update_data(card_id=card_id)
         await state.update_data(card_back=card_back)
+        await state.update_data(side=side)
+        # Если количество букв будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
+        if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
 
-        await message.answer(f'Карточка: {card_id}\n'
-                             f'Первая сторона: {card_front}',
-                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+            create_photo(card_back, message.from_user.id)
+            photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
+
+            await bot.send_photo(message.chat.id, photo=photo, caption=side)
+
+            os.remove(f'handlers/flashcards/{message.from_user.id}.png')
+        else:
+            await message.answer(f'{side}:\n{card_back}',
+                                 reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+
         await Flash_game.fls_game.set()
 
 
@@ -138,10 +166,16 @@ async def flc_game_end(message: types.Message, state: FSMContext):
                          reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
     correct = user_data['correct']
-
+    # Создание статистики
     string_correct = ''
     for i in range(len(correct)):
-        string_correct += f"{i + 1}: id - {correct[i]}\n"
+        if type(correct[i]) == int:
+            # Пример списка info_one_card: [55, "cat", "кошка"] или ["55 обрат.карт", "dog", "собака"]
+            info_one_card = flashcard_one(message.from_user.id, correct[i])[0]
+            string_correct += f"<u>{i + 1}</u>: {info_one_card[1]} <u><b>=></b></u> {info_one_card[2]}\n"
+        else:
+            info_one_card = flashcard_one(message.from_user.id, correct[i].split()[0])[0]
+            string_correct += f"<u>{i + 1}</u>: {info_one_card[2]} <u><b>=></b></u> {info_one_card[1]}\n"
 
     await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
                                                         f'{string_correct}')
@@ -154,7 +188,25 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
     """
     user_data = await state.get_data()
     card_back = user_data['card_back']
-    await message.answer(f'Обратная сторона: {card_back}')
+    list_words = card_back.split()
+    side = user_data['side']
+    if side == 'Лицевая сторона':
+        side = 'Обратная сторона'
+    else:
+        side = 'Лицевая сторона'
+
+    if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
+
+        create_photo(card_back, message.from_user.id)
+        photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
+
+        await bot.send_photo(message.chat.id, photo=photo, caption=side)
+
+        os.remove(f'handlers/flashcards/{message.from_user.id}.png')
+    else:
+        await message.answer(f'{side}:\n{card_back}',
+                             reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
+    await Flash_game.fls_game.set()
 
 
 def flashcard_generate(user_id):

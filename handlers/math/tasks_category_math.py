@@ -100,13 +100,13 @@ async def tasks_category_math_print_keyboard_inline(call: types.CallbackQuery, c
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
 
-    await state.update_data(card_id=href)
-
-    # Образка словаря
+    # dict(list(dictionary_info_problem.items())) - Словарь сожержащий всю информацию о задаче
+    # dict(list(dictionary_info_problem.items())[6:]) - словарь с двумя решениями, ответом и подсказкой
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
     global problems_info_data_math
     problems_info_data_math = info_problem
+
     try:
         link_problems = hlink('Ссылка на задачу', href)
         dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
@@ -132,6 +132,8 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
 
+    # dict(list(dictionary_info_problem.items())) - Словарь сожержащий всю информацию о задаче
+    # dict(list(dictionary_info_problem.items())[6:]) - словарь с двумя решениями, ответом и подсказкой
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
     global problems_info_data_math

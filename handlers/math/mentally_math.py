@@ -122,7 +122,7 @@ async def equation_mentally(message: types.Message, state: FSMContext):
     try:
         msg = int(message.text)
     except ValueError:
-        await message.answer(f'Неправильные знаки')
+        await message.answer(f'Неправильные знаки, введите число')
     else:
         user_data = await state.get_data()
 
