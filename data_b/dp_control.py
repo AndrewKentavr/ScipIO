@@ -141,11 +141,13 @@ def flashcard_dp_info_game(user_id):
     return result
 
 
-def flashcard_del(user_id, front_card, back_card):
-    cur.execute(f"""DELETE FROM flashcards
-        where user_id = {user_id} and front_card = '{front_card}' and back_card = '{back_card}';""")
-    cur.connection.commit()
-    return
+def flashcard_del_check(card_id):
+    cur.execute(f"""select count(*) from flashcards
+        where id = {card_id};""")
+    result = cur.fetchall()
+    if result[0][0] == 0:
+        return False
+    return True
 
 
 def flashcard_one(user_id, id):
@@ -153,6 +155,13 @@ def flashcard_one(user_id, id):
                 where user_id = {user_id} and id = {id};""")
     result = cur.fetchall()
     return result
+
+
+def flashcard_del(card_id):
+    cur.execute(f"""DELETE FROM flashcards
+        where id = {card_id};""")
+    cur.connection.commit()
+    return
 
 
 # -----------------------------TIMER-----------------------------------------
@@ -247,6 +256,18 @@ def stat_bar_general(telegram_user_id):
         list_time.append([i[0][5:10] for i in cur.fetchall()])
 
     return list_time
+
+
+def dp_admin_stat():
+    cur.execute("""SELECT telegram_user_id, date_reg FROM users;""")
+    result = cur.fetchall()
+    return result
+
+
+def dp_admin_stat_actions():
+    cur.execute("""SELECT telegram_user_id, time_action FROM actions;""")
+    result = cur.fetchall()
+    return result
 
 # -----------------------------main-----------------------------------------
 

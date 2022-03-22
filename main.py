@@ -51,9 +51,9 @@ async def main():
     # Запуск "антифлуда"
     middlewares.setup(dp)
 
-    # scheduler.start() - это запуск таймера AsyncIOScheduler
+    # Это запуск таймера AsyncIOScheduler
     scheduler.start()
-    # timer_interval_func() - запуск функции таймера
+    # Запуск функции таймера
     timer_interval_func()
 
     await set_commands(bot)
