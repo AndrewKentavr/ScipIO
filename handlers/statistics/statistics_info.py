@@ -20,13 +20,13 @@ async def stat_general(message: types.Message):
     pie_chart(info_general, user_id)
     photo = InputFile(f"handlers/statistics/data_figure/{user_id}.png")
     await message.answer_photo(photo=photo)
-    os.remove(f"handlers/statistics/data_figure/{user_id}.png")
+    os.remove(f"handlers/statistics/{user_id}.png")
 
     list_time = stat_bar_general(user_id)
     bar_chart(list_time, user_id)
     photo = InputFile(f"handlers/statistics/data_figure/{user_id}.png")
     await message.answer_photo(photo=photo)
-    os.remove(f"handlers/statistics/data_figure/{user_id}.png")
+    os.remove(f"handlers/statistics/{user_id}.png")
 
     return
 
