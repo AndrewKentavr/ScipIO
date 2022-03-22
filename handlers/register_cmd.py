@@ -24,6 +24,7 @@ from handlers.logic.tasks_category_logic import register_handlers_tasks_logic_ca
 # ------timer-------
 from handlers.statistics.statistics import register_handlers_statistics
 from handlers.statistics.statistics_info import register_handlers_statistics_info
+from handlers.statistics.statistics_info_admins import register_handlers_statistics_info_admins
 from handlers.timer.timer import register_handlers_timer
 from handlers.timer.timer_managing import register_handlers_timer_managing
 
@@ -58,3 +59,4 @@ def reg_cmd(dp):
     # ------statistics-------
     register_handlers_statistics(dp)
     register_handlers_statistics_info(dp)
+    register_handlers_statistics_info_admins(dp)
