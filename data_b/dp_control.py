@@ -243,18 +243,6 @@ def stat_bar_general(telegram_user_id):
 
     return list_time
 
-
-def dp_admin_stat():
-    cur.execute("""SELECT telegram_user_id, date_reg FROM users;""")
-    result = cur.fetchall()
-    return result
-
-
-def dp_admin_stat_actions():
-    cur.execute("""SELECT telegram_user_id, time_action FROM actions;""")
-    result = cur.fetchall()
-    return result
-
 # -----------------------------main-----------------------------------------
 
 # https://cloud.google.com/bigquery/docs/reference/standard-sql/arrays
