@@ -22,6 +22,7 @@ from handlers.logic.logic import register_handlers_logic
 from handlers.logic.tasks_category_logic import register_handlers_tasks_logic_category
 
 # ------timer-------
+from handlers.send_message_all.send_message_all_main import register_handlers_send_msg
 
 from handlers.timer.timer import register_handlers_timer
 from handlers.timer.timer_managing import register_handlers_timer_managing
@@ -30,6 +31,9 @@ from handlers.timer.timer_managing import register_handlers_timer_managing
 from handlers.statistics.statistics import register_handlers_statistics
 from handlers.statistics.statistics_info import register_handlers_statistics_info
 from handlers.statistics.statistics_info_admins import register_handlers_statistics_info_admins
+
+# ------send_message_all-------
+from handlers.send_message_all.send_message_all import register_handlers_send_message_all
 
 
 def reg_cmd(dp):
@@ -60,3 +64,7 @@ def reg_cmd(dp):
     register_handlers_statistics(dp)
     register_handlers_statistics_info(dp)
     register_handlers_statistics_info_admins(dp)
+
+    # ------send_message_all-------
+    register_handlers_send_msg(dp)
+    register_handlers_send_message_all(dp)
