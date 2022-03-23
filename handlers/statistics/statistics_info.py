@@ -1,3 +1,13 @@
+"""
+Статитстика работает так:
+    1. Рисует круглую диаграмму на основе данных функции (stat_general_bd), который возвращает массив количества типов
+        action (действий пользователя): в общем, от flc, от mentally math, от category_math и от category_logic.
+        Потом сохроняется, показывается поьзователю, и фотография удаляется
+
+    2. Рисует диаграмму (bar) на основе данных функции(stat_bar_general), которая высылает типы actions пользователя за
+        неделю. Потом также сохраняется, отправляется пользователю и фотография удаляется
+"""
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.utils import emoji

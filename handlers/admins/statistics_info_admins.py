@@ -1,3 +1,12 @@
+"""
+Присылает администраторам бота информацию:
+    1. Количество пользователй за всё время
+    2. Количество новых пользователей за день
+    3. Количество новых пользователей за последние 7 дней
+    4. Количество новых пользователей за последние 30 дней
+
+"""
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import IDFilter, Text
 
@@ -8,15 +17,21 @@ import pytz
 
 
 def users_new(users_list, time):
-    users_new_today_list = []
+    """
+    Подсчёт новый пользователй за определённое время
+    :param users_list: массив время регистрации пользователей
+    :param time: нужное время
+    :return: количество новый пользователей
+    """
     time_moscow = datetime.datetime.now(pytz.timezone('Europe/Moscow'))
     arr_time_week = [(time_moscow - datetime.timedelta(days=time - 1 - i)).strftime("%Y-%m-%d") for i in range(time)]
 
+    count = 0
     for i in users_list:
         if i[1][0:10] in arr_time_week:
-            users_new_today_list.append(i[0])
+            count += 1
 
-    return users_new_today_list
+    return count
 
 
 async def stat_admins(message: types.Message):
@@ -28,11 +43,12 @@ async def stat_admins(message: types.Message):
     users_month = users_new(all_users_list, 30)
 
     await message.answer(f'Всего пользователей: {len(all_users_list)}\n'
-                         f'Новых за день: {len(users_today)}\n'
-                         f'Новых за неделю: {len(users_week)}\n'
-                         f'Новых за месяц: {len(users_month)}\n', reply_markup=types.ReplyKeyboardRemove())
+                         f'Новых за день: {users_today}\n'
+                         f'Новых за неделю: {users_week}\n'
+                         f'Новых за месяц: {users_month}\n', reply_markup=types.ReplyKeyboardRemove())
     return
 
 
 def register_handlers_statistics_info_admins(dp: Dispatcher):
-    dp.register_message_handler(stat_admins, IDFilter(user_id=ADMINS), Text(equals='Статистика пользователей'), state="*")
+    dp.register_message_handler(stat_admins, IDFilter(user_id=ADMINS), Text(equals='Статистика пользователей'),
+                                state="*")
