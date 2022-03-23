@@ -59,7 +59,7 @@ def get_inline_main_math_problems_category():
 
     # Находит все категории, которые есть в таблице math
     list_all_categorys = sorted(finding_main_categories_table('math'))
-
+    print(list_all_categorys)
     for i in list_all_categorys:
         category_name = i[0]  # НАПРИМЕР --- "riddles"
         translated_name = i[1]  # НАПРИМЕР --- "Загадки"
