@@ -7,8 +7,8 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.dispatcher.filters import Text
 
 from config import BOT_TOKEN, ADMINS
-from data_b.dp_control import select_all_users
-from handlers.keyboards.default.send_message_all import choose_send, add_text
+from data_b.dp_control import dp_admin_stat
+from handlers.keyboards.default.admin_menu import choose_send, add_text
 
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 
@@ -27,13 +27,13 @@ async def send_message_start(message: types.Message, state: FSMContext):
         except:
             c = []
             await state.update_data(c=c)
-    await send_message_all.main_message1.set()
+    await AdminSendMessage.main_message_1.set()
 
 
 async def send_dop_msg(message: types, state: FSMContext):
     await state.update_data(msg=message.text)
-    await message.answer('Хотите добавить сообщение', reply_markup=add_text())
-    await send_message_all.next()
+    await message.answer('Хотите добавить ещё сообщение?', reply_markup=add_text())
+    await AdminSendMessage.main_message_2.set()
 
 
 async def send_message_middle(message: types.Message, state: FSMContext):
@@ -46,15 +46,14 @@ async def send_message_middle(message: types.Message, state: FSMContext):
     await state.update_data(c=c)
 
     await message.answer('Вы уверенные что хотите отправить это сообщение?', reply_markup=choose_send())
-    # await message.answer(f'{c}')
-    await send_message_all.next()
+    await AdminSendMessage.main_message_3.set()
 
 
 async def send_message_end(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id, 'Сообщения отправляются', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
     c = user_data['c']
-    all_users = list(select_all_users())
+    all_users = list(dp_admin_stat())
     for i in range(len(all_users)):
         await asyncio.sleep(0.1)
         user_id = all_users[i][0]
@@ -64,20 +63,20 @@ async def send_message_end(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-class send_message_all(StatesGroup):
-    main_message1 = State()
-    main_message2 = State()
-    main_message3 = State()
+class AdminSendMessage(StatesGroup):
+    main_message_1 = State()
+    main_message_2 = State()
+    main_message_3 = State()
 
 
 def register_handlers_send_message_all(dp: Dispatcher):
     dp.register_message_handler(send_message_start, Text(equals="Отправка сообщения всем"), state='*')
+    dp.register_message_handler(send_dop_msg, state=AdminSendMessage.main_message_1)
 
     dp.register_message_handler(send_message_start, Text(equals="Добавить"), IDFilter(user_id=ADMINS),
-                                state=send_message_all.main_message2)
+                                state=AdminSendMessage.main_message_2)
 
-    dp.register_message_handler(send_dop_msg, state=send_message_all.main_message1)
+    dp.register_message_handler(send_message_middle, Text(equals="Нет, хочу отправить"),
+                                state=AdminSendMessage.main_message_2)
 
-    dp.register_message_handler(send_message_middle,Text(equals="Нет, хочу отправить"), state=send_message_all.main_message2)
-
-    dp.register_message_handler(send_message_end, Text(equals="Да"), state=send_message_all.main_message3)
+    dp.register_message_handler(send_message_end, Text(equals="Да"), state=AdminSendMessage.main_message_3)

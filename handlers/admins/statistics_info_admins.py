@@ -1,5 +1,5 @@
 from aiogram import types, Dispatcher
-from aiogram.dispatcher.filters import IDFilter
+from aiogram.dispatcher.filters import IDFilter, Text
 
 from config import ADMINS
 from data_b.dp_control import dp_admin_stat
@@ -30,9 +30,9 @@ async def stat_admins(message: types.Message):
     await message.answer(f'Всего пользователей: {len(all_users_list)}\n'
                          f'Новых за день: {len(users_today)}\n'
                          f'Новых за неделю: {len(users_week)}\n'
-                         f'Новых за месяц: {len(users_month)}\n')
+                         f'Новых за месяц: {len(users_month)}\n', reply_markup=types.ReplyKeyboardRemove())
     return
 
 
 def register_handlers_statistics_info_admins(dp: Dispatcher):
-    dp.register_message_handler(stat_admins, IDFilter(user_id=ADMINS), commands='admin_stat', state="*")
+    dp.register_message_handler(stat_admins, IDFilter(user_id=ADMINS), Text(equals='Статистика пользователей'), state="*")
