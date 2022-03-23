@@ -7,8 +7,7 @@ from handlers.keyboards.default.admin_menu import main_send_msg
 
 async def send_msg_start_main(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer('Отправка сообщения всем\n'
-                         'Введите сообщение', reply_markup=main_send_msg())
+    await message.answer('Выберете:', reply_markup=main_send_msg())
 
 
 def register_handlers_send_msg(dp: Dispatcher):

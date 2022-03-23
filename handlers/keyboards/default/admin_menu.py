@@ -4,7 +4,7 @@ from aiogram import types
 def choose_send():
     buttons = [
         'Да',
-        'Нет'
+        'Отмена'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
