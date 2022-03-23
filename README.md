@@ -244,7 +244,7 @@ Scipio - это telegram-bot, который позволяет пользова
 - [Официальная документация про многопот. и многопроц.]('https://docs.python.org/3/library/multiprocessing.html?source=post_page-----48b59bfcc89e----------------------')
 - [Парсинг сайтов на Python: подробный видеокурс ](https://www.youtube.com/watch?v=AFqYxaOyqy0&list=PLqGS6O1-DZLprgEaEeKn9BWKZBvzVi_la)
 - [Асинхронность в Python](https://botfather.dev/blog/async-in-python#asyncio-lib)
-- [Асинхронное программирование в Python: краткий обзор] (https://habr.com/ru/company/ruvds/blog/475246/)
+- [Асинхронное программирование в Python: краткий обзор](https://habr.com/ru/company/ruvds/blog/475246/)
 - [Учебник по git](https://githowto.com/ru)
 
 
