@@ -16,21 +16,21 @@ bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 async def send_message_start(message: types.Message, state: FSMContext):
     await message.answer('Введите сообщение для отправки всем', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
-    if message.text == 'Нет':
+    # Список c - список в котором хранятся все сообщения
+    # Если он не существует то он создается и добавляется в state
+    try:
+        c = user_data['c']
+        c.append(user_data['msg'])
+        await state.update_data(c=c)
+    except:
         c = []
         await state.update_data(c=c)
-    else:
-        try:
-            c = user_data['c']
-            c.append(user_data['msg'])
-            await state.update_data(c=c)
-        except:
-            c = []
-            await state.update_data(c=c)
+
     await AdminSendMessage.main_message_1.set()
 
 
 async def send_dop_msg(message: types, state: FSMContext):
+    # Добавление сообщения в state
     await state.update_data(msg=message.text)
     await message.answer('Хотите добавить ещё сообщение?', reply_markup=add_text())
     await AdminSendMessage.main_message_2.set()
@@ -40,7 +40,7 @@ async def send_message_middle(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
 
     await state.update_data(msg=message.text)
-
+    # Добавление последнего сообщеняи в state
     c = user_data['c']
     c.append(user_data['msg'])
     await state.update_data(c=c)
@@ -52,7 +52,9 @@ async def send_message_middle(message: types.Message, state: FSMContext):
 async def send_message_end(message: types.Message, state: FSMContext):
     await bot.send_message(message.from_user.id, 'Сообщения отправляются', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
+    # Все сообщения
     c = user_data['c']
+    # Список всех пользователей. Пример: [(id, 'Время регистрации в боте'), (930136261, '2022-03-22 11:29:03.159285')]
     all_users = list(dp_admin_stat())
     for i in range(len(all_users)):
         await asyncio.sleep(0.1)
