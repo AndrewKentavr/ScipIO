@@ -157,9 +157,9 @@ def flashcard_one(user_id, id):
     return result
 
 
-def flashcard_del(card_id):
+def flashcard_del(user_id, front, back):
     cur.execute(f"""DELETE FROM flashcards
-        where id = {card_id};""")
+        where user_id = {user_id} and front_card = '{front}' and back_card = '{back}';""")
     cur.connection.commit()
     return
 

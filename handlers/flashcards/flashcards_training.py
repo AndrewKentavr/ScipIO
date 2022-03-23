@@ -40,7 +40,7 @@ from config import BOT_TOKEN
 from aiogram import Bot
 import os
 
-from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
+from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start, get_keyboard_flashcard_training_game
 
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 
@@ -116,16 +116,19 @@ async def fls_game(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     # Выбор РАНДОМНОЙ карточки из user_data['flashcards']
     flashcard = user_data['flashcards']
-
     #  если карточки закончились то END
     if not flashcard:
         await flc_game_end(message, state)
     else:
         flashcard = choice(flashcard)
+
         # card_id содежит либо номер карточки, Пример: 54, либо номер каточки и сторону, Пример: 54 обрат.карт
         card_id, card_front, card_back, show_card = flashcard
+        print(flashcard)
         list_words = card_front.split()
+        print(list_words)
         card_id_split = str(card_id).split()
+        print(card_id_split)
         # Если у списка card_id_split существует первый элмент, то значит это обратная сторона
         try:
             str(card_id_split[1])
@@ -137,12 +140,12 @@ async def fls_game(message: types.Message, state: FSMContext):
         await state.update_data(card_back=card_back)
         await state.update_data(side=side)
         # Если количество букв будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
-        if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
+        if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_front) <= 250):
 
-            create_photo(card_back, message.from_user.id)
+            create_photo(card_front, message.from_user.id)
             photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
-            await bot.send_photo(message.chat.id, photo=photo, caption=side)
+            await bot.send_photo(message.chat.id, photo=photo, caption=side, reply_markup=get_keyboard_flashcard_training_game())
 
             os.remove(f'handlers/flashcards/{message.from_user.id}.png')
         else:
@@ -217,10 +220,9 @@ def flashcard_generate(user_id):
     flashcards = flashcard_dp_info_game(user_id)
     if len(flashcards) == 0:
         return False
-
     flashcards_2 = []
     for i in flashcards:
-        if i[3] == 'True':
+        if i[3] == True:
             flashcards_2.append((str(i[0]) + ' обрат.карт', i[2], i[1], i[3]))
     return flashcards + flashcards_2
 
