@@ -27,7 +27,6 @@ async def time_cycle(dp):
             user_id = i[0]
             tasks = i[1]
             try:
-
                 """
                 Без создания state, на версии 2.16 aiogram выдаёт ошибку:
                     AttributeError: 'NoneType' object has no attribute 'current_state'

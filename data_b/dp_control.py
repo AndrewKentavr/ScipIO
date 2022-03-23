@@ -199,6 +199,8 @@ def del_user(user_id):
     cur.execute(f"""
         DELETE FROM time WHERE user_id = {user_id};
     """)
+    cur.connection.commit()
+    return
 
 
 # -----------------------------add_action-----------------------------------------
