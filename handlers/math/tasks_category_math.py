@@ -49,10 +49,9 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
     categories = finding_one_categories_table(call["data"][9:])
     if len(categories) == 1:
         global category
-        category = callback_data["category"]
-        print(category)
+        category = callback_data["category"][:-5]
         # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
-        dictionary_info_problem = problem_category_random(category[:-5], 'math')
+        dictionary_info_problem = problem_category_random(category, 'math')
 
         title = dictionary_info_problem['title']
         href = dictionary_info_problem['href']
