@@ -1,22 +1,22 @@
 """
-Данный алгоритм построен на основе ОДНОГО шага, основной функцией которого является (fls_game)
+Данный алгоритм построен на основе ОДНОГО шага, основной функцией которого является (flc_game)
 
 Основная идея данного алгоритма в том, что из-за того что всё происходит в основной функции, то при нажатии "Правильно"
     и "Неправильно" следующее что делает функция fls_game, это создаёт новую flashcard и вызывает саму себя. Из-за этого
     алгоритм после "Правильно"/"Неправильно" сразу создаёт новую flashcard и показывает её,
-    не требуя ввести сообщение от пользователя
+     не требуя ввести сообщение от пользователя
 
 Алгоритм работает так:
     Пользователь вызвал /flc_train или нажал на кнопки в боте. Бот спросил готов ли он (flashcards_training_start),
-        пользователь ответил, что готов, а дальше вызывается функция fls_game, которая проверяет, что пользователь верно
+        пользователь ответил, что готов, а дальше вызывается функция flc_game, которая проверяет, что пользователь верно
         нажал на кнопку "Да" и дальше...
 
     Основной алгоритм. Функция гененирует карточку, присылает пользователю информацию о карточке и создаёт кнопки:
         "Обратная сторона", "Правильно", "Неправильно", а дальше вызывает саму себя, и ждёт следующих действий от
         пользователя:
             1. "Обратная сторона". Тогда вызывается функция flc_game_reverse_side, которая срабатывает
-                поверх функции fls_game. Она отправляет пользователю card_back и выключается, STATE оно не меняет!
-                fls_game остаётся дальше ждать действий от пользователя
+                поверх функции flc_game. Она отправляет пользователю card_back и выключается, STATE оно не меняет!
+                flc_game остаётся дальше ждать действий от пользователя
 
             2. "Правильно" или "Неправильно". При нажатии на кнопку "Правильно" - пользователю при прохождении дальнейшей
                 тренировки больше не будет высвечиватся это карточка (карточка удаляется из user_data['flashcards']).
@@ -62,10 +62,10 @@ async def flashcards_training_theory(message: types.Message):
 async def flashcards_training_start(message: types.Message):
     await message.answer('Принцип работы с карточками и советы /flc_theory')
     await message.answer('Вы готовы?', reply_markup=flashcard_menu.get_keyboard_flashcard_training_start())
-    await Flash_game.fls_game.set()
+    await Flash_game.flc_game.set()
 
 
-async def fls_game(message: types.Message, state: FSMContext):
+async def flc_game(message: types.Message, state: FSMContext):
     """
     Основной алгоритм
 
@@ -153,7 +153,7 @@ async def fls_game(message: types.Message, state: FSMContext):
             await message.answer(f'{side}:\n{card_back}',
                                  reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
-        await Flash_game.fls_game.set()
+        await Flash_game.flc_game.set()
 
 
 async def flc_game_end(message: types.Message, state: FSMContext):
@@ -210,7 +210,7 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
     else:
         await message.answer(f'{side}:\n{card_back}',
                              reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
-    await Flash_game.fls_game.set()
+    await Flash_game.flc_game.set()
 
 
 def flashcard_generate(user_id):
@@ -229,7 +229,7 @@ def flashcard_generate(user_id):
 
 
 class Flash_game(StatesGroup):
-    fls_game = State()
+    flc_game = State()
 
 
 def register_handlers_flashcards_training(dp: Dispatcher):
@@ -243,4 +243,4 @@ def register_handlers_flashcards_training(dp: Dispatcher):
     dp.register_message_handler(flc_game_reverse_side, Text(equals="Обратная сторона"), state='*')
     dp.register_message_handler(flashcards_training_start,
                                 Text(equals=emoji.emojize(":brain:") + ' Начать учить карточки'), state='*')
-    dp.register_message_handler(fls_game, state=Flash_game.fls_game)
+    dp.register_message_handler(flc_game, state=Flash_game.flc_game)
