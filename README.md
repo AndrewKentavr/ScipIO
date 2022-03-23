@@ -17,8 +17,8 @@
 - [База Данных](#База_Данных)
   - dp_control
 - [Flashcards](#Flashcards)
-- [Category math](#Category math)
-- [Mentaly math](#Mentaly math)
+- [Category math](#Category_math)
+- [Mentaly math](#Mentaly_math)
 - [Timer](#Timer)
 - [Statistics](#Statistics)
 - [admin](#admin)
