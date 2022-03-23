@@ -195,6 +195,14 @@ def dp_timer_circle_user_time(time_now):
     return results
 
 
+def del_user(user_id):
+    cur.execute(f"""
+        DELETE FROM time WHERE user_id = {user_id};
+    """)
+    cur.connection.commit()
+    return
+
+
 # -----------------------------add_action-----------------------------------------
 def action_add(telegram_user_id, action, correct=None, id_category=None):
     """
@@ -266,15 +274,6 @@ def dp_admin_stat():
 
 def dp_admin_stat_actions():
     cur.execute("""SELECT telegram_user_id, time_action FROM actions;""")
-    result = cur.fetchall()
-    return result
-
-
-# -----------------------------send_message_all-----------------------------------------
-def select_all_users():
-    cur.execute(f"""
-        SELECT telegram_user_id FROM users;
-    """)
     result = cur.fetchall()
     return result
 
