@@ -50,8 +50,9 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
     if len(categories) == 1:
         global category
         category = callback_data["category"]
+        print(category)
         # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
-        dictionary_info_problem = problem_category_random(category, 'math')
+        dictionary_info_problem = problem_category_random(category[:-5], 'math')
 
         title = dictionary_info_problem['title']
         href = dictionary_info_problem['href']
@@ -93,7 +94,6 @@ async def tasks_category_math_print_keyboard_inline(call: types.CallbackQuery, c
     category = callback_data["category"]
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'math')
-
     title = dictionary_info_problem['title']
     href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
@@ -125,7 +125,6 @@ async def tasks_category_math_print_keyboard_inline(call: types.CallbackQuery, c
 
 async def tasks_category_math_print_keyboard_default(message: types.Message, state: FSMContext):
     dictionary_info_problem = problem_category_random(category, 'math')
-
     title = dictionary_info_problem['title']
     href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
@@ -166,9 +165,6 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
 
 
 async def tasks_category_math_print_info(call: types.CallbackQuery, callback_data: dict):
-    """
-    ВОТ ТУТ НУЖНО ИСПРАВЛЯТЬ, Т.К ТУТ НЕПОНЯТНО ЗАЧЕМ НУЖЕН TRANSLATE, ЕСЛИ ЕСТЬ info_math
-    """
 
     info = callback_data['info']
     try:
