@@ -64,6 +64,7 @@ async def send_message_end(message: types.Message, state: FSMContext):
             try:
                 await bot.send_message(user_id, c[j])
             except:
+                None
                 # Создать удаление пользователей
     await state.finish()
 
