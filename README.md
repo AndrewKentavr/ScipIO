@@ -237,11 +237,11 @@ Scipio - это telegram-bot, который позволяет пользова
 
 ## Полезные ссылки
 
-Есть список полезных ссылок от официального [aiogram]('https://telegra.ph/aiogram-ru-01-28') сообщества и от [MasterGroosha]('https://telegra.ph/faq-02-07-6')
+Есть список полезных ссылок от официального [aiogram](https://telegra.ph/aiogram-ru-01-28) сообщества и от [MasterGroosha](https://telegra.ph/faq-02-07-6)
 
-- [Вводная статья на хабре про ботов]('https://habr.com/ru/post/543676')
-- [Отличная статья про многопоточность и многопроцессорность на анг]('https://www.geeksforgeeks.org/difference-between-multithreading-vs-multiprocessing-in-python')
-- [Официальная документация про многопот. и многопроц.]('https://docs.python.org/3/library/multiprocessing.html?source=post_page-----48b59bfcc89e----------------------')
+- [Вводная статья на хабре про ботов](https://habr.com/ru/post/543676)
+- [Отличная статья про многопоточность и многопроцессорность на анг](https://www.geeksforgeeks.org/difference-between-multithreading-vs-multiprocessing-in-python)
+- [Официальная документация про многопот. и многопроц.](https://docs.python.org/3/library/multiprocessing.html?source=post_page-----48b59bfcc89e----------------------)
 - [Парсинг сайтов на Python: подробный видеокурс ](https://www.youtube.com/watch?v=AFqYxaOyqy0&list=PLqGS6O1-DZLprgEaEeKn9BWKZBvzVi_la)
 - [Асинхронность в Python](https://botfather.dev/blog/async-in-python#asyncio-lib)
 - [Асинхронное программирование в Python: краткий обзор](https://habr.com/ru/company/ruvds/blog/475246)
@@ -251,12 +251,12 @@ Scipio - это telegram-bot, который позволяет пользова
 #### **Aiogram**:
 - [Mastergroosha - лучшая статья](https://mastergroosha.github.io/telegram-tutorial-2)
 - [Плейлист tutorial по aiogram (Physics is Simple)](https://www.youtube.com/watch?v=wj1Vwq3IrL4&list=PLwVBSkoL97Q3phZRyInbM4lShvS1cBl-U)
-- [Официальные примеры aiogram docs]('https://docs.aiogram.dev/en/latest/examples/index.html')
-- [Как сделать функции таймера в боте]('https://botfather.dev/blog/zapusk-funkczij-v-bote-po-tajmeru')
+- [Официальные примеры aiogram docs](https://docs.aiogram.dev/en/latest/examples/index.html)
+- [Как сделать функции таймера в боте](https://botfather.dev/blog/zapusk-funkczij-v-bote-po-tajmeru)
 
 #### Чаты 
-- [Официальный чат aiogram]('https://t.me/aiogram_ru'), где сидит главный разработчик
-- [Чат MasterGroosha]('https://t.me/joinchat/TsftDfnevFLQS1ts')
+- [Официальный чат aiogram](https://t.me/aiogram_ru), где сидит главный разработчик
+- [Чат MasterGroosha](https://t.me/joinchat/TsftDfnevFLQS1ts)
 
 
 ## Заключение
