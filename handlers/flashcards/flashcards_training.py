@@ -142,7 +142,7 @@ async def fls_game(message: types.Message, state: FSMContext):
             create_photo(card_back, message.from_user.id)
             photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
-            await bot.send_photo(message.chat.id, photo=photo, caption=side)
+            await bot.send_photo(message.chat.id, photo=photo, caption=side, reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
             os.remove(f'handlers/flashcards/{message.from_user.id}.png')
         else:
@@ -163,7 +163,7 @@ async def flc_game_end(message: types.Message, state: FSMContext):
     :return: Конец тренировки, state.finish()
     """
     await message.answer('Тренировка карточек закончена',
-                         reply_markup=types.ReplyKeyboardRemove())
+                         reply_markup=flashcard_menu.get_keyboard_flashcard_start())
     user_data = await state.get_data()
     correct = user_data['correct']
     # Создание статистики
@@ -200,7 +200,7 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         create_photo(card_back, message.from_user.id)
         photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
-        await bot.send_photo(message.chat.id, photo=photo, caption=side)
+        await bot.send_photo(message.chat.id, photo=photo, caption=side, reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
         os.remove(f'handlers/flashcards/{message.from_user.id}.png')
     else:

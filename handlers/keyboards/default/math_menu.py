@@ -7,7 +7,7 @@ def get_keyboard_math_start():
         emoji.emojize(":book:") + ' Задания из категорий',
     ]
     buttons_2 = emoji.emojize(":brain:") + ' Примеры для подсчёта в уме'
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2, one_time_keyboard=True)
     keyboard.add(*buttons_1)
     keyboard.add(buttons_2)
     return keyboard

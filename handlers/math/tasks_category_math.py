@@ -49,7 +49,7 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
     categories = finding_one_categories_table(call["data"][9:])
     if len(categories) == 1:
         global category
-        category = callback_data["category"]
+        category = callback_data["category"][:-5]
         # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
         dictionary_info_problem = problem_category_random(category, 'math')
 
@@ -207,7 +207,7 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
         disable_web_page_preview=True)
 
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
-                         reply_markup=types.ReplyKeyboardRemove())
+                         reply_markup=math_menu.get_keyboard_math_start())
 
 
 class MathCategory(StatesGroup):
