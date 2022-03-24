@@ -125,11 +125,8 @@ async def flc_game(message: types.Message, state: FSMContext):
 
         # card_id содежит либо номер карточки, Пример: 54, либо номер каточки и сторону, Пример: 54 обрат.карт
         card_id, card_front, card_back, show_card = flashcard
-        print(flashcard)
         list_words = card_front.split()
-        print(list_words)
         card_id_split = str(card_id).split()
-        print(card_id_split)
         # Если у списка card_id_split существует первый элмент, то значит это обратная сторона
         try:
             str(card_id_split[1])
