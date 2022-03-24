@@ -61,7 +61,10 @@ async def send_message_end(message: types.Message, state: FSMContext):
         user_id = all_users[i][0]
         # if str(user_id) != str(ADMINS):
         for j in range(len(c)):
-            await bot.send_message(user_id, c[j])
+            try:
+                await bot.send_message(user_id, c[j])
+            except:
+                # Создать удаление пользователей
     await state.finish()
 
 
