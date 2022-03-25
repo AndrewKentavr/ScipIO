@@ -37,13 +37,10 @@ from data_b.dp_control import flashcard_dp_info_game, action_add, flashcard_one
 from handlers.keyboards.default import flashcard_menu
 
 from handlers.flashcards.create_flashcard_photo import create_photo
-from config import BOT_TOKEN
-from aiogram import Bot
 import os
 
 from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start, get_keyboard_flashcard_training_game
 
-bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 
 
 async def flashcards_training_theory(message: types.Message):
@@ -143,7 +140,7 @@ async def flc_game(message: types.Message, state: FSMContext):
             create_photo(card_front, message.from_user.id)
             photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
-            await bot.send_photo(message.chat.id, photo=photo, caption=side, reply_markup=get_keyboard_flashcard_training_game())
+            await message.answer_photo(photo=photo, caption=side, reply_markup=get_keyboard_flashcard_training_game())
 
             os.remove(f'handlers/flashcards/{message.from_user.id}.png')
         else:
@@ -201,7 +198,7 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         create_photo(card_back, message.from_user.id)
         photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
 
-        await bot.send_photo(message.chat.id, photo=photo, caption=side)
+        await message.answer_photo(photo=photo, caption=side)
 
         os.remove(f'handlers/flashcards/{message.from_user.id}.png')
     else:

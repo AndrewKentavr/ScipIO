@@ -50,7 +50,7 @@ async def send_message_middle(message: types.Message, state: FSMContext):
 
 
 async def send_message_end(message: types.Message, state: FSMContext):
-    await bot.send_message(message.from_user.id, 'Сообщения отправляются', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Сообщения отправляются', reply_markup=types.ReplyKeyboardRemove())
     user_data = await state.get_data()
     # Все сообщения
     c = user_data['c']

@@ -1,11 +1,11 @@
 import json
+from math import ceil
+from random import randrange
+from time import sleep
+
 import requests
 from bs4 import BeautifulSoup
 from user_agent import generate_user_agent
-
-from random import randrange
-from time import sleep
-from math import ceil
 
 
 def checking_quantity_start():
