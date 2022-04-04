@@ -82,8 +82,6 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 
 def register_handlers_start(dp: Dispatcher):
-    global dp_main
-    dp_main = dp
     dp.register_message_handler(cmd_start, CommandStart(), state='*')
     dp.register_message_handler(cmd_help, CommandHelp(), state='*')
     dp.register_message_handler(cmd_cancel, commands='cancel', state='*')

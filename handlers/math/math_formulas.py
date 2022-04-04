@@ -45,8 +45,7 @@ async def math_formulas(message: types.Message, state: FSMContext):
     conditions = user_data['condition']
     conditions.append(condition_dp)
 
-    await state.update_data(condition=conditions)
-    await state.update_data(answer=answers)
+    await state.update_data(condition=conditions, answer=answers)
 
     await message.answer(f"Формула:\n{condition_dp}", reply_markup=get_inline_math_formulas())
     await message.answer(f'Посмотрите Продолжить или закончить?', reply_markup=get_keyboard_math_formulas())

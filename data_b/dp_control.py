@@ -43,13 +43,6 @@ def dp_all_telegram_id_time_list():
     return time_telegram_id_list
 
 
-def problem_translate_name(name):
-    cur.execute(f"""SELECT translate_category FROM category
-    WHERE '{name}' = value;""")
-    result = cur.fetchall()
-    return result[0][0]
-
-
 def problem_category_random(name_category, tasks_theme):
     """
     :param name_category: Название категории вида: 'fractions'

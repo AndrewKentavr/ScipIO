@@ -13,6 +13,9 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from handlers.timer.timer_cycle import time_cycle
 from handlers.register_cmd import reg_cmd
 
+from data_b.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp_user_create, \
+    dp_all_telegram_id_time_list
+
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
 logging.basicConfig(level=logging.INFO)
@@ -74,9 +77,6 @@ if __name__ == "__main__":
         Сделанн он, чтобы добавить всех пользователей в таблицу(users), у которых есть карточки flashcards и timer,
             т.к там хранится их 'telegram_user_id'
     """
-
-    from data_b.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp_user_create, \
-        dp_all_telegram_id_time_list
 
     all_users_list = dp_all_users_list()
     all_telegram_id_flc = dp_all_telegram_id_flc_list()

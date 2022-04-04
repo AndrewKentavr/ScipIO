@@ -31,7 +31,7 @@ async def tasks_category_logic_start(message: types.Message, state: FSMContext):
     await LogicCategory.logic_step.set()
 
 
-async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, callback_data: dict):
+async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, callback_data: dict, state: FSMContext):
     # НУЖНЫ ИЗМЕНЕНИЯ В КОММЕНТАРИИ
 
     """
@@ -43,7 +43,9 @@ async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, 
     from handlers.keyboards.inline import logic_menu_inline
 
     # объявлен global, чтобы при нажатии "Следующее задание" выводило туже категорию
-    global category
+
+    await state.update_data(category=callback_data["category_logic"])
+
     category = callback_data["category_logic"]
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'logic')
@@ -57,14 +59,13 @@ async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, 
     # Образка словаря
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
-    global problems_info_data_logic
-    problems_info_data_logic = info_problem
+    await state.update_data(problems_info_data_logic=info_problem)
 
     link_problems = hlink('Ссылка на задачу', href)
     dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
     await call.message.answer(
         f'Название задания или его ID: {title}\n{link_problems}',
-        reply_markup=logic_menu.get_keyboard_logic_category())
+        reply_markup=logic_menu.get_keyboard_logic_category(), disable_web_page_preview=True)
     await call.message.answer(f'{condition}',
                               reply_markup=logic_menu_inline.get_inline_logic_problems_category_info(info_problem))
 
@@ -73,8 +74,9 @@ async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, 
 
 async def tasks_category_logic_print_keyboard_default(message: types.Message, state: FSMContext):
     from handlers.keyboards.inline import logic_menu_inline
-
+    user_data = await state.get_data()
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
+    category = user_data['category']
     dictionary_info_problem = problem_category_random(category, 'logic')
 
     id = dictionary_info_problem['id']
@@ -86,7 +88,6 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
 
     # если "правильно", то в user_data['correct'] добавляется id карточки
     if message.text == emoji.emojize(":white_check_mark:") + ' Правильно':
-        user_data = await state.get_data()
         correct = user_data['correct']
         # Если названия задачки не существует, то в вывод подается не название задача и id задачи
         if title == 'None':
@@ -104,24 +105,24 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
     # Образка словаря
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
-    global problems_info_data_logic
-    problems_info_data_logic = info_problem
+    await state.update_data(problems_info_data_logic=info_problem)
 
     link_problems = hlink('Ссылка на задачу', href)
     # В задачках логики нет сложности, классов и подкатегорий, поэтому вынес в отдельную переменную
     dop_info = f'\nПодкатегория: {subcategory}\nСложность: {complexity}\nКлассы: {classes}'
     await message.answer(
         f'Название задания или его ID: {title}\n{link_problems}',
-        reply_markup=logic_menu.get_keyboard_logic_category())
+        reply_markup=logic_menu.get_keyboard_logic_category(), disable_web_page_preview=True)
     await message.answer(f'{condition}',
                          reply_markup=logic_menu_inline.get_inline_logic_problems_category_info(info_problem))
 
 
-async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_data: dict):
+async def tasks_category_logic_print_info(call: types.CallbackQuery, callback_data: dict, state:FSMContext):
     """
     ВОТ ТУТ НУЖНО ИСПРАВЛЯТЬ, Т.К ТУТ НЕПОНЯТНО ЗАЧЕМ НУЖЕН TRANSLATE, ЕСЛИ ЕСТЬ info_logic
     """
-
+    user_data = await state.get_data()
+    problems_info_data_logic = user_data['problems_info_data_logic']
     translate = callback_data['translate_logic']
 
     if translate == 'Решение 1':
