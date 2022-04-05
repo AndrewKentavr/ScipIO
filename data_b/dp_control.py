@@ -94,6 +94,18 @@ def finding_one_categories_table(tasks_theme):
     return result_0
 
 
+def del_task(name_task, category):
+    if str(category) == 'Математика':
+        cur.execute(f"""DELETE FROM tasks_math WHERE title = {name_task};""")
+    else:
+        try:
+            int(name_task)
+            cur.execute(f"""DELETE FROM tasks_logic WHERE id = {name_task};""")
+        except:
+            cur.execute(f"""DELETE FROM tasks_logic WHERE title = '{name_task}';""")
+    cur.connection.commit()
+    return
+
 # -----------------------------MATH-----------------------------------------
 
 
