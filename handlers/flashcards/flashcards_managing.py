@@ -138,16 +138,16 @@ async def flashcards_managing_info(message: types.Message):
     if len(flashcard_dp_info(message.from_user.id)) == 0:
         await message.answer('У вас нет карточек')
         return
-    else:
-        await message.answer('Все ваши карточки:', reply_markup=types.ReplyKeyboardRemove())
-        # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
-        all_cards = flashcard_dp_info(message.from_user.id)
-        # Создание сообщения с информацией о всех каточках
-        mes_print = ''
-        for i in range(len(all_cards)):
-            mes_print += f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
 
-        await message.answer(mes_print)
+    await message.answer('Все ваши карточки:', reply_markup=types.ReplyKeyboardRemove())
+    # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
+    all_cards = flashcard_dp_info(message.from_user.id)
+    # Создание сообщения с информацией о всех каточках
+    mes_print = ''
+    for i in range(len(all_cards)):
+        mes_print += f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
+
+    await message.answer(mes_print)
 
 
 class FlashcardManaging(StatesGroup):
