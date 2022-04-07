@@ -22,7 +22,7 @@ def get_text_size(text, image, font):
     return draw.textsize(text, font)
 
 
-def create_photo(msg, id):
+def create_photo(msg, id, side):
     width_ratio = 2.25
     font_family = "handlers/flashcards/pillow.ttf"
     text = msg
@@ -77,4 +77,4 @@ def create_photo(msg, id):
     else:
         editable_image.text((width / 2, height / 2), text, font=font, fill='black', anchor="mm")
 
-    image.save(f'handlers/flashcards/{id}.png')
+    image.save(f'handlers/flashcards/flc_users/{id}_{side}.png')
