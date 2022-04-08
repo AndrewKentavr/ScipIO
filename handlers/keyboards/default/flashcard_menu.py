@@ -38,7 +38,8 @@ def get_keyboard_flashcard_managing():
     buttons = [
         emoji.emojize(":pencil2:") + ' Создать карточку',
         emoji.emojize(":stop_sign:") + ' Удалить карточку',
-        emoji.emojize(":information_source:") + ' Информация о карточках'
+        emoji.emojize(":information_source:") + ' Информация о карточках',
+        'Показ карточек'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
@@ -49,6 +50,16 @@ def get_keyboard_flashcard_end_que():
     buttons = [
         'Да',
         'Нет',
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def setting_show():
+    buttons = [
+        'Фото',
+        'Текст',
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

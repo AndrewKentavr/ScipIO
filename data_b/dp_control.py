@@ -20,8 +20,8 @@ def dp_all_users_list():
 
 
 def dp_user_create(telegram_user_id):
-    cur.execute(f"""INSERT INTO users (telegram_user_id, date_reg)
-VALUES ({telegram_user_id}, '{datetime.datetime.now()}');""")
+    cur.execute(f"""INSERT INTO users (telegram_user_id, date_reg, flc_show)
+VALUES ({telegram_user_id}, '{datetime.datetime.now()}', 0);""")
     cur.connection.commit()
     return
 
