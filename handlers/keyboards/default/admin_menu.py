@@ -31,7 +31,7 @@ def choose_category():
     return keyboard
 
 
-def main_send_msg():
+def admin_start_menu():
     buttons = [
         'Отправка сообщения всем',
         'Статистика пользователей',
