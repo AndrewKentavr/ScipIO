@@ -71,7 +71,6 @@ async def flc_game(message: types.Message, state: FSMContext):
 
         # Генерация массива карточек пользователя
         flashcards = flashcard_generate(message.from_user.id)
-        print(flashcards)
         for i in range(len(flashcards)):
             card_id = flashcards[i][0]
             if type(card_id) == int:
