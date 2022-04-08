@@ -50,12 +50,14 @@ async def tasks_category_logic_print_keyboard_inline(call: types.CallbackQuery, 
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'logic')
 
+    id = dictionary_info_problem['id']
     title = dictionary_info_problem['title']
     href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
     complexity, classes = dictionary_info_problem['complexity'], dictionary_info_problem['classes']
     condition = dictionary_info_problem['conditions']
-
+    if str(title) == 'None':
+        title = id
     # Образка словаря
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
@@ -106,6 +108,9 @@ async def tasks_category_logic_print_keyboard_default(message: types.Message, st
     info_problem = dict(list(dictionary_info_problem.items())[6:])
 
     await state.update_data(problems_info_data_logic=info_problem)
+
+    if str(title) == 'None':
+        title = id
 
     link_problems = hlink('Ссылка на задачу', href)
     # В задачках логики нет сложности, классов и подкатегорий, поэтому вынес в отдельную переменную
