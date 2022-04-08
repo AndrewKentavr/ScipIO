@@ -188,8 +188,6 @@ async def flc_game_end(message: types.Message, state: FSMContext):
     for i in range(len(flashcards)):
         card_id = flashcards[i][0]
         if type(card_id) == int:
-            card_front = flashcards[i][1]
-            card_back = flashcards[i][2]
             os.remove(f'handlers/flashcards/flc_users/{card_id}_front.png')
             os.remove(f'handlers/flashcards/flc_users/{card_id}_back.png')
     await state.finish()
