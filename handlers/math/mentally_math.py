@@ -68,7 +68,11 @@ async def equation_mentally_start(message: types.Message):
 
 
 async def equation_mentally_beginning(message: types.Message, state: FSMContext):
-    if message.text != 'Да':
+    if message.text == 'Нет':
+        await message.answer('Действие отменено', reply_markup=math_menu.get_keyboard_math_start())
+        await state.finish()
+        return
+    elif message.text != 'Да':
         await message.answer('Вы написали что-то не то')
         return
     else:

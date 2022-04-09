@@ -198,6 +198,7 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
     string_correct = ''
     # Создание статистики
     for i in range(len(correct)):
+        print(correct[i])
         link_problems = hlink('Ссылка на задачу', correct[i])
         string_correct += f"{i + 1}: id - {correct[i][52:]} ({link_problems})\n"
 
@@ -219,7 +220,7 @@ class MathCategory(StatesGroup):
 def register_handlers_tasks_math_category(dp: Dispatcher):
     dp.register_message_handler(tasks_category_math_start,
                                 Text(equals=emoji.emojize(":book:") + ' Задания из категорий'),
-                                state=MathButCategory.math_category_step)
+                                state='*')
 
     all_main_files_names = [i[0] for i in finding_main_categories_table('math')]
     dp.register_callback_query_handler(one_tasks_category,
