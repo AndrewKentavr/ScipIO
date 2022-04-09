@@ -68,12 +68,16 @@ async def equation_mentally_start(message: types.Message):
 
 
 async def equation_mentally_beginning(message: types.Message, state: FSMContext):
-    if message.text != 'Да':
+    if message.text == 'Нет':
+        await message.answer('Действие отменено', reply_markup=math_menu.get_keyboard_math_start())
+        await state.finish()
+        return
+    elif message.text != 'Да':
         await message.answer('Вы написали что-то не то')
         return
     else:
         await message.answer(
-            'Чтобы закончить выполненение или пропишите /end_mental, или нажмите на кнопку "Закончить"')
+            'Чтобы закончить выполненение или пропишите /end_mental, или нажмите на кнопку "Закончить".\nЧтобы получить следующий пример нужно отправить правильный ответ.')
 
         # Генерирует пример ввида [equation, answer]
         equation = equation_generate()
@@ -183,7 +187,7 @@ async def equation_mentally_end(message: types.Message, state: FSMContext):
 
     :return: Конец тренировки, state.finish()
     """
-    await message.answer('Отличная работа', reply_markup=types.ReplyKeyboardRemove())
+    await message.answer('Отличная работа', reply_markup=math_menu.get_keyboard_math_start())
     user_data = await state.get_data()
 
     conditions = user_data['condition']

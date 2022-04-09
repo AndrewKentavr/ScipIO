@@ -67,7 +67,7 @@ async def timer_create_end(message: types.Message, state: FSMContext):
         try:
             user_data = await state.get_data()
             timer_create_dp(message.from_user.id, user_data["time"], msg)
-            await message.reply('Таймер успешно установлен', reply_markup=types.ReplyKeyboardRemove())
+            await message.reply('Таймер успешно установлен', reply_markup=timer_menu.get_keyboard_timer())
         except Exception:
             await message.answer(f'Что - то пошло не так')
         await state.finish()
@@ -124,9 +124,9 @@ async def timer_del(message: types.Message, state: FSMContext):
             if len(all_timers) >= int(id_timer_list_str[i]) > 0:
                 count_id = int(id_timer_list_str[i]) - 1
                 timer_del_dp(message.from_user.id, all_timers[count_id])
-                await message.answer(f'Таймер {all_timers[count_id]} удалён')
+                await message.answer(f'Таймер {all_timers[count_id]} удалён', reply_markup=timer_menu.get_keyboard_timer())
             else:
-                await message.answer(f'Таймера под номером {id_timer_list_str[i]} не существует')
+                await message.answer(f'Таймера под номером {id_timer_list_str[i]} не существует', reply_markup=timer_menu.get_keyboard_timer())
                 await Timer.timer_del.set()
         await state.finish()
     else:
