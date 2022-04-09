@@ -10,7 +10,7 @@
     то пользователь выбирает подкатегорию. Функция: one_tasks_category
     3) После выбора подкатегории, пользователю отправляется первая задача. Функция: tasks_category_math_print_keyboard_inline
     4) Когда пользователь ответит "Правильно" или "Неправильно" то вызывается функция: tasks_category_math_print_keyboard_default
-    5) Чтобы закончить решение задач, пользователь может прописать "Закончить математику"
+    5) Чтобы закончить решение задач, пользователь может прописать "🛑 Закончить математику"
 
 """
 
@@ -93,6 +93,7 @@ async def tasks_category_math_print_keyboard_inline(call: types.CallbackQuery, c
     category = callback_data["category"]
     # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
     dictionary_info_problem = problem_category_random(category, 'math')
+
     title = dictionary_info_problem['title']
     href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
@@ -124,6 +125,7 @@ async def tasks_category_math_print_keyboard_inline(call: types.CallbackQuery, c
 
 async def tasks_category_math_print_keyboard_default(message: types.Message, state: FSMContext):
     dictionary_info_problem = problem_category_random(category, 'math')
+
     title = dictionary_info_problem['title']
     href = dictionary_info_problem['href']
     subcategory = dictionary_info_problem['subcategory']
@@ -164,6 +166,9 @@ async def tasks_category_math_print_keyboard_default(message: types.Message, sta
 
 
 async def tasks_category_math_print_info(call: types.CallbackQuery, callback_data: dict):
+    """
+    ВОТ ТУТ НУЖНО ИСПРАВЛЯТЬ, Т.К ТУТ НЕПОНЯТНО ЗАЧЕМ НУЖЕН TRANSLATE, ЕСЛИ ЕСТЬ info_math
+    """
 
     info = callback_data['info']
     try:
@@ -193,6 +198,7 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
     string_correct = ''
     # Создание статистики
     for i in range(len(correct)):
+        print(correct[i])
         link_problems = hlink('Ссылка на задачу', correct[i])
         string_correct += f"{i + 1}: id - {correct[i][52:]} ({link_problems})\n"
 
@@ -202,7 +208,7 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
         disable_web_page_preview=True)
 
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
-                         reply_markup=types.ReplyKeyboardRemove())
+                         reply_markup=math_menu.get_keyboard_math_start())
 
 
 class MathCategory(StatesGroup):
@@ -214,7 +220,7 @@ class MathCategory(StatesGroup):
 def register_handlers_tasks_math_category(dp: Dispatcher):
     dp.register_message_handler(tasks_category_math_start,
                                 Text(equals=emoji.emojize(":book:") + ' Задания из категорий'),
-                                state=MathButCategory.math_category_step)
+                                state='*')
 
     all_main_files_names = [i[0] for i in finding_main_categories_table('math')]
     dp.register_callback_query_handler(one_tasks_category,
