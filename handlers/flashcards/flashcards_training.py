@@ -66,7 +66,8 @@ async def flashcards_training_start(message: types.Message):
 
 async def flc_game(message: types.Message, state: FSMContext):
     global flc_show
-    flc_show = cur.execute(f"""SELECT flc_show FROM users WHERE telegram_user_id = {message.from_user.id}""")
+    cur.execute(f"""SELECT flc_show FROM users WHERE telegram_user_id = {message.from_user.id}""")
+    flc_show = cur.fetchall()[0][0]
     """
     Основной алгоритм
     :param message: Ждёт сообщения: "Да"; "Правильно"; "Неправильно" всё остальное отсекается
@@ -118,6 +119,9 @@ async def flc_game(message: types.Message, state: FSMContext):
             action_add(message.from_user.id, 'flc', True)
         else:
             action_add(message.from_user.id, 'flc', False)
+    elif message.text == 'Нет':
+        await message.answer('Действие отменено', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
+        return
     else:
         await message.answer('Вы написали что-то не то')
         return
@@ -150,7 +154,7 @@ async def flc_game(message: types.Message, state: FSMContext):
         card_id = str(card_id).split()[0]
 
         # Если количество букв будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
-        if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_front) <= 250) and flc_show == 1:
+        if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_front) <= 250)) and flc_show:
 
             photo = open(f'handlers/flashcards/flc_users/{card_id}_{side_file}.png', 'rb')
 
@@ -172,7 +176,7 @@ async def flc_game_end(message: types.Message, state: FSMContext):
     :return: Конец тренировки, state.finish()
     """
     await message.answer('Тренировка карточек закончена',
-                         reply_markup=types.ReplyKeyboardRemove())
+                         reply_markup=flashcard_menu.get_keyboard_flashcard_start())
     user_data = await state.get_data()
     correct = user_data['correct']
     # Создание статистики
@@ -215,7 +219,7 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         side = 'Лицевая сторона'
         side_file = 'front'
 
-    if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250) and flc_show == 1:
+    if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250)) and flc_show == 1:
 
         photo = open(f'handlers/flashcards/flc_users/{card_id}_{side_file}.png', 'rb')
 
@@ -240,16 +244,7 @@ def flashcard_generate(user_id):
     return flashcards + flashcards_2
 
 
-async def setting_show(message: types.Message):
-    msg = message.text
-    if msg == 'Показ карточек':
-        await message.answer('Вы можете настроить показ карточек(фото, текст)',
-                             reply_markup=flashcard_menu.setting_show())
-    elif msg == 'Фото':
-        cur.execute(f"""UPDATE users SET flc_show = 1 WHERE telegram_user_id = {message.from_user.id};""")
-    elif msg == 'Текст':
-        cur.execute(f"""UPDATE users SET flc_show = 0 WHERE telegram_user_id = {message.from_user.id};""")
-    cur.connection.commit()
+
 
 
 class Flash_game(StatesGroup):
@@ -268,4 +263,4 @@ def register_handlers_flashcards_training(dp: Dispatcher):
     dp.register_message_handler(flashcards_training_start,
                                 Text(equals=emoji.emojize(":brain:") + ' Начать учить карточки'), state='*')
     dp.register_message_handler(flc_game, state=Flash_game.flc_game)
-    dp.register_message_handler(setting_show, Text(["Показ карточек", "Фото", "Текст"]), state='*')
+

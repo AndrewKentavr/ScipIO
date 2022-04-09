@@ -17,7 +17,7 @@ def get_keyboard_flashcard_training_game():
 def get_keyboard_flashcard_training_start():
     buttons = [
         'Да',
-        'Отмена',
+        'Нет',
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)
