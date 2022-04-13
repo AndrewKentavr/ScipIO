@@ -34,7 +34,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_info_game, action_add, flashcard_one
+from data_b.dp_control import flashcard_dp_info_game, action_add, flashcard_one, flashcard_check_show
 from handlers.keyboards.default import flashcard_menu
 
 from handlers.flashcards.create_flashcard_photo import create_photo
@@ -42,8 +42,6 @@ import os
 
 from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start, get_keyboard_flashcard_training_game
 
-CONN = sqlite3.connect('data_b/scipio.db')
-cur = CONN.cursor()
 
 async def flashcards_training_theory(message: types.Message):
     await message.answer('Флеш-карточки - это удобный способ запоминания и повторения изучаемого материала. '
@@ -65,13 +63,12 @@ async def flashcards_training_start(message: types.Message):
 
 
 async def flc_game(message: types.Message, state: FSMContext):
-    global flc_show
-    cur.execute(f"""SELECT flc_show FROM users WHERE telegram_user_id = {message.from_user.id}""")
-    flc_show = cur.fetchall()[0][0]
     """
     Основной алгоритм
     :param message: Ждёт сообщения: "Да"; "Правильно"; "Неправильно" всё остальное отсекается
     """
+    global flc_show
+    flc_show = flashcard_check_show(message.from_user.id)
 
     if message.text == 'Да':
 

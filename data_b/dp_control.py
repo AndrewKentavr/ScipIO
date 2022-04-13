@@ -165,8 +165,13 @@ def flashcard_setting_photo_text(telegram_user_id, photo_text):
     cur.execute(f"""UPDATE users SET flc_show = {photo_text} WHERE 
     telegram_user_id = {telegram_user_id};""")
     cur.connection.commit()
-
     return
+
+
+def flashcard_check_show(telegram_user_id):
+    cur.execute(f"""SELECT flc_show FROM users WHERE telegram_user_id = {telegram_user_id}""")
+    flc_show = cur.fetchall()[0][0]
+    return flc_show
 
 # -----------------------------TIMER-----------------------------------------
 
