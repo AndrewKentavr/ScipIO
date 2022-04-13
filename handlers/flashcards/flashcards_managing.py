@@ -165,6 +165,7 @@ async def setting_show(message: types.Message):
         await message.answer("Показ карточке: Текст", reply_markup=flashcard_menu.get_keyboard_flashcard_start())
     return
 
+
 class FlashcardManaging(StatesGroup):
     flashcards_managing_create_middle = State()
     flashcards_managing_create_middle_2 = State()

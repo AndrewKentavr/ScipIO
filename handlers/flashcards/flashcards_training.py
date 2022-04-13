@@ -57,7 +57,9 @@ async def flashcards_training_theory(message: types.Message):
 
 
 async def flashcards_training_start(message: types.Message):
-    await message.answer('Принцип работы с карточками и советы /flc_theory')
+    await message.answer(
+        '<i>Можно выбрать тип показа карточек (Или в виде фото, или в виде текста). Это можно сделать в "Управление карточками" - "Показ карточек"</i>\n\n'
+        'Принцип работы с карточками и советы /flc_theory')
     await message.answer('Вы готовы?', reply_markup=flashcard_menu.get_keyboard_flashcard_training_start())
     await Flash_game.flc_game.set()
 
