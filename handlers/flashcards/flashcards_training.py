@@ -76,13 +76,14 @@ async def flc_game(message: types.Message, state: FSMContext):
 
         # Генерация массива карточек пользователя
         flashcards = flashcard_generate(message.from_user.id)
-        for i in range(len(flashcards)):
-            card_id = flashcards[i][0]
-            if type(card_id) == int:
-                card_front = flashcards[i][1]
-                card_back = flashcards[i][2]
-                create_photo(card_front, card_id, 'front')
-                create_photo(card_back, card_id, 'back')
+        if flc_show:
+            for i in range(len(flashcards)):
+                card_id = flashcards[i][0]
+                if type(card_id) == int:
+                    card_front = flashcards[i][1]
+                    card_back = flashcards[i][2]
+                    create_photo(card_front, card_id, 'front')
+                    create_photo(card_back, card_id, 'back')
 
         if not flashcards:
             await message.answer('У вас ещё нет карточек', reply_markup=types.ReplyKeyboardRemove())
@@ -193,13 +194,13 @@ async def flc_game_end(message: types.Message, state: FSMContext):
 
     await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
                                                         f'{string_correct}')
-
-    flashcards = flashcard_generate(message.from_user.id)
-    for i in range(len(flashcards)):
-        card_id = flashcards[i][0]
-        if type(card_id) == int:
-            os.remove(f'handlers/flashcards/flc_users/{card_id}_front.png')
-            os.remove(f'handlers/flashcards/flc_users/{card_id}_back.png')
+    if flc_show:
+        flashcards = flashcard_generate(message.from_user.id)
+        for i in range(len(flashcards)):
+            card_id = flashcards[i][0]
+            if type(card_id) == int:
+                os.remove(f'handlers/flashcards/flc_users/{card_id}_front.png')
+                os.remove(f'handlers/flashcards/flc_users/{card_id}_back.png')
     await state.finish()
 
 
