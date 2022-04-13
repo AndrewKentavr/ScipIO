@@ -72,13 +72,12 @@ async def flashcards_managing_create_end(message: types.Message, state: FSMConte
         await FlashcardManaging.flashcards_managing_create_end.set()
 
     user_data = await state.get_data()
-    await message.answer('Создана карточка\n'
-                         f'Передняя сторона - {user_data["front"]}')
-    await message.answer(f'Задняя сторона - {user_data["back"]}')
-    await message.answer(f'Показывать карточку с двух сторон? - {msg}')
     try:
         flashcard_dp_create(message.from_user.id, user_data["front"], user_data["back"], show_card)
         await message.answer(f'Карточка успешно создана', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
+        await message.answer(f'Передняя сторона - {user_data["front"]}\n'
+                             f'Задняя сторона - {user_data["back"]}\n'
+                             f'Показывать карточку с двух сторон? - {msg}')
     except Exception:
         await message.answer(f'Что - то пошло не так, попробуйте снова')
     await state.finish()
@@ -89,9 +88,8 @@ async def flashcards_managing_del_start(message: types.Message):
     # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
     all_cards = flashcard_dp_info(message.from_user.id)
     if len(all_cards) == 0:
-        await message.answer(f'У вас нет карточек, которые вы могли бы удалалять',
-                             reply_markup=types.ReplyKeyboardRemove())
-        await message.answer(f'Сначала создайте их', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
+        await message.answer(f'У вас нет карточек, которые вы могли бы удалалять\n'
+                             f'Сначала создайте их', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
         return
 
     await message.answer(f'Чтобы удалить карточку - введите её id\n'
@@ -172,7 +170,6 @@ class FlashcardManaging(StatesGroup):
     flashcards_managing_create_middle = State()
     flashcards_managing_create_middle_2 = State()
     flashcards_managing_create_end = State()
-
     flashcards_managing_del_end = State()
 
 

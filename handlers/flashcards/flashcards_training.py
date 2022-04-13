@@ -9,7 +9,7 @@
 Алгоритм работает так:
     Пользователь вызвал /flc_train или нажал на кнопки в боте. Бот спросил готов ли он (flashcards_training_start),
         пользователь ответил, что готов, а дальше вызывается функция flc_game, которая проверяет, что пользователь верно
-        нажал на кнопку "Да" и дальше...
+        нажал на кнопку "Да" (Если ответил "Нет, то возвращает в основное меню") и дальше...
 
     Основной алгоритм. Функция гененирует карточку, присылает пользователю информацию о карточке и создаёт кнопки:
         "Обратная сторона", "Правильно", "Неправильно", а дальше вызывает саму себя, и ждёт следующих действий от
@@ -120,6 +120,7 @@ async def flc_game(message: types.Message, state: FSMContext):
         else:
             action_add(message.from_user.id, 'flc', False)
     elif message.text == 'Нет':
+        # Возврат в основное меню
         await message.answer('Действие отменено', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
         return
     else:
@@ -154,7 +155,8 @@ async def flc_game(message: types.Message, state: FSMContext):
         card_id = str(card_id).split()[0]
 
         # Если количество букв будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
-        if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_front) <= 250)) and flc_show:
+        if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (
+                len(list_words) > 1 and len(card_front) <= 250)) and flc_show:
 
             photo = open(f'handlers/flashcards/flc_users/{card_id}_{side_file}.png', 'rb')
 
@@ -219,7 +221,8 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
         side = 'Лицевая сторона'
         side_file = 'front'
 
-    if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250)) and flc_show == 1:
+    if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (
+            len(list_words) > 1 and len(card_back) <= 250)) and flc_show == 1:
 
         photo = open(f'handlers/flashcards/flc_users/{card_id}_{side_file}.png', 'rb')
 
@@ -244,9 +247,6 @@ def flashcard_generate(user_id):
     return flashcards + flashcards_2
 
 
-
-
-
 class Flash_game(StatesGroup):
     flc_game = State()
 
@@ -263,4 +263,3 @@ def register_handlers_flashcards_training(dp: Dispatcher):
     dp.register_message_handler(flashcards_training_start,
                                 Text(equals=emoji.emojize(":brain:") + ' Начать учить карточки'), state='*')
     dp.register_message_handler(flc_game, state=Flash_game.flc_game)
-
