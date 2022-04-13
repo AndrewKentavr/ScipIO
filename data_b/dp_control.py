@@ -157,6 +157,17 @@ def flashcard_del(user_id, front, back):
     return
 
 
+def flashcard_setting_photo_text(telegram_user_id, photo_text):
+    """
+    Настройка показа flc
+    :param photo_text: bool значение. "1" - Фото; "0" - Текст
+    """
+    cur.execute(f"""UPDATE users SET flc_show = {photo_text} WHERE 
+    telegram_user_id = {telegram_user_id};""")
+    cur.connection.commit()
+
+    return
+
 # -----------------------------TIMER-----------------------------------------
 
 def timer_create_dp(user_id, time, tasks):

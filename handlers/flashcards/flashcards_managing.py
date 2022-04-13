@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del
+from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del, flashcard_setting_photo_text
 from handlers.keyboards.default import flashcard_menu
 from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
 
@@ -151,20 +151,19 @@ async def flashcards_managing_info(message: types.Message):
 
 
 async def setting_show(message: types.Message):
-    CONN = sqlite3.connect('data_b/scipio.db')
-    cur = CONN.cursor()
     msg = message.text
     if msg == 'Показ карточек':
-        await message.answer('Вы можете настроить показ карточек(фото, текст)',
+        await message.answer('Вы можете настроить показ карточек(flashcards):\n'
+                             '1. Сделать показ карточек фотографиями\n'
+                             '2. Сделать показ карточек текстом',
                              reply_markup=flashcard_menu.setting_show())
     elif msg == 'Фото':
-        cur.execute(f"""UPDATE users SET flc_show = 1 WHERE telegram_user_id = {message.from_user.id};""")
+        flashcard_setting_photo_text(message.from_user.id, 1)
         await message.answer("Показ карточке: Фото", reply_markup=flashcard_menu.get_keyboard_flashcard_start())
     elif msg == 'Текст':
-        cur.execute(f"""UPDATE users SET flc_show = 0 WHERE telegram_user_id = {message.from_user.id};""")
+        flashcard_setting_photo_text(message.from_user.id, 0)
         await message.answer("Показ карточке: Текст", reply_markup=flashcard_menu.get_keyboard_flashcard_start())
-    cur.connection.commit()
-
+    return
 
 class FlashcardManaging(StatesGroup):
     flashcards_managing_create_middle = State()
