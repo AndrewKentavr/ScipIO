@@ -21,10 +21,21 @@ def add_text():
     return keyboard
 
 
-def main_send_msg():
+def choose_category():
+    buttons = [
+        'Математика',
+        'Логика'
+    ]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def admin_start_menu():
     buttons = [
         'Отправка сообщения всем',
-        'Статистика пользователей'
+        'Статистика пользователей',
+        'Удалить задачу'
     ]
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     keyboard.add(*buttons)

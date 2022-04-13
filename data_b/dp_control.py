@@ -20,8 +20,8 @@ def dp_all_users_list():
 
 
 def dp_user_create(telegram_user_id):
-    cur.execute(f"""INSERT INTO users (telegram_user_id, date_reg)
-VALUES ({telegram_user_id}, '{datetime.datetime.now()}');""")
+    cur.execute(f"""INSERT INTO users (telegram_user_id, date_reg, flc_show)
+VALUES ({telegram_user_id}, '{datetime.datetime.now()}', 0);""")
     cur.connection.commit()
     return
 
@@ -94,6 +94,23 @@ def finding_one_categories_table(tasks_theme):
     return result_0
 
 
+def del_task(name_task, category):
+    """
+    Удаление задачи из admins
+    :param name_task: Название задачи или id
+    :param category: категория задачи('Математика' и т.д)
+    """
+    if str(category) == 'Математика':
+        cur.execute(f"""DELETE FROM tasks_math WHERE title = {name_task};""")
+    else:
+        try:
+            int(name_task)
+            cur.execute(f"""DELETE FROM tasks_logic WHERE id = {name_task};""")
+        except:
+            cur.execute(f"""DELETE FROM tasks_logic WHERE title = '{name_task}';""")
+    cur.connection.commit()
+    return
+
 # -----------------------------MATH-----------------------------------------
 
 
@@ -156,6 +173,22 @@ def flashcard_del(user_id, front, back):
     cur.connection.commit()
     return
 
+
+def flashcard_setting_photo_text(telegram_user_id, photo_text):
+    """
+    Настройка показа flc
+    :param photo_text: bool значение. "1" - Фото; "0" - Текст
+    """
+    cur.execute(f"""UPDATE users SET flc_show = {photo_text} WHERE 
+    telegram_user_id = {telegram_user_id};""")
+    cur.connection.commit()
+    return
+
+
+def flashcard_check_show(telegram_user_id):
+    cur.execute(f"""SELECT flc_show FROM users WHERE telegram_user_id = {telegram_user_id}""")
+    flc_show = cur.fetchall()[0][0]
+    return flc_show
 
 # -----------------------------TIMER-----------------------------------------
 

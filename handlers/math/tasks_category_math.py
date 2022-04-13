@@ -202,7 +202,7 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
         disable_web_page_preview=True)
 
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
-                         reply_markup=types.ReplyKeyboardRemove())
+                         reply_markup=math_menu.get_keyboard_math_start())
 
 
 class MathCategory(StatesGroup):

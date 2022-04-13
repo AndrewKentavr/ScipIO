@@ -22,7 +22,7 @@ from handlers.logic.logic import register_handlers_logic
 from handlers.logic.tasks_category_logic import register_handlers_tasks_logic_category
 
 # ------timer-------
-from handlers.admins.send_message_all_main import register_handlers_send_msg
+from handlers.admins.admins import register_handlers_send_msg
 
 from handlers.timer.timer import register_handlers_timer
 from handlers.timer.timer_managing import register_handlers_timer_managing
@@ -34,7 +34,7 @@ from handlers.statistics.statistics_info import register_handlers_statistics_inf
 # ------admins-------
 from handlers.admins.send_message_all import register_handlers_send_message_all
 from handlers.admins.statistics_info_admins import register_handlers_statistics_info_admins
-
+from handlers.admins.delete_tasks import register_handlers_del_task
 
 def reg_cmd(dp):
     # ------main-------
@@ -68,3 +68,4 @@ def reg_cmd(dp):
     register_handlers_send_msg(dp)
     register_handlers_send_message_all(dp)
     register_handlers_statistics_info_admins(dp)
+    register_handlers_del_task(dp)
