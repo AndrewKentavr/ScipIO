@@ -24,7 +24,7 @@ def get_text_size(text, image, font):
 
 def create_photo(msg, id, side):
     width_ratio = 2.25
-    font_family = "handlers/flashcards/pillow.ttf"
+    font_family = "handlers/flashcards/flc_users/pillow.ttf"
     text = msg.replace('\n',' ')
 
     image = Image.open('handlers/flashcards/base.jpg')
