@@ -1,10 +1,12 @@
+import sqlite3
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del
+from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del, flashcard_setting_photo_text
 from handlers.keyboards.default import flashcard_menu
 from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
 
@@ -70,13 +72,12 @@ async def flashcards_managing_create_end(message: types.Message, state: FSMConte
         await FlashcardManaging.flashcards_managing_create_end.set()
 
     user_data = await state.get_data()
-    await message.answer('Создана карточка\n'
-                         f'Передняя сторона - {user_data["front"]}')
-    await message.answer(f'Задняя сторона - {user_data["back"]}')
-    await message.answer(f'Показывать карточку с двух сторон? - {msg}')
     try:
         flashcard_dp_create(message.from_user.id, user_data["front"], user_data["back"], show_card)
-        await message.answer(f'Карточка успешно создана', reply_markup=types.ReplyKeyboardRemove())
+        await message.answer(f'Карточка успешно создана', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
+        await message.answer(f'Передняя сторона - {user_data["front"]}\n'
+                             f'Задняя сторона - {user_data["back"]}\n'
+                             f'Показывать карточку с двух сторон? - {msg}')
     except Exception:
         await message.answer(f'Что - то пошло не так, попробуйте снова')
     await state.finish()
@@ -87,9 +88,8 @@ async def flashcards_managing_del_start(message: types.Message):
     # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
     all_cards = flashcard_dp_info(message.from_user.id)
     if len(all_cards) == 0:
-        await message.answer(f'У вас нет карточек, которые вы могли бы удалалять',
-                             reply_markup=types.ReplyKeyboardRemove())
-        await message.answer(f'Сначала создайте их', reply_markup=flashcard_menu.get_keyboard_flashcard_managing())
+        await message.answer(f'У вас нет карточек, которые вы могли бы удалалять\n'
+                             f'Сначала создайте их', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
         return
 
     await message.answer(f'Чтобы удалить карточку - введите её id\n'
@@ -139,7 +139,7 @@ async def flashcards_managing_info(message: types.Message):
         await message.answer('У вас нет карточек')
         return
     else:
-        await message.answer('Все ваши карточки:', reply_markup=types.ReplyKeyboardRemove())
+        await message.answer('Все ваши карточки:', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
         # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
         all_cards = flashcard_dp_info(message.from_user.id)
         # Создание сообщения с информацией о всех каточках
@@ -150,11 +150,26 @@ async def flashcards_managing_info(message: types.Message):
         await message.answer(mes_print)
 
 
+async def setting_show(message: types.Message):
+    msg = message.text
+    if msg == 'Показ карточек':
+        await message.answer('Вы можете настроить показ карточек(flashcards):\n'
+                             '1. Сделать показ карточек фотографиями\n'
+                             '2. Сделать показ карточек текстом',
+                             reply_markup=flashcard_menu.setting_show())
+    elif msg == 'Фото':
+        flashcard_setting_photo_text(message.from_user.id, 1)
+        await message.answer("Показ карточке: Фото", reply_markup=flashcard_menu.get_keyboard_flashcard_start())
+    elif msg == 'Текст':
+        flashcard_setting_photo_text(message.from_user.id, 0)
+        await message.answer("Показ карточке: Текст", reply_markup=flashcard_menu.get_keyboard_flashcard_start())
+    return
+
+
 class FlashcardManaging(StatesGroup):
     flashcards_managing_create_middle = State()
     flashcards_managing_create_middle_2 = State()
     flashcards_managing_create_end = State()
-
     flashcards_managing_del_end = State()
 
 
@@ -179,3 +194,4 @@ def register_handlers_flashcards_managing(dp: Dispatcher):
 
     dp.register_message_handler(flashcards_managing_del_end,
                                 state=FlashcardManaging.flashcards_managing_del_end)
+    dp.register_message_handler(setting_show, Text(["Показ карточек", "Фото", "Текст"]), state='*')

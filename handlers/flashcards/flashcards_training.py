@@ -9,7 +9,7 @@
 Алгоритм работает так:
     Пользователь вызвал /flc_train или нажал на кнопки в боте. Бот спросил готов ли он (flashcards_training_start),
         пользователь ответил, что готов, а дальше вызывается функция flc_game, которая проверяет, что пользователь верно
-        нажал на кнопку "Да" и дальше...
+        нажал на кнопку "Да" (Если ответил "Нет, то возвращает в основное меню") и дальше...
 
     Основной алгоритм. Функция гененирует карточку, присылает пользователю информацию о карточке и создаёт кнопки:
         "Обратная сторона", "Правильно", "Неправильно", а дальше вызывает саму себя, и ждёт следующих действий от
@@ -25,6 +25,7 @@
             3. "Закончить". Вызывает функцию flc_game_end, которая присылает статистику пользователю и соответственно
                 заканчивает тренировку.
 """
+import sqlite3
 from random import choice
 
 from aiogram import types, Dispatcher
@@ -33,14 +34,13 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_info_game, action_add, flashcard_one
+from data_b.dp_control import flashcard_dp_info_game, action_add, flashcard_one, flashcard_check_show
 from handlers.keyboards.default import flashcard_menu
 
 from handlers.flashcards.create_flashcard_photo import create_photo
 import os
 
 from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start, get_keyboard_flashcard_training_game
-
 
 
 async def flashcards_training_theory(message: types.Message):
@@ -57,7 +57,9 @@ async def flashcards_training_theory(message: types.Message):
 
 
 async def flashcards_training_start(message: types.Message):
-    await message.answer('Принцип работы с карточками и советы /flc_theory')
+    await message.answer(
+        '<i>Можно выбрать тип показа карточек (Или в виде фото, или в виде текста). Это можно сделать в "Управление карточками" - "Показ карточек"</i>\n\n'
+        'Принцип работы с карточками и советы /flc_theory')
     await message.answer('Вы готовы?', reply_markup=flashcard_menu.get_keyboard_flashcard_training_start())
     await Flash_game.flc_game.set()
 
@@ -65,14 +67,23 @@ async def flashcards_training_start(message: types.Message):
 async def flc_game(message: types.Message, state: FSMContext):
     """
     Основной алгоритм
-
     :param message: Ждёт сообщения: "Да"; "Правильно"; "Неправильно" всё остальное отсекается
     """
+    global flc_show
+    flc_show = flashcard_check_show(message.from_user.id)
 
     if message.text == 'Да':
 
         # Генерация массива карточек пользователя
         flashcards = flashcard_generate(message.from_user.id)
+        for i in range(len(flashcards)):
+            card_id = flashcards[i][0]
+            if type(card_id) == int:
+                card_front = flashcards[i][1]
+                card_back = flashcards[i][2]
+                create_photo(card_front, card_id, 'front')
+                create_photo(card_back, card_id, 'back')
+
         if not flashcards:
             await message.answer('У вас ещё нет карточек', reply_markup=types.ReplyKeyboardRemove())
             await message.answer('Чтобы создать их, вам нужно зайти в '
@@ -107,6 +118,10 @@ async def flc_game(message: types.Message, state: FSMContext):
             action_add(message.from_user.id, 'flc', True)
         else:
             action_add(message.from_user.id, 'flc', False)
+    elif message.text == 'Нет':
+        # Возврат в основное меню
+        await message.answer('Действие отменено', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
+        return
     else:
         await message.answer('Вы написали что-то не то')
         return
@@ -124,25 +139,28 @@ async def flc_game(message: types.Message, state: FSMContext):
         card_id, card_front, card_back, show_card = flashcard
         list_words = card_front.split()
         card_id_split = str(card_id).split()
-        # Если у списка card_id_split существует первый элмент, то значит это обратная сторона
-        try:
-            str(card_id_split[1])
-            side = 'Обратная сторона'
-        except:
+        # Если id может быть: 138 или '138 обрат.сторона'. То есть если id число значить это лицевая сторона
+        if type(card_id) == int:
             side = 'Лицевая сторона'
+            side_file = 'front'
+        else:
+            side = 'Обратная сторона'
+            side_file = 'back'
 
         await state.update_data(card_id=card_id)
         await state.update_data(card_back=card_back)
         await state.update_data(side=side)
-        # Если количество букв будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
-        if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_front) <= 250):
 
-            create_photo(card_front, message.from_user.id)
-            photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
+        card_id = str(card_id).split()[0]
+
+        # Если количество букв будет больше 250, то сообщение будет в виде обычного текста(не в виде фото)
+        if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (
+                len(list_words) > 1 and len(card_front) <= 250)) and flc_show:
+
+            photo = open(f'handlers/flashcards/flc_users/{card_id}_{side_file}.png', 'rb')
 
             await message.answer_photo(photo=photo, caption=side, reply_markup=get_keyboard_flashcard_training_game())
 
-            os.remove(f'handlers/flashcards/{message.from_user.id}.png')
         else:
             await message.answer(f'{side}:\n{card_back}',
                                  reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
@@ -153,15 +171,13 @@ async def flc_game(message: types.Message, state: FSMContext):
 async def flc_game_end(message: types.Message, state: FSMContext):
     """
     Функция присылает статистику по тренировке и закачивает тренировку
-
     Вызов: 1.Если написали /flash_end
            2.Если закончились flashcards у пользователя
            3. Нажали на кнопку закончить
-
     :return: Конец тренировки, state.finish()
     """
     await message.answer('Тренировка карточек закончена',
-                         reply_markup=types.ReplyKeyboardRemove())
+                         reply_markup=flashcard_menu.get_keyboard_flashcard_start())
     user_data = await state.get_data()
     correct = user_data['correct']
     # Создание статистики
@@ -177,6 +193,13 @@ async def flc_game_end(message: types.Message, state: FSMContext):
 
     await message.answer(emoji.emojize(":bar_chart:") + f' Количество правильно отвеченных карточек: {len(correct)}\n'
                                                         f'{string_correct}')
+
+    flashcards = flashcard_generate(message.from_user.id)
+    for i in range(len(flashcards)):
+        card_id = flashcards[i][0]
+        if type(card_id) == int:
+            os.remove(f'handlers/flashcards/flc_users/{card_id}_front.png')
+            os.remove(f'handlers/flashcards/flc_users/{card_id}_back.png')
     await state.finish()
 
 
@@ -186,21 +209,23 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
     """
     user_data = await state.get_data()
     card_back = user_data['card_back']
+    card_id = user_data['card_id']
     list_words = card_back.split()
     side = user_data['side']
     if side == 'Лицевая сторона':
         side = 'Обратная сторона'
+        side_file = 'back'
     else:
+        card_id = card_id.split()[0]
         side = 'Лицевая сторона'
+        side_file = 'front'
 
-    if (len(list_words) == 1 and len(list_words[0]) <= 50) or (len(list_words) > 1 and len(card_back) <= 250):
+    if ((len(list_words) == 1 and len(list_words[0]) <= 50) or (
+            len(list_words) > 1 and len(card_back) <= 250)) and flc_show == 1:
 
-        create_photo(card_back, message.from_user.id)
-        photo = open(f'handlers/flashcards/{message.from_user.id}.png', 'rb')
+        photo = open(f'handlers/flashcards/flc_users/{card_id}_{side_file}.png', 'rb')
 
         await message.answer_photo(photo=photo, caption=side)
-
-        os.remove(f'handlers/flashcards/{message.from_user.id}.png')
     else:
         await message.answer(f'{side}:\n{card_back}',
                              reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
@@ -209,7 +234,6 @@ async def flc_game_reverse_side(message: types.Message, state: FSMContext):
 
 def flashcard_generate(user_id):
     """
-
     :return: массив карточек + карточки, которые должны показываться в обратную сторону
     """
     flashcards = flashcard_dp_info_game(user_id)
@@ -217,7 +241,7 @@ def flashcard_generate(user_id):
         return False
     flashcards_2 = []
     for i in flashcards:
-        if i[3] == True:
+        if i[3] == True or i[3] == 'True':
             flashcards_2.append((str(i[0]) + ' обрат.карт', i[2], i[1], i[3]))
     return flashcards + flashcards_2
 
