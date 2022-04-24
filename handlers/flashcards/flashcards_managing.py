@@ -96,12 +96,13 @@ async def flashcards_managing_del_start(message: types.Message):
                          'Первый пример: 1\n'
                          'Второй пример: 1 2 5',
                          reply_markup=types.ReplyKeyboardRemove())
-    # Создание сообщения с информацией о всех каточках
-    mes_print = ''
-    for i in range(len(all_cards)):
-        mes_print += f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
 
-    await message.answer(mes_print)
+    # Создания сообщения длинной максимум 4096 символов
+    arr_mes_flc_info = print_info_card(message.from_user.id)
+
+    for i in range(len(arr_mes_flc_info)):
+        await message.answer(arr_mes_flc_info[i])
+
     await FlashcardManaging.flashcards_managing_del_end.set()
 
 
@@ -140,14 +141,36 @@ async def flashcards_managing_info(message: types.Message):
         return
     else:
         await message.answer('Все ваши карточки:', reply_markup=flashcard_menu.get_keyboard_flashcard_start())
-        # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
-        all_cards = flashcard_dp_info(message.from_user.id)
-        # Создание сообщения с информацией о всех каточках
-        mes_print = ''
-        for i in range(len(all_cards)):
-            mes_print += f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
 
-        await message.answer(mes_print)
+        # Создания сообщения длинной максимум 4096 символов
+        arr_mes_flc_info = print_info_card(message.from_user.id)
+
+        for i in range(len(arr_mes_flc_info)):
+            await message.answer(arr_mes_flc_info[i])
+
+
+def print_info_card(telegram_user_id):
+    """
+    Создаёт сообщения (информации о карточках), каждое из которых максимум 4096 символов, чтобы избавиться от ошибки
+    'Message too long'
+    """
+
+    # Список всех карточек. Пример: [(54, "cat", "кошка"),(55, "dog", "собака")]
+    all_cards = flashcard_dp_info(telegram_user_id)
+    # Создание сообщения с информацией о всех каточках
+
+    arr_mes_flc_info = []
+    mes_print = ''
+    for i in range(len(all_cards)):
+        string = f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
+        if len(mes_print) + len(string) >= 4096:
+            arr_mes_flc_info.append(mes_print)
+            mes_print = f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
+        else:
+            mes_print += f'{i + 1}:  {all_cards[i][1]}  -  {all_cards[i][2]}\n'
+    arr_mes_flc_info.append(mes_print)
+
+    return arr_mes_flc_info
 
 
 async def setting_show(message: types.Message):
