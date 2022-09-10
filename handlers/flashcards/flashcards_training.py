@@ -163,7 +163,7 @@ async def flc_game(message: types.Message, state: FSMContext):
             await message.answer_photo(photo=photo, caption=side, reply_markup=get_keyboard_flashcard_training_game())
 
         else:
-            await message.answer(f'{side}:\n{card_back}',
+            await message.answer(f'{side}:\n{card_front}',
                                  reply_markup=flashcard_menu.get_keyboard_flashcard_training_game())
 
         await Flash_game.flc_game.set()
