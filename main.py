@@ -18,7 +18,27 @@ from data_b.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp
 
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
-logging.basicConfig(level=logging.INFO)
+
+# Логирование
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# создание обработчика для записи в файл
+file_handler = logging.FileHandler('logs.log')
+file_handler.setLevel(logging.INFO)
+
+# создание обработчика для вывода логов в консоль
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+
+# создание форматировщика логов
+formatter = logging.Formatter(f'%(asctime)s - %(levelname)s ' + '- %(name)s - %(message)s')
+file_handler.setFormatter(formatter)
+console_handler.setFormatter(formatter)
+
+# добавление обработчиков в логгер
+logger.addHandler(file_handler)
+logger.addHandler(console_handler)
 
 
 async def set_commands(bot: Bot):
@@ -51,6 +71,9 @@ async def main():
     scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp,))
     scheduler.start()
 
+    # Отключение логирования таймера
+    logging.getLogger('apscheduler').setLevel(logging.WARNING)
+
     await set_commands(bot)
 
     # функция регистрации "register_message_handler"
@@ -58,6 +81,16 @@ async def main():
 
     # Запуск полинга
     await dp.start_polling()
+
+
+# Функция для оповещения ошибок
+async def shutdown(error):
+    user_id = ADMINS
+    message = f"Ошибка: {error}"
+    for i in user_id:
+        await bot.send_message(chat_id=int(i), text=message)
+        await bot.send_message(chat_id=int(i), text=message)
+        await bot.send_message(chat_id=int(i), text=message)
 
 
 if __name__ == "__main__":
@@ -85,4 +118,9 @@ if __name__ == "__main__":
     # ------------------------------------------------------
 
     # Ассинхронный запуск бота
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        # логируем сообщение об ошибке
+        logger.error(str(e))
+        asyncio.run(shutdown(str(e)))
