@@ -35,14 +35,8 @@ async def set_commands(bot: Bot):
     await bot.set_my_commands(commands)
 
 
-def timer_interval_func():
-    """
-    Запускает функцию time_cycle, каждые 60 секунд
-    """
-    scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp,))
-
-
 async def main():
+    scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
     """
     await bot.delete_webhook(drop_pending_updates=True) - в новых версиях aiogram есть проблема, то что при запуске бота,
         он реагирует на сообщения, которые были отправленны ему, пока он был выключен и это не чинилось dp.skip_updates()
@@ -55,9 +49,8 @@ async def main():
     middlewares.setup(dp)
 
     # Это запуск таймера AsyncIOScheduler
+    scheduler.add_job(time_cycle, "interval", seconds=60, args=(dp,))
     scheduler.start()
-    # Запуск функции таймера
-    timer_interval_func()
 
     await set_commands(bot)
 
