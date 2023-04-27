@@ -19,7 +19,6 @@ from data_b.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)
 dp = Dispatcher(bot, storage=MemoryStorage())
 logging.basicConfig(level=logging.INFO)
-scheduler = AsyncIOScheduler(timezone="Europe/Moscow")
 
 
 async def set_commands(bot: Bot):
