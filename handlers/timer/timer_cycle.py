@@ -50,10 +50,10 @@ async def time_cycle(dp):
                 await state.set_state(Equation.equation_mentally_beginning)
 
             elif tasks == 'Задачи по математике':
-                await dp.bot.send_message(user_id, 'Выберете категорию заданий:',
+                await dp.bot.send_message(user_id, 'Выберите категорию заданий:',
                                           reply_markup=math_menu_inline.get_inline_math_problems_category())
 
             elif tasks == 'Задачи по логике':
                 from handlers.keyboards.inline import logic_menu_inline
-                await dp.bot.send_message(user_id, 'Выберете категорию заданий:',
+                await dp.bot.send_message(user_id, 'Выберите категорию заданий:',
                                           reply_markup=logic_menu_inline.get_inline_logic_problems_category())
