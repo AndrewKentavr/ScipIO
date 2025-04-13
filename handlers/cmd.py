@@ -4,7 +4,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.types import InputFile
 from aiogram.utils import emoji
 
-from data_b.dp_control import dp_all_users_list, dp_user_create
+from database.dp_control import dp_all_users_list, dp_user_create
 
 
 async def cmd_start(message: types.Message, state: FSMContext):

@@ -34,7 +34,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_info_game, action_add, flashcard_one, flashcard_check_show
+from database.dp_control import flashcard_dp_info_game, action_add, flashcard_one, flashcard_check_show
 from handlers.keyboards.default import flashcard_menu
 
 from handlers.flashcards.create_flashcard_photo import create_photo

@@ -6,7 +6,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.utils import emoji
 
-from data_b.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del, flashcard_setting_photo_text
+from database.dp_control import flashcard_dp_create, flashcard_dp_info, flashcard_del, flashcard_setting_photo_text
 from handlers.keyboards.default import flashcard_menu
 from handlers.keyboards.default.flashcard_menu import get_keyboard_flashcard_start
 

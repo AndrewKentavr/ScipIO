@@ -11,7 +11,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher.filters import Text
 from aiogram.utils import emoji
 
-from data_b.dp_control import timer_create_dp, timer_info_dp, timer_del_dp
+from database.dp_control import timer_create_dp, timer_info_dp, timer_del_dp
 from handlers.keyboards.default import timer_menu
 
 

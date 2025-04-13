@@ -11,7 +11,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import IDFilter, Text
 
 from config import ADMINS
-from data_b.dp_control import dp_admin_stat
+from database.dp_control import dp_admin_stat
 import datetime
 import pytz
 

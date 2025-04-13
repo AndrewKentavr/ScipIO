@@ -1,6 +1,6 @@
 from aiogram import types
 
-from data_b.dp_control import finding_categories_table
+from database.dp_control import finding_categories_table
 from handlers.logic.tasks_category_logic import callback_problems_logic, callback_problems_info_logic
 
 

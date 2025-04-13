@@ -23,7 +23,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import InputFile
 from aiogram.utils import emoji
 
-from data_b.dp_control import action_add
+from database.dp_control import action_add
 from handlers.keyboards.default import math_menu
 from handlers.keyboards.inline import math_menu_inline
 

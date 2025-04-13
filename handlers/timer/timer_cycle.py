@@ -5,11 +5,11 @@
 """
 
 from aiogram import types
-from data_b.dp_control import dp_timer_circle_user_time, del_user
+from database.dp_control import dp_timer_circle_user_time, del_user
 from handlers.flashcards.flashcards_training import Flash_game
 from handlers.keyboards.default import flashcard_menu, math_menu
 from handlers.keyboards.inline import math_menu_inline
-from handlers.math.mentally_math import Equation
+from handlers.problems.mentally_math import Equation
 import pytz
 from datetime import datetime
 

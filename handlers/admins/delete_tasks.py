@@ -12,7 +12,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.dispatcher.filters import Text
 
 from handlers.keyboards.default.admin_menu import choose_category
-from data_b.dp_control import del_task
+from database.dp_control import del_task
 
 
 async def del_task_start(message: types.Message):

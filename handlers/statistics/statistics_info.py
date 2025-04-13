@@ -1,7 +1,7 @@
 """
 Статитстика работает так:
     1. Рисует круглую диаграмму на основе данных функции (stat_general_bd), который возвращает массив количества типов
-        action (действий пользователя): в общем, от flc, от mentally math, от category_math и от category_logic.
+        action (действий пользователя): в общем, от flc, от mentally problems, от category_math и от category_logic.
         Потом сохроняется, показывается поьзователю, и фотография удаляется
 
     2. Рисует диаграмму (bar) на основе данных функции(stat_bar_general), которая высылает типы actions пользователя за
@@ -11,7 +11,7 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.filters import Text
 from aiogram.utils import emoji
-from data_b.dp_control import stat_general_bd, stat_bar_general
+from database.dp_control import stat_general_bd, stat_bar_general
 from handlers.statistics.charts import pie_chart, bar_chart
 from aiogram.types import InputFile
 import os
@@ -23,7 +23,7 @@ async def stat_general(message: types.Message):
     info_general = stat_general_bd(user_id)[0]
     await message.answer(f'Ваша общая статистика:\n'
                          f'Показов flashcard: {info_general[0]}\n'
-                         f'Попыток mentally math: {info_general[1]}\n'
+                         f'Попыток mentally problems: {info_general[1]}\n'
                          f'Показов category_math: {info_general[2]}\n'
                          f'Показов category_logic: {info_general[3]}', reply_markup=types.ReplyKeyboardRemove())
 

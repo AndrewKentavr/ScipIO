@@ -1,28 +1,43 @@
-from aiogram import types
-
-from data_b.dp_control import finding_categories_table, finding_one_categories_table
-from data_b.dp_control import finding_main_categories_table
-from handlers.math.tasks_category_math import callback_main_problems_math, callback_problems_info_math, \
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from database.dp_control import finding_categories_table, finding_one_categories_table
+from database.dp_control import finding_main_categories_table
+from database import dp_control
+from handlers.problems.tasks_category_math import callback_main_problems_math, callback_problems_info_math, \
     callback_problems_math
 
 
 def get_inline_math_url():
     buttons = [
-        types.InlineKeyboardButton(text="Хабр", url="https://habr.com/ru/post/207034/"),
+        InlineKeyboardButton(text="Хабр", url="https://habr.com/ru/post/207034/"),
     ]
-    keyboard = types.InlineKeyboardMarkup(row_width=1)
+    keyboard = InlineKeyboardMarkup(row_width=1)
     keyboard.add(*buttons)
     return keyboard
 
 
 def get_inline_math_formulas():
     buttons = [
-        types.InlineKeyboardButton(text="Вывести подсказку", callback_data="hint_f"),
-        types.InlineKeyboardButton(text="Вывести ответ", callback_data="answer_f")
+        InlineKeyboardButton(text="Вывести подсказку", callback_data="hint_f"),
+        InlineKeyboardButton(text="Вывести ответ", callback_data="answer_f")
     ]
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
+    keyboard = InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
 
+    return keyboard
+
+
+def get_math_categories(category):
+    categories = dp_control.get_math_categories(category)
+    buttons = []
+    for i in categories:
+        category_name = i[0]  # НАПРИМЕР --- "riddles"
+        translated_name = i[1]  # НАПРИМЕР --- "Загадки"
+        buttons.append(
+            InlineKeyboardButton(text=translated_name,
+                                 callback_data=callback_main_problems_math.new(category=category_name)))
+
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    keyboard.add(*buttons)
     return keyboard
 
 
@@ -34,16 +49,16 @@ def get_inline_math_problems_category():
     """
     buttons = []
 
-    # Находит все категории, которые есть в таблице math
-    list_all_categorys = finding_categories_table('math')
+    # Находит все категории, которые есть в таблице problems
+    list_all_categories = finding_categories_table('problems')
 
-    for i in list_all_categorys:
+    for i in list_all_categories:
         category_name = i[0]  # НАПРИМЕР --- "riddles"
         translated_name = i[1]  # НАПРИМЕР --- "Загадки"
         buttons.append(
-            types.InlineKeyboardButton(text=translated_name,
-                                       callback_data=callback_main_problems_math.new(category=category_name)))
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
+            InlineKeyboardButton(text=translated_name,
+                                 callback_data=callback_main_problems_math.new(category=category_name)))
+    keyboard = InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
 
     return keyboard
@@ -57,35 +72,28 @@ def get_inline_main_math_problems_category():
     """
     buttons = []
 
-    # Находит все категории, которые есть в таблице math
-    list_all_categorys = sorted(finding_main_categories_table('math'))
-    for i in list_all_categorys:
+    # Находит все категории, которые есть в таблице problems
+    list_all_categories = sorted(finding_main_categories_table('problems'))
+    for i in list_all_categories:
         category_name = i[0]  # НАПРИМЕР --- "riddles"
         translated_name = i[1]  # НАПРИМЕР --- "Загадки"
-        if types.InlineKeyboardButton(text=translated_name, callback_data=callback_main_problems_math.new(
-                category=category_name)) not in buttons:
-            buttons.append(
-                types.InlineKeyboardButton(text=translated_name,
-                                           callback_data=callback_main_problems_math.new(category=category_name)))
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
+        buttons.append(InlineKeyboardButton(text=translated_name, callback_data=callback_main_problems_math.new(
+            category=category_name)))
+    keyboard = InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
 
     return keyboard
 
 
 def get_inline_one_main_math_problems_category(category):
-
-    list_all_categorys = sorted(finding_one_categories_table(category))
+    list_all_categories = sorted(finding_one_categories_table(category))
     buttons = []
-    for i in list_all_categorys:
+    for i in list_all_categories:
         category_name = i[0]  # НАПРИМЕР --- "riddles"
         translated_name = i[1]  # НАПРИМЕР --- "Загадки"
-        if types.InlineKeyboardButton(text=translated_name, callback_data=callback_problems_math.new(
-                category=category_name)) not in buttons:
-            buttons.append(
-                types.InlineKeyboardButton(text=translated_name,
-                                           callback_data=callback_problems_math.new(category=category_name)))
-    keyboard = types.InlineKeyboardMarkup(row_width=2)
+        buttons.append(InlineKeyboardButton(text=translated_name,
+                                            callback_data=callback_problems_math.new(category=category_name)))
+    keyboard = InlineKeyboardMarkup(row_width=2)
     keyboard.add(*buttons)
 
     return keyboard
@@ -101,27 +109,27 @@ def get_inline_math_problems_category_info(info_problem):
 
     buttons = []
 
-    if info_problem['decisions_1'] != '':
-        buttons.append(types.InlineKeyboardButton(text='Решение 1',
-                                                  callback_data=callback_problems_info_math.new(
-                                                      info='Decision 1')))
+    if info_problem['decisions_1'] != '' and info_problem['decisions_1'] is not None:
+        buttons.append(InlineKeyboardButton(text='Решение 1',
+                                            callback_data=callback_problems_info_math.new(
+                                                info='decisions_1')))
 
-    if info_problem['decisions_2'] != '':
-        buttons.append(types.InlineKeyboardButton(text='Решение 2',
-                                                  callback_data=callback_problems_info_math.new(
-                                                      info='Decision 2')))
+    if info_problem['decisions_2'] != '' and info_problem['decisions_2'] is not None:
+        buttons.append(InlineKeyboardButton(text='Решение 2',
+                                            callback_data=callback_problems_info_math.new(
+                                                info='decisions_2')))
 
-    if info_problem['answer'] != '':
-        buttons.append(types.InlineKeyboardButton(text='Ответ',
-                                                  callback_data=callback_problems_info_math.new(
-                                                      info='Answer')))
+    if info_problem['answer'] != '' and info_problem['answer'] is not None:
+        buttons.append(InlineKeyboardButton(text='Ответ',
+                                            callback_data=callback_problems_info_math.new(
+                                                info='answer')))
 
-    if info_problem['remarks'] != '':
-        buttons.append(types.InlineKeyboardButton(text='Замечания',
-                                                  callback_data=callback_problems_info_math.new(
-                                                      info='Remarks')))
+    if info_problem['remarks'] != '' and info_problem['remarks'] is not None:
+        buttons.append(InlineKeyboardButton(text='Замечания',
+                                            callback_data=callback_problems_info_math.new(
+                                                info='remarks')))
 
-    keyboard = types.InlineKeyboardMarkup(row_width=3)
+    keyboard = InlineKeyboardMarkup(row_width=3)
     keyboard.add(*buttons)
 
     return keyboard

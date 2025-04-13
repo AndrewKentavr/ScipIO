@@ -13,7 +13,7 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from handlers.timer.timer_cycle import time_cycle
 from handlers.register_cmd import reg_cmd
 
-from data_b.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp_user_create, \
+from database.dp_control import dp_all_users_list, dp_all_telegram_id_flc_list, dp_user_create, \
     dp_all_telegram_id_time_list
 
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)

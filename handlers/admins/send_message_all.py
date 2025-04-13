@@ -7,7 +7,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.dispatcher.filters import Text
 
 from config import BOT_TOKEN, ADMINS
-from data_b.dp_control import dp_admin_stat
+from database.dp_control import dp_admin_stat
 from handlers.keyboards.default.admin_menu import choose_send, add_text
 
 bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.HTML)

@@ -3,7 +3,7 @@ import sqlite3
 
 import pytz
 
-CONN = sqlite3.connect('data_b/scipio.db')
+CONN = sqlite3.connect('database/scipio.db')
 cur = CONN.cursor()
 
 
@@ -47,34 +47,31 @@ def problem_category_random(name_category, tasks_theme):
     """
     :param name_category: Название категории вида: 'fractions'
     :param tasks_theme: Передаётся название таблици
-    из которой будут брать задачи. Например: 'math'
+    из которой будут брать задачи. Например: 'problems'
 
     :return: Вся информация В СЛОВАРЕ, что есть по задаче. Например в задаче
     2 Условия и Ответ. Значит так и будет передоваться
     """
     cur.execute(
         f"""SELECT id, title, href, subcategory, complexity, classes, conditions, decisions_1, 
-        decisions_2, answer, remarks FROM tasks_{tasks_theme}
+        decisions_2, answer, remarks, img FROM tasks_{tasks_theme}
                 WHERE id_category = (SELECT id FROM category
-                                WHERE value = '{name_category}')
+                                WHERE name = '{name_category}')
                 ORDER BY RANDOM()
                 LIMIT 1;""")
     columns = ['id', 'title', 'href', 'subcategory', 'complexity', 'classes', 'conditions', 'decisions_1',
-               'decisions_2', 'answer', 'remarks']
+               'decisions_2', 'answer', 'remarks', 'img']
     result_0 = cur.fetchall()
     result = {}
 
     for i in range(len(result_0[0])):
-        if result_0[0][i] is not None:
-            result[columns[i]] = result_0[0][i]
-        else:
-            result[columns[i]] = ''
+        result[columns[i]] = result_0[0][i]
 
     return result
 
 
 def finding_categories_table(tasks_theme):
-    cur.execute(f"""SELECT value, translate_category FROM category
+    cur.execute(f"""SELECT name, translate_name FROM category
         WHERE id in (SELECT DISTINCT id_category FROM tasks_{tasks_theme});""")
     result_0 = cur.fetchall()
     return result_0
@@ -114,11 +111,13 @@ def del_task(name_task, category):
 # -----------------------------MATH-----------------------------------------
 
 
-def problem_search_random():  # <--------  Эта функция вообще где-то применяется?
-    cur.execute(f"""SELECT * FROM math_problems 
-    ORDER BY RANDOM() LIMIT 1;""")
+def get_math_categories(category):
+    if category == "*":
+        cur.execute(f"SELECT name, translate_name FROM category")
+    else:
+        cur.execute(f"SELECT name, translate_name FROM category WHERE main_name='{category}'")
     result = cur.fetchall()
-    return result[0]
+    return result
 
 
 def formulas_search_random():
