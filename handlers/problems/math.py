@@ -12,7 +12,7 @@ class MathButCategory(StatesGroup):
 
 async def math_start(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer('Выберите:', reply_markup=math_menu.get_keyboard_math_start())
+    await message.answer('Выберите:', reply_markup=math_menu.get_keyboard_math_start(message))
     await state.set_state(MathButCategory.math_category_step)
 
 

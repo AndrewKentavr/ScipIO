@@ -2,6 +2,7 @@ import datetime
 import sqlite3
 
 import pytz
+from aiogram import types
 
 CONN = sqlite3.connect('database/scipio.db')
 cur = CONN.cursor()
@@ -43,20 +44,22 @@ def dp_all_telegram_id_time_list():
     return time_telegram_id_list
 
 
-def problem_category_random(name_category, tasks_theme):
+def problem_category_random(name_category, tasks_theme, img):
     """
     :param name_category: Название категории вида: 'fractions'
-    :param tasks_theme: Передаётся название таблици
+    :param tasks_theme: Передаётся название таблицы
+    :param img: 1 или 0. Отправлять фото или нет
     из которой будут брать задачи. Например: 'problems'
 
-    :return: Вся информация В СЛОВАРЕ, что есть по задаче. Например в задаче
-    2 Условия и Ответ. Значит так и будет передоваться
+    :return: Вся информация В СЛОВАРЕ, что есть по задаче. Например, в задаче
+    2 Условия и Ответ. Значит так и будет передаваться
     """
     cur.execute(
         f"""SELECT id, title, href, subcategory, complexity, classes, conditions, decisions_1, 
         decisions_2, answer, remarks, img FROM tasks_{tasks_theme}
                 WHERE id_category = (SELECT id FROM category
                                 WHERE name = '{name_category}')
+                AND img<={img}
                 ORDER BY RANDOM()
                 LIMIT 1;""")
     columns = ['id', 'title', 'href', 'subcategory', 'complexity', 'classes', 'conditions', 'decisions_1',
@@ -108,6 +111,7 @@ def del_task(name_task, category):
     cur.connection.commit()
     return
 
+
 # -----------------------------MATH-----------------------------------------
 
 
@@ -125,6 +129,21 @@ def formulas_search_random():
     ORDER BY RANDOM() LIMIT 1;""")
     result = cur.fetchall()
     return result[0]
+
+
+def show_img(message: types.Message):
+    if 'Выключить' in message.text:
+        value = 0
+    elif 'Включить' in message.text:
+        value = 1
+    cur.execute(f"UPDATE users SET math_img={value} WHERE telegram_user_id={message.from_user.id}")
+    cur.connection.commit()
+    return
+
+
+def show_img_check(user_id):
+    res = cur.execute(f"SELECT math_img FROM users WHERE telegram_user_id={user_id}")
+    return res.fetchall()[0][0]
 
 
 # -----------------------------LOGIC-----------------------------------------
@@ -188,6 +207,7 @@ def flashcard_check_show(telegram_user_id):
     cur.execute(f"""SELECT flc_show FROM users WHERE telegram_user_id = {telegram_user_id}""")
     flc_show = cur.fetchall()[0][0]
     return flc_show
+
 
 # -----------------------------TIMER-----------------------------------------
 

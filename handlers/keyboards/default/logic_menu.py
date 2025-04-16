@@ -6,7 +6,7 @@ def get_keyboard_logic_start():
     buttons = [
         emoji.emojize(":book:") + ' Задания из категорий',
     ]
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2, one_time_keyboard=True)
     keyboard.add(*buttons)
     return keyboard
 

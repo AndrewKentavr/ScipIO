@@ -37,7 +37,7 @@ callback_main_problems_math = CallbackData("problems", "category")
 
 # Отправляет список категорий
 async def tasks_category_math_start(message: types.Message, state: FSMContext):
-    step = await state.get_state() # problems or logic
+    step = await state.get_state()  # problems or logic
 
     if step == MathButCategory.math_category_step.state:
         type_problem = "math"
@@ -45,6 +45,7 @@ async def tasks_category_math_start(message: types.Message, state: FSMContext):
         type_problem = "logic"
 
     await state.update_data(correct=[])
+
     await message.answer('Выберите категорию заданий:',
                          reply_markup=math_menu_inline.get_math_categories(type_problem))
     # link_endrey = hlink('в этот телеграм', 'https://t.me/Endrey_k')
@@ -62,7 +63,7 @@ async def one_tasks_category(call: types.CallbackQuery, callback_data: dict, sta
         category = callback_data["category"]
         await state.update_data(category=category)
         # Берёт из бд рандомную задачу и данные хранятся в СЛОВАРЕ
-        await send_math_problem(category, call.message, state)  # отправляет задачу пользователю
+        await send_math_problem(category, call, state)  # отправляет задачу пользователю
         await call.answer()
     else:
         await call.answer()
@@ -128,7 +129,6 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
     user_data = await state.get_data()
     # Список correct содержит ссылки на задачи(в каждой ссылке есть id задачи)
     correct = user_data['correct']
-    await state.finish()
     string_correct = ''
     # Создание статистики
 
@@ -142,7 +142,17 @@ async def tasks_category_math_end(message: types.Message, state: FSMContext):
         disable_web_page_preview=True)
 
     await message.answer(emoji.emojize(":red_circle: ") + ' Выполнение задачек закончилось',
-                         reply_markup=math_menu.get_keyboard_math_start())
+                         reply_markup=math_menu.get_keyboard_math_start(message))
+
+
+async def show_img(message: types.Message):
+    dp_control.show_img(message)
+    text = ""
+    if "Включить" in message.text:
+        text = "Задачи с фотографиями включены"
+    elif "Выключить" in message.text:
+        text = "Задачи с фотографиями отключены"
+    await message.answer(text, reply_markup=math_menu.get_keyboard_math_start(message))
 
 
 def register_handlers_tasks_math_category(dp: Dispatcher):
@@ -167,15 +177,27 @@ def register_handlers_tasks_math_category(dp: Dispatcher):
     dp.register_callback_query_handler(tasks_category_math_print_info,
                                        callback_problems_info_math.filter(info=info), state='*')
 
+    img = [emoji.emojize(":gear:") + ' Выключить задачи с фотографиями',
+           emoji.emojize(":gear:") + ' Включить задачи с фотографиями']
+    dp.register_message_handler(show_img,
+                                Text(img),
+                                state=MathButCategory.math_category_step)
+
 
 async def send_math_problem(category, message, state: FSMContext):
+    user_id = message.from_user.id
+    if isinstance(message, types.CallbackQuery):
+        message = message.message
+
     step = await state.get_state()
     if step == MathButCategory.math_category_step.state:
         type_problem = "math"
     elif step == LogicButCategory.logic_category_step.state:
         type_problem = "logic"
 
-    dictionary_info_problem = problem_category_random(category, type_problem)
+    img = dp_control.show_img_check(user_id)
+
+    dictionary_info_problem = problem_category_random(category, type_problem, img)
     title = dictionary_info_problem['title']
     if title == 'None':
         title = dictionary_info_problem['id']
@@ -213,5 +235,5 @@ async def send_math_problem(category, message, state: FSMContext):
         await message.answer(f'{condition}',
                              reply_markup=math_menu_inline.get_inline_math_problems_category_info(
                                  dictionary_info_problem))
-    except Exception:
+    except Exception as err:
         await message.answer('Сломанная задача')
